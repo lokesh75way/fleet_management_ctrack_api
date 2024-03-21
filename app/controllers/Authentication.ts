@@ -25,7 +25,8 @@ export const adminLogin = async (
     const { user: userData, token } = await generateToken(user);
     const options = { new: true };
 
-    const data = await User.findById(user._id);
+    const data = await User.findById(user._id)
+    .select("userName firstName lastName email mobileNumber role type");
     res.send(
       createResponse({ user: data, token }, "Login successfully!")
     );

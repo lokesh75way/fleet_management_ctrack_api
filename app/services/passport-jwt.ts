@@ -81,7 +81,12 @@ export const initPassport = (): void => {
       },
       async (email, password, done) => {
         try {
-          const user = await User.findOne({ email }).select("_id password isDeleted isActive email role type firstName lastName");
+          const user = await User.findOne({ 
+            $or:[
+              { email: email },
+              { userName: email },
+            ]
+           }).select("_id password isDeleted isActive email role type firstName lastName userName");
           if (user == null) {
             done(createError(401, "User not found!"), false);
             return;
