@@ -19,6 +19,7 @@ export interface IBusinessGroup extends BaseSchema {
   street2: string;
   contactPerson: string;
   faxNumber: string;
+  capacity : number,
   // setting
   dateFormat: string;
   timeFormat: string;
@@ -28,6 +29,7 @@ export interface IBusinessGroup extends BaseSchema {
   workStartDay: string;
   currency: string;
   timezone: string;
+  file :string;
   createdBy: Types.ObjectId | IUser;
 }
 
@@ -51,9 +53,11 @@ const BusinessGroupSchema = new Schema<IBusinessGroup>(
     unitOfDistance: { type: String },
     unitOfFuel: { type: String },
     language: { type: String },
+    capacity : {type : Number},
     workStartDay: { type: String },
     currency: { type: String },
     timezone: { type: String },
+    file : {type: String},
     createdBy: { type: mongoose.Types.ObjectId, ref: "user" },
   },
   { timestamps: true }

@@ -16,12 +16,9 @@ export const initPassport = (): void => {
       },
       async (token, done) => {
         try {
-          console.log('token', token)
           const admin = await User.findOne({
             _id: token.user.id,
           });
-          console.log('admin', admin)
-          
           if (admin?.isDeleted == true) {
             return done(
               createError(
@@ -33,9 +30,11 @@ export const initPassport = (): void => {
           }
           const userRole = token?.user?.role;
           if (Object.values(UserRole).includes(userRole) && admin) {
-            return done(null, admin);
+            return done(null, admin as IUser);
           }
+
           if (!admin) throw new Error("User not found!");
+       
           // return done(null, user);
           done(null, token.user);
         } catch (error) {
@@ -83,7 +82,7 @@ export const initPassport = (): void => {
         try {
           const user = await User.findOne({ email }).select("_id password isDeleted isActive email role type firstName lastName");
           if (user == null) {
-            done(createError(401, "User not found!"), false);
+            done(createError(401, "User not found"), false);
             return;
           }
 
@@ -96,14 +95,13 @@ export const initPassport = (): void => {
             done(createError(401, "Your account is inactive! Please contact admin"), false);
             return;
           }
-
           const validate = await user.isValidPassword(password);
           if (!validate) {
             done(createError(401, "Invalid email or password"), false);
             return;
           }
 
-          user['password'] = ""
+          // user['password'] = ""
           done(null, user, { message: "Logged in Successfully" });
         } catch (error: any) {
           done(createError(500, error.message));
