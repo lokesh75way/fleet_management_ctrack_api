@@ -1,13 +1,14 @@
 import mongoose, { type Types } from "mongoose";
 import { type BaseSchema } from "./index";
 import { IUser } from "./User";
+import { IModule } from "./Module";
 
 const Schema = mongoose.Schema;
 
 export interface IPermission extends BaseSchema {
-  templateName: string;
-  module: {
-    moduleName: string;
+  name: string;
+  permission: {
+    moduleId: Types.ObjectId | IModule;
     endPoint: string;
     add: boolean;
     view: boolean;
@@ -18,15 +19,13 @@ export interface IPermission extends BaseSchema {
 
 const PermissionSchema = new Schema<IPermission>(
   {
-    templateName: { 
+    name: { 
       type: String
     },
-    module: [{
-      moduleName: { 
-        type: String
-      },
-      endPoint: { 
-        type: String
+    permission: [{
+      moduleId: { 
+        type: mongoose.Types.ObjectId,
+        ref: "module"
       },
       add: { 
         type: Boolean, default: false
