@@ -390,7 +390,7 @@ export const validate = (validationName: string): any[] => {
     case "module:add": {
       return [
         check("moduleId")
-         .optional()
+          .optional()
           .isString()
           .withMessage("Module ID must be a non-empty string"),
         check("title")
@@ -403,6 +403,33 @@ export const validate = (validationName: string): any[] => {
           .isString()
           .notEmpty()
           .withMessage("Base Path must be a non-empty string"),
+      ];
+    }
+
+    case "module:permission": {
+      return [
+        check("name")
+          .isString()
+          .notEmpty()
+          .withMessage("Name must be a non-empty string"),
+        check("permission")
+          .isArray()
+          .withMessage("Permission must be an array"),
+        check("permission.*.moduleId")
+          .isMongoId()
+          .withMessage("Module ID must be a valid MongoDB ObjectId"),
+        check("permission.*.add")
+          .isBoolean()
+          .withMessage("Add must be a boolean value"),
+        check("permission.*.view")
+          .isBoolean()
+          .withMessage("View must be a boolean value"),
+        check("permission.*.modify")
+          .isBoolean()
+          .withMessage("Modify must be a boolean value"),
+        check("permission.*.delete")
+          .isBoolean()
+          .withMessage("Delete must be a boolean value"),
       ];
     }
 

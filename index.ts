@@ -8,6 +8,7 @@ import errorHandler from "./app/middleware/errorHandler";
 import { initDB } from "./app/services/initDB";
 import authRoutes from "./app/routes/auth";
 import userRoutes from "./app/routes/user";
+import modules from './app/routes/modules'
 import featureTemplate from './app/routes/featureTemplate'
 import businessGroup from "./app/routes/businessGroup";
 import companyRoutes from "./app/routes/company";
@@ -53,6 +54,7 @@ const initApp = async (): Promise<void> => {
 
   // routes
   router.use("/auth", authRoutes);
+  router.use("/modules",adminAccess , modules)
   router.use('/feature-template',adminAccess ,featureTemplate)
   router.use("/business-group", adminAccess, businessGroup);
   router.use("/company", businessGroupAccess, companyRoutes);
