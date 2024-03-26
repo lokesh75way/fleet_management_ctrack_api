@@ -292,11 +292,13 @@ export const validate = (validationName: string): any[] => {
         check("unitOfDistance")
           .optional()
           .isIn(["MILES", "KILOMETER", "NAUTIC_MILES"]),
+
         check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
 
         check("language")
           .optional()
           .isIn(["ENGLISH", "FRENCH", "ARABIC", "PORTUGUESE"]),
+          
         check("status").optional().isIn(["ACTIVE", "INACTIVE"]),
         check("workStartDay")
           .optional()

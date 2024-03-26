@@ -170,29 +170,30 @@ export const getAllGroups = async (
   next: NextFunction
 ) => {
   try {
-    // let { page, limit } = req.query;
-    // page  = parseInt(page as string) || 1; 
-    // limit = parseInt(limit as string) || 10; 
-const limit =10;
-const startIndex = 0;
-    
-    // const startIndex = (page - 1) * limit;
+    let { page, limit } = req.query;
+    let page1  = parseInt(page as string) || 1;
+    let limit1 = parseInt(limit as string) || 10;
+
+
+    const startIndex = (page1 - 1) * limit1;
 
     const groups = await User.aggregate([
-        {
-            $match : {
-                isDeleted  : false , 
-            }
+      {
+        $match: {
+          isDeleted: false,
         },
-        {
-            $limit : limit
-        },
-        {
-            $skip : startIndex
-        }
-    ])
+      },
+      {
+        $limit: limit1 ,
+      },
+      {
+        $skip: startIndex,
+      },
+    ]);
 
-    res.send(createResponse({data : groups}, "User has been deleted successfully."));
+    res.send(
+      createResponse({ data: groups }, "User has been deleted successfully.")
+    );
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",

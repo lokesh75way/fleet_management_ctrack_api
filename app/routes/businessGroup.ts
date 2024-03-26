@@ -10,11 +10,13 @@ const router = express.Router();
 router.post("/", validate("group:add"), catchError, asyncHandler(createBusinessUser));
 
 // update Business group 
-router.patch('/update', validate("group:update"), catchError , asyncHandler(updateBusinessUser))
+router.patch('/', validate("group:update"), catchError , asyncHandler(updateBusinessUser))
+
+// get get all business group
+router.get('/',catchError,asyncHandler(getAllGroups))
 
 // delete Business group
-router.patch('/delete/:id',catchError, asyncHandler(deleteBusinessGroup))
+router.delete('/:id',catchError, asyncHandler(deleteBusinessGroup))
 
-router.get('/get',catchError,asyncHandler(getAllGroups))
 
 export default router;
