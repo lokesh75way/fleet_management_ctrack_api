@@ -20,6 +20,16 @@ enum Language {
  PORTUGUESE =  "PORTUGUESE"
 }
 
+enum WeekDays {
+  SUNDAY = 'SUNDAY',
+  MONDAY = 'MONDAY',
+  TUESDAY = 'TUESDAY',
+  WEDNESDAY = 'WEDNESDAY',
+  THURSDAY = 'THURSDAY',
+  FRIDAY = 'FRIDAY',
+  SATURDAY = 'SATURDAY',
+}
+
 const Schema = mongoose.Schema;
 
 export interface IBusinessGroup extends BaseSchema {
@@ -72,7 +82,7 @@ const BusinessGroupSchema = new Schema<IBusinessGroup>(
     unitOfFuel: { type: String , enum : UnitOfFuel },
     language: { type: String , enum : Language },
     capacity: { type: Number },
-    workStartDay: { type: String },
+    workStartDay: { type: String , enum : WeekDays },
     currency: { type: String },
     timezone: { type: String },
     file: { type: String },

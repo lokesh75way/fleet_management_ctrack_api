@@ -292,14 +292,14 @@ export const validate = (validationName: string): any[] => {
         check("unitOfDistance")
           .optional()
           .isIn(["MILES", "KILOMETER", "NAUTIC_MILES"]),
-
         check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
 
         check("language")
           .optional()
           .isIn(["ENGLISH", "FRENCH", "ARABIC", "PORTUGUESE"]),
-          
+
         check("status").optional().isIn(["ACTIVE", "INACTIVE"]),
+
         check("workStartDay")
           .optional()
           .isIn([
@@ -317,13 +317,218 @@ export const validate = (validationName: string): any[] => {
         check("timezone").optional().isString(),
       ];
     }
-    case "group:add": {
+
+    case "group:update": {
       return [
         check("userName").optional(),
 
         check("groupName").optional(),
 
-        check("email").optional().isEmail().withMessage("Enter valid email"),
+        check("email")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Email is required")
+          .isEmail()
+          .bail()
+          .withMessage("Enter valid email"),
+
+        check("helpDeskEmail")
+          .optional()
+          .isEmail()
+          .withMessage("Enter valid email"),
+
+        check("helpDeskTelephoneNumber").optional().isMobilePhone("any"),
+
+        check("mobileNumber").optional().isMobilePhone("any"),
+
+        check("whatsappContactNumber").optional().isMobilePhone("any"),
+
+        check("country").optional().optional(),
+
+        check("state").optional().optional(),
+
+        check("city").optional().optional(),
+
+        check("zipCode").optional().isPostalCode("any"),
+
+        check("storageCapacity").optional().isNumeric(),
+
+        check("logo").optional().isURL(),
+
+        check("file").optional().isURL(),
+
+        check("street1").optional(),
+
+        check("street2").optional(),
+
+        check("contactPerson").optional(),
+
+        check("faxNumber").optional(),
+
+        check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
+
+        check("timeFormat").optional().isIn(["12", "24"]),
+
+        check("unitOfDistance")
+          .optional()
+          .isIn(["MILES", "KILOMETER", "NAUTIC_MILES"]),
+
+        check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
+
+        check("language")
+          .optional()
+          .isIn(["ENGLISH", "FRENCH", "ARABIC", "PORTUGUESE"]),
+
+        check("status").optional().isIn(["ACTIVE", "INACTIVE"]),
+
+        check("workStartDay")
+          .optional()
+          .isIn([
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THRUSDAY",
+            "FRIDAY",
+            "SATURDAY",
+          ]),
+
+        check("currency").optional().isString(),
+
+        check("timezone").optional().isString(),
+      ];
+    }
+
+    case "company:add": {
+      return [
+        check("businessGroupId")
+          .exists({ values: "falsy" })
+          .bail()
+          .withMessage("Business group required"),
+
+        check("userName")
+          .exists({ values: "falsy" })
+          .bail()
+          .withMessage("User name is required"),
+
+        check("companyName")
+          .exists({ values: "falsy" })
+          .notEmpty()
+          .bail()
+          .withMessage("Company name is required"),
+
+        check("email")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Email is required")
+          .isEmail()
+          .bail()
+          .withMessage("Enter valid email"),
+        check("password")
+          .exists()
+          .notEmpty()
+          .isLength({ min: 8 })
+          .bail()
+          .withMessage("Password must be at least 8 characters long")
+          .matches(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/
+          )
+          .withMessage(
+            "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character"
+          ),
+        check("helpDeskEmail")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Email is required")
+          .isEmail()
+          .bail()
+          .withMessage("Enter valid email"),
+
+        check("helpDeskTelephoneNumber").optional().isMobilePhone("any"),
+
+        check("mobileNumber")
+          .exists()
+          .notEmpty()
+          .isMobilePhone("any")
+          .withMessage("Enter a valid mobile number"),
+
+        check("whatsappContactNumber").optional().isMobilePhone("any"),
+
+        check("country").exists().notEmpty().withMessage("Country is required"),
+
+        check("state").optional().notEmpty().withMessage("State is required"),
+
+        check("city").exists().notEmpty().withMessage("City is required"),
+
+        check("zipCode").optional().isPostalCode("any"),
+
+        check("storageCapacity").optional().isNumeric(),
+
+        check("logo").optional().isURL(),
+
+        check("file").optional().isURL(),
+
+        check("street1").exists().notEmpty().withMessage("Street1 is required"),
+
+        check("street2").optional(),
+
+        check("contactPerson").optional(),
+
+        check("faxNumber").optional(),
+
+        check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
+
+        check("timeFormat").optional().isIn(["12", "24"]),
+
+        check("unitOfDistance")
+          .optional()
+          .isIn(["MILES", "KILOMETER", "NAUTIC_MILES"]),
+
+        check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
+
+        check("language")
+          .optional()
+          .isIn(["ENGLISH", "FRENCH", "ARABIC", "PORTUGUESE"]),
+
+        check("status").optional().isIn(["ACTIVE", "INACTIVE"]),
+
+        check("workStartDay")
+          .optional()
+          .isIn([
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THRUSDAY",
+            "FRIDAY",
+            "SATURDAY",
+          ]),
+
+        check("currency").optional().isString(),
+
+        check("timezone").optional().isString(),
+      ];
+    }
+
+    case "company:update": {
+      return [
+        check("businessGroupId").optional(),
+
+        check("userName").optional(),
+
+        check("companyName").optional(),
+
+        check("email")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Email is required")
+          .isEmail()
+          .bail()
+          .withMessage("Enter valid email"),
 
         check("helpDeskEmail")
           .optional()
@@ -370,7 +575,136 @@ export const validate = (validationName: string): any[] => {
         check("language")
           .optional()
           .isIn(["ENGLISH", "FRENCH", "ARABIC", "PORTUGUESE"]),
+
         check("status").optional().isIn(["ACTIVE", "INACTIVE"]),
+
+        check("workStartDay")
+          .optional()
+          .isIn([
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THRUSDAY",
+            "FRIDAY",
+            "SATURDAY",
+          ]),
+
+        check("currency").optional().isString(),
+
+        check("timezone").optional().isString(),
+      ];
+    }
+
+    case "branch:add": {
+      return [
+        check("businessGroupId")
+          .exists({ values: "falsy" })
+          .bail()
+          .withMessage("Business group Id is required"),
+
+        check("companyId")
+          .exists({ values: "falsy" })
+          .bail()
+          .withMessage("Company Id is required"),
+
+        check("parentBranchId").optional(),
+
+        check("branchName")
+          .exists({ values: "falsy" })
+          .notEmpty()
+          .bail()
+          .withMessage("Branch name is required"),
+
+        check("country").exists().notEmpty().withMessage("Country is required"),
+
+        check("state").optional().notEmpty().withMessage("State is required"),
+
+        check("city").exists().notEmpty().withMessage("City is required"),
+
+        check("zipCode").optional().isPostalCode("any"),
+
+        check("file").optional().isURL(),
+
+        check("street1").exists().notEmpty().withMessage("Street1 is required"),
+
+        check("street2").optional(),
+
+        check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
+
+        check("timeFormat").optional().isIn(["12", "24"]),
+
+        check("unitOfDistance")
+          .optional()
+          .isIn(["MILES", "KILOMETER", "NAUTIC_MILES"]),
+
+        check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
+
+        check("language")
+          .optional()
+          .isIn(["ENGLISH", "FRENCH", "ARABIC", "PORTUGUESE"]),
+
+        check("status").optional().isIn(["ACTIVE", "INACTIVE"]),
+
+        check("workStartDay")
+          .optional()
+          .isIn([
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THRUSDAY",
+            "FRIDAY",
+            "SATURDAY",
+          ]),
+
+        check("currency").optional().isString(),
+
+        check("timezone").optional().isString(),
+      ];
+    }
+
+    case "branch:update": {
+      return [
+        check("businessGroupId").optional(),
+
+        check("companyId").optional(),
+
+        check("parentBranchId").optional(),
+
+        check("userName").optional(),
+
+        check("branchName").optional(),
+
+        check("country").optional().optional(),
+
+        check("state").optional().optional(),
+
+        check("city").optional().optional(),
+
+        check("zipCode").optional().isPostalCode("any"),
+
+        check("file").optional().isURL(),
+
+        check("street1").optional(),
+
+        check("street2").optional(),
+
+        check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
+
+        check("timeFormat").optional().isIn(["12", "24"]),
+
+        check("unitOfDistance")
+          .optional()
+          .isIn(["MILES", "KILOMETER", "NAUTIC_MILES"]),
+        check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
+
+        check("language")
+          .optional()
+          .isIn(["ENGLISH", "FRENCH", "ARABIC", "PORTUGUESE"]),
+
+        check("status").optional().isIn(["ACTIVE", "INACTIVE"]),
+
         check("workStartDay")
           .optional()
           .isIn([

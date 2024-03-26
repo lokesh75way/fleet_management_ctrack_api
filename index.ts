@@ -6,16 +6,19 @@ import http from "http";
 
 import errorHandler from "./app/middleware/errorHandler";
 import { initDB } from "./app/services/initDB";
+
 import authRoutes from "./app/routes/auth";
 import userRoutes from "./app/routes/user";
 import modules from './app/routes/modules'
 import featureTemplate from './app/routes/featureTemplate'
 import businessGroup from "./app/routes/businessGroup";
 import companyRoutes from "./app/routes/company";
+import branchRoutes from './app/routes/branch';
+
 import { initPassport } from "./app/services/passport-jwt";
 import passport from "passport";
 import { roleAuth } from "./app/middleware/roleAuth";
-import { UserRole } from "./app/schema/User";
+import User, { UserRole } from "./app/schema/User";
 import { checkPermission } from "./app/middleware/permissions";
 import cors from 'cors';
 import { createAdmin } from "./app/helper/createAdmin";
@@ -51,13 +54,15 @@ const initApp = async (): Promise<void> => {
   // permission
   const adminAccess = [passport.authenticate("jwt", { session: false })];
   const businessGroupAccess = [passport.authenticate("jwt", { session: false }), roleAuth(UserRole.SUPER_ADMIN,UserRole.BUSINESS_GROUP)];
+  const companyAccess = [passport.authenticate("jwt",{session : false}),roleAuth(UserRole.SUPER_ADMIN, UserRole.COMPANY , UserRole.BUSINESS_GROUP)]
 
   // routes
   router.use("/auth", authRoutes);
-  router.use("/modules",adminAccess , modules)
   router.use('/feature-template',adminAccess ,featureTemplate)
+  router.use("/modules",adminAccess , modules)
   router.use("/business-group", adminAccess, businessGroup);
   router.use("/company", businessGroupAccess, companyRoutes);
+  router.use("/branch",companyAccess, branchRoutes)
 
   // error handler
   app.use(errorHandler);

@@ -2,6 +2,35 @@ import mongoose, { Schema, Types } from "mongoose";
 import { type BaseSchema } from "./index";
 import { IBusinessGroup } from "./BusinessGroup";
 import { ICompany } from "./Company";
+import { IUser } from "./User";
+
+enum UnitOfDistance {
+  MILES = "MILES",
+  KILOMETER = "KILOMETER",
+  NAUTIC_MILES = "NAUTIC_MILES",
+}
+
+enum UnitOfFuel {
+  GALLONS = "GALLONS",
+  LITERS = "LITERS",
+}
+
+enum Language {
+  ENGLISH = "ENGLISH",
+  FRENCH = "FRENCH",
+  ARABIC = "ARABIC",
+  PORTUGUESE = "PORTUGUESE",
+}
+
+enum WeekDays {
+  SUNDAY = "SUNDAY",
+  MONDAY = "MONDAY",
+  TUESDAY = "TUESDAY",
+  WEDNESDAY = "WEDNESDAY",
+  THURSDAY = "THURSDAY",
+  FRIDAY = "FRIDAY",
+  SATURDAY = "SATURDAY",
+}
 
 export interface IBranch extends BaseSchema {
   businessGroupId: Types.ObjectId | IBusinessGroup,
@@ -9,18 +38,22 @@ export interface IBranch extends BaseSchema {
   parentBranchId: Types.ObjectId | IBranch,
   branchName: string;
   logo: string;
+  status : string;
   country: string;
   state: string;
   city: string;
   zipCode: string;
   street1: string;
   street2: string;
+  language : string;
   dateFormat: string;
   timeFormat: string;
   unitOfDistance: string;
   unitOfFuel: string;
-  isActive: boolean;
-  isDeleted: boolean;
+  workStartDay: string;
+  currency: string;
+  timezone: string;
+  file: string;
 }
 
 const BranchSchema = new Schema<IBranch>(
@@ -29,19 +62,24 @@ const BranchSchema = new Schema<IBranch>(
     logo: { type: String },
     businessGroupId: { type: Schema.Types.ObjectId, ref: "business-group", required: true },
     companyId: { type: Schema.Types.ObjectId, ref: "company", required: true },
-    parentBranchId: { type: Schema.Types.ObjectId, ref: "company-branch", required: true },
-    isActive: { type: Boolean, default: true },
-    isDeleted: { type: Boolean, default: false },
+    parentBranchId: { type: Schema.Types.ObjectId, ref: "company-branch", required: false },
+  
+    status : {type : String , enum : ["INACTIVE","ACTIVE"]},
     country: { type: String },
     state: { type: String },
     city: { type: String },
     zipCode: { type: String },
     street1: { type: String },
     street2: { type: String },
-    dateFormat: { type: String },
-    timeFormat: { type: String },
-    unitOfDistance: { type: String },
-    unitOfFuel: { type: String },
+    dateFormat: { type: String, enum: ["MM-DD-YYYY", "DD-MM-YYYY"] },
+    timeFormat: { type: String, enum: ["12", "24"] },
+    unitOfDistance: { type: String, enum: UnitOfDistance },
+    unitOfFuel: { type: String, enum: UnitOfFuel },
+    language: { type: String, enum: Language },
+    workStartDay: { type: String, enum: WeekDays },
+    currency: { type: String },
+    timezone: { type: String },
+    file: { type: String },
   },
   {
     timestamps: true,
