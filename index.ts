@@ -8,6 +8,8 @@ import errorHandler from "./app/middleware/errorHandler";
 import { initDB } from "./app/services/initDB";
 import authRoutes from "./app/routes/auth";
 import userRoutes from "./app/routes/user";
+import modules from './app/routes/modules'
+import featureTemplate from './app/routes/featureTemplate'
 import businessGroup from "./app/routes/businessGroup";
 import companyRoutes from "./app/routes/company";
 import { initPassport } from "./app/services/passport-jwt";
@@ -16,6 +18,7 @@ import { roleAuth } from "./app/middleware/roleAuth";
 import { UserRole } from "./app/schema/User";
 import { checkPermission } from "./app/middleware/permissions";
 import cors from 'cors';
+import { createAdmin } from "./app/helper/createAdmin";
 
 dotenv.config();
 
@@ -34,22 +37,25 @@ const initApp = async (): Promise<void> => {
   // init mongodb
   await initDB();
 
+
   // passport init
   initPassport();
 
   // set base path to /api
-  app.use("/api", router);
+  app.use("/api/fleet", router);
 
   app.get("/", (req: Request, res: Response) => {
     res.send({ status: "ok" });
   });
 
   // permission
-  const adminAccess = [passport.authenticate("jwt", { session: false }), roleAuth(UserRole.SUPER_ADMIN)];
+  const adminAccess = [passport.authenticate("jwt", { session: false })];
   const businessGroupAccess = [passport.authenticate("jwt", { session: false }), roleAuth(UserRole.SUPER_ADMIN,UserRole.BUSINESS_GROUP)];
 
   // routes
   router.use("/auth", authRoutes);
+  router.use("/modules",adminAccess , modules)
+  router.use('/feature-template',adminAccess ,featureTemplate)
   router.use("/business-group", adminAccess, businessGroup);
   router.use("/company", businessGroupAccess, companyRoutes);
 

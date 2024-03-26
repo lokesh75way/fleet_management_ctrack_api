@@ -139,8 +139,14 @@ export const validate = (validationName: string): any[] => {
           .isEmail()
           .bail()
           .withMessage("Enter valid email"),
-        check("firstName").notEmpty().bail().withMessage("First name is required"),
-        check("lastName").notEmpty().bail().withMessage("Last name is required"),
+        check("firstName")
+          .notEmpty()
+          .bail()
+          .withMessage("First name is required"),
+        check("lastName")
+          .notEmpty()
+          .bail()
+          .withMessage("Last name is required"),
       ];
     }
 
@@ -206,7 +212,228 @@ export const validate = (validationName: string): any[] => {
           .withMessage("Method is required"),
       ];
     }
-  
+
+    case "group:add": {
+      return [
+        check("userName")
+          .exists({ values: "falsy" })
+          .bail()
+          .withMessage("User name is required"),
+        check("groupName")
+          .exists({ values: "falsy" })
+          .notEmpty()
+          .bail()
+          .withMessage("Business Group name is required"),
+        check("email")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Email is required")
+          .isEmail()
+          .bail()
+          .withMessage("Enter valid email"),
+        check("password")
+          .exists()
+          .notEmpty()
+          .isLength({ min: 8 })
+          .bail()
+          .withMessage("Password must be at least 8 characters long")
+          .matches(
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]+$/
+          )
+          .withMessage(
+            "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character"
+          ),
+        check("helpDeskEmail")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Email is required")
+          .isEmail()
+          .bail()
+          .withMessage("Enter valid email"),
+
+        check("helpDeskTelephoneNumber").optional().isMobilePhone("any"),
+
+        check("mobileNumber")
+          .exists()
+          .notEmpty()
+          .isMobilePhone("any")
+          .withMessage("Enter a valid mobile number"),
+
+        check("whatsappContactNumber").optional().isMobilePhone("any"),
+
+        check("country").exists().notEmpty().withMessage("Country is required"),
+
+        check("state").optional().notEmpty().withMessage("State is required"),
+
+        check("city").exists().notEmpty().withMessage("City is required"),
+
+        check("zipCode").optional().isPostalCode("any"),
+
+        check("storageCapacity").optional().isNumeric(),
+
+        check("logo").optional().isURL(),
+
+        check("file").optional().isURL(),
+
+        check("street1").exists().notEmpty().withMessage("Street1 is required"),
+
+        check("street2").optional(),
+
+        check("contactPerson").optional(),
+
+        check("faxNumber").optional(),
+
+        check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
+
+        check("timeFormat").optional().isIn(["12", "24"]),
+
+        check("unitOfDistance")
+          .optional()
+          .isIn(["MILES", "KILOMETER", "NAUTIC_MILES"]),
+
+        check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
+
+        check("language")
+          .optional()
+          .isIn(["ENGLISH", "FRENCH", "ARABIC", "PORTUGUESE"]),
+          
+        check("status").optional().isIn(["ACTIVE", "INACTIVE"]),
+        check("workStartDay")
+          .optional()
+          .isIn([
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THRUSDAY",
+            "FRIDAY",
+            "SATURDAY",
+          ]),
+
+        check("currency").optional().isString(),
+
+        check("timezone").optional().isString(),
+      ];
+    }
+    case "group:add": {
+      return [
+        check("userName").optional(),
+
+        check("groupName").optional(),
+
+        check("email").optional().isEmail().withMessage("Enter valid email"),
+
+        check("helpDeskEmail")
+          .optional()
+          .isEmail()
+          .withMessage("Enter valid email"),
+
+        check("helpDeskTelephoneNumber").optional().isMobilePhone("any"),
+
+        check("mobileNumber").optional().isMobilePhone("any"),
+
+        check("whatsappContactNumber").optional().isMobilePhone("any"),
+
+        check("country").optional().optional(),
+
+        check("state").optional().optional(),
+
+        check("city").optional().optional(),
+
+        check("zipCode").optional().isPostalCode("any"),
+
+        check("storageCapacity").optional().isNumeric(),
+
+        check("logo").optional().isURL(),
+
+        check("file").optional().isURL(),
+
+        check("street1").optional(),
+
+        check("street2").optional(),
+
+        check("contactPerson").optional(),
+
+        check("faxNumber").optional(),
+
+        check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
+
+        check("timeFormat").optional().isIn(["12", "24"]),
+
+        check("unitOfDistance")
+          .optional()
+          .isIn(["MILES", "KILOMETER", "NAUTIC_MILES"]),
+        check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
+
+        check("language")
+          .optional()
+          .isIn(["ENGLISH", "FRENCH", "ARABIC", "PORTUGUESE"]),
+        check("status").optional().isIn(["ACTIVE", "INACTIVE"]),
+        check("workStartDay")
+          .optional()
+          .isIn([
+            "SUNDAY",
+            "MONDAY",
+            "TUESDAY",
+            "WEDNESDAY",
+            "THRUSDAY",
+            "FRIDAY",
+            "SATURDAY",
+          ]),
+
+        check("currency").optional().isString(),
+
+        check("timezone").optional().isString(),
+      ];
+    }
+
+    case "module:add": {
+      return [
+        check("moduleId")
+          .optional()
+          .isString()
+          .withMessage("Module ID must be a non-empty string"),
+        check("title")
+          .exists()
+          .isString()
+          .notEmpty()
+          .withMessage("Title must be a non-empty string"),
+        check("basePath")
+          .exists()
+          .isString()
+          .notEmpty()
+          .withMessage("Base Path must be a non-empty string"),
+      ];
+    }
+
+    case "module:permission": {
+      return [
+        check("name")
+          .isString()
+          .notEmpty()
+          .withMessage("Name must be a non-empty string"),
+        check("permission")
+          .isArray()
+          .withMessage("Permission must be an array"),
+        check("permission.*.moduleId")
+          .isMongoId()
+          .withMessage("Module ID must be a valid MongoDB ObjectId"),
+        check("permission.*.add")
+          .isBoolean()
+          .withMessage("Add must be a boolean value"),
+        check("permission.*.view")
+          .isBoolean()
+          .withMessage("View must be a boolean value"),
+        check("permission.*.modify")
+          .isBoolean()
+          .withMessage("Modify must be a boolean value"),
+        check("permission.*.delete")
+          .isBoolean()
+          .withMessage("Delete must be a boolean value"),
+      ];
+    }
 
     default:
       return [];
