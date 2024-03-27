@@ -39,6 +39,8 @@ export interface IBranch extends BaseSchema {
   branchName: string;
   logo: string;
   status : string;
+  isActive : boolean;
+  isDeleted : boolean;
   country: string;
   state: string;
   city: string;
@@ -64,6 +66,9 @@ const BranchSchema = new Schema<IBranch>(
     companyId: { type: Schema.Types.ObjectId, ref: "company", required: true },
     parentBranchId: { type: Schema.Types.ObjectId, ref: "company-branch", required: false },
   
+    isActive: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false },
+
     status : {type : String , enum : ["INACTIVE","ACTIVE"]},
     country: { type: String },
     state: { type: String },

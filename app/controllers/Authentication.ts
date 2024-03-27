@@ -29,10 +29,10 @@ export const adminLogin = async (
     const data = await User.findById(user._id)
     .select("userName firstName lastName email mobileNumber role type");
 
-    const permissions = await Permission.find();
+    const permissions = await Permission.find().populate("permission.moduleId");
 
     res.send(
-      createResponse({ user: data,permissions ,token }, "Login successfully!")
+      createResponse({ user: data ,token , permissions }, "Login successfully!")
     );
   } catch (error: any) {
     throw createHttpError(400, {

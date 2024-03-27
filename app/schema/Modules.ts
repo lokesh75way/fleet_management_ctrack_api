@@ -13,7 +13,7 @@ const ModuleSchema = new Schema<IModules>(
   {
     moduleId: {
       type: mongoose.Types.ObjectId,
-      ref: "module",
+      ref: "modules",
     },
     title: { type: String, required: true },
     basePath: { type: String, required: true },
@@ -21,4 +21,4 @@ const ModuleSchema = new Schema<IModules>(
   { timestamps: true }
 );
 
-export default mongoose.model<IModules>("module", ModuleSchema);
+export default mongoose.model<IModules>("modules", ModuleSchema);

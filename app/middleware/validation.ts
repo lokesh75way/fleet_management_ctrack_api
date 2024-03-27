@@ -3,6 +3,17 @@ import expressAsyncHandler from "express-async-handler";
 import { check, validationResult } from "express-validator";
 import createHttpError from "http-errors";
 import { UserRole } from "../schema/User";
+import {
+  CostType,
+  DistanceCounter,
+  DocumentType,
+  FuelSensor,
+  FuelType,
+  Permit,
+  SpeedDetection,
+  UnitOFDistance,
+  VehicleCategory,
+} from "../schema/Vehicle";
 
 export const validate = (validationName: string): any[] => {
   switch (validationName) {
@@ -666,13 +677,16 @@ export const validate = (validationName: string): any[] => {
 
     case "branch:update": {
       return [
+        check("branchId")
+          .exists({ values: "falsy" })
+          .bail()
+          .withMessage("Branch ID is required"),
+
         check("businessGroupId").optional(),
 
         check("companyId").optional(),
 
         check("parentBranchId").optional(),
-
-        check("userName").optional(),
 
         check("branchName").optional(),
 
@@ -749,23 +763,409 @@ export const validate = (validationName: string): any[] => {
           .notEmpty()
           .withMessage("Name must be a non-empty string"),
         check("permission")
+          .optional()
           .isArray()
           .withMessage("Permission must be an array"),
         check("permission.*.moduleId")
+          .optional()
           .isMongoId()
           .withMessage("Module ID must be a valid MongoDB ObjectId"),
         check("permission.*.add")
+          .optional()
           .isBoolean()
           .withMessage("Add must be a boolean value"),
         check("permission.*.view")
+          .optional()
           .isBoolean()
           .withMessage("View must be a boolean value"),
         check("permission.*.modify")
+          .optional()
           .isBoolean()
           .withMessage("Modify must be a boolean value"),
         check("permission.*.delete")
+          .optional()
           .isBoolean()
           .withMessage("Delete must be a boolean value"),
+      ];
+    }
+
+    case "vehicle:add": {
+      return [
+        check("businessGroupId")
+          .notEmpty()
+          .withMessage("Business group ID is required")
+          .isMongoId()
+          .withMessage("Business group ID must be a valid MongoDB ObjectId"),
+        check("companyId")
+          .notEmpty()
+          .withMessage("Company ID is required")
+          .isMongoId()
+          .withMessage("Company ID must be a valid MongoDB ObjectId"),
+        check("branchId")
+          .notEmpty()
+          .withMessage("Branch ID is required")
+          .isMongoId()
+          .withMessage("Branch ID must be a valid MongoDB ObjectId"),
+        check("vehicleName").notEmpty().withMessage("Vehicle name is required"),
+        check("deviceType").optional(),
+        check("imeiNumber")
+          .notEmpty()
+          .withMessage("IMEI number is required")
+          .isString()
+          .withMessage("IMEI number must be a string"),
+        check("copyFrom").optional(),
+        check("serverAddress")
+          .optional()
+          .isURL()
+          .withMessage("Server address must be a valid URL"),
+        check("simNumber")
+          .optional()
+          .isString()
+          .withMessage("SIM number must be a string"),
+        check("secondrySimNumber")
+          .optional()
+          .isString()
+          .withMessage("Secondary SIM number must be a string"),
+        check("distanceCounter")
+          .notEmpty()
+          .withMessage("Distance counter is required")
+          .isIn(Object.values(DistanceCounter))
+          .withMessage("Invalid distance counter value"),
+        check("unitOfDistance")
+          .notEmpty()
+          .withMessage("Unit of distance is required")
+          .isIn(Object.values(UnitOFDistance))
+          .withMessage("Invalid unit of distance value"),
+        check("speedDetection")
+          .optional()
+          .isIn(Object.values(SpeedDetection))
+          .withMessage("Invalid speed detection value"),
+        check("deviceAccuracyTolerance")
+          .optional()
+          .isString()
+          .withMessage("Device accuracy tolerance must be a string"),
+        check("plateNumber").notEmpty().withMessage("Plate number is required"),
+        check("vehicleCategory")
+          .notEmpty()
+          .withMessage("Vehicle category is required")
+          .isIn(Object.values(VehicleCategory))
+          .withMessage("Invalid vehicle category value"),
+        check("dvirTemplate").optional(),
+        check("manufacturerDate")
+          .optional()
+          .isISO8601()
+          .withMessage("Manufacturer date must be a valid ISO 8601 date"),
+        check("purchaseDate")
+          .optional()
+          .isISO8601()
+          .withMessage("Purchase date must be a valid ISO 8601 date"),
+        check("purchaseAmount")
+          .optional()
+          .isNumeric()
+          .withMessage("Purchase amount must be a number"),
+        check("weightCapacity")
+          .optional()
+          .isNumeric()
+          .withMessage("Weight capacity must be a number"),
+        check("gpsInstallationDate")
+          .optional()
+          .isISO8601()
+          .withMessage("GPS installation date must be a valid ISO 8601 date"),
+        check("gpsWarranty")
+          .optional()
+          .isNumeric()
+          .withMessage("GPS warranty must be a number"),
+        check("companyAverage")
+          .optional()
+          .isString()
+          .withMessage("Company average must be a string"),
+        check("permit")
+          .optional()
+          .isIn(Object.values(Permit))
+          .withMessage("Invalid permit value"),
+        check("installationDate")
+          .optional()
+          .isISO8601()
+          .withMessage("Installation date must be a valid ISO 8601 date"),
+        check("registrationNumber")
+          .optional()
+          .isString()
+          .withMessage("Registration number must be a string"),
+        check("fuelType")
+          .optional()
+          .isIn(Object.values(FuelType))
+          .withMessage("Invalid fuel type value"),
+        check("distanceBaseFuelConsumption")
+          .optional()
+          .isNumeric()
+          .withMessage("Distance base fuel consumption must be a number"),
+        check("durationBaseFuelConsumption")
+          .optional()
+          .isNumeric()
+          .withMessage("Duration base fuel consumption must be a number"),
+        check("fuelIdlingConsumption").optional(),
+        check("consumptionTolerancePercent")
+          .optional()
+          .isNumeric()
+          .withMessage("Consumption tolerance percent must be a number"),
+        check("vinNumber")
+          .optional()
+          .isNumeric()
+          .withMessage("VIN number must be a number"),
+        check("engineNumber")
+          .optional()
+          .isString()
+          .withMessage("Engine number must be a string"),
+        check("odometer").optional(),
+        check("lsbDetectionRadius").optional(),
+        check("engineHour").optional(),
+        check("passengerSeat")
+          .optional()
+          .isNumeric()
+          .withMessage("Passenger seat must be a number"),
+        check("costType")
+          .optional()
+          .isIn(Object.values(CostType))
+          .withMessage("Invalid cost type value"),
+        check("distance")
+          .optional()
+          .isNumeric()
+          .withMessage("Distance must be a number"),
+        check("duration")
+          .optional()
+          .isNumeric()
+          .withMessage("Duration must be a number"),
+        check("rfidTimeoutDuration")
+          .optional()
+          .isNumeric()
+          .withMessage("RFID timeout duration must be a number"),
+        check("sleepModeDuration")
+          .optional()
+          .isNumeric()
+          .withMessage("Sleep mode duration must be a number"),
+        check("minimumWorkingHour")
+          .optional()
+          .isNumeric()
+          .withMessage("Minimum working hour must be a number"),
+        check("weightSensor")
+          .optional()
+          .isBoolean()
+          .withMessage("Weight sensor must be a boolean"),
+        check("underweightTolerance")
+          .optional()
+          .isNumeric()
+          .withMessage("Underweight tolerance must be a number"),
+        check("overweightTolerance")
+          .optional()
+          .isNumeric()
+          .withMessage("Overweight tolerance must be a number"),
+        check("loadingUnloadingTolerance")
+          .optional()
+          .isNumeric()
+          .withMessage("Loading/unloading tolerance must be a number"),
+        check("fuelSensor")
+          .optional()
+          .isIn(Object.values(FuelSensor))
+          .withMessage("Invalid fuel sensor value"),
+        check("gSensor")
+          .optional()
+          .isBoolean()
+          .withMessage("G-sensor must be a boolean"),
+        check("documents.*.documentType")
+          .notEmpty()
+          .withMessage("Document type is required")
+          .isIn(Object.values(DocumentType))
+          .withMessage("Invalid document type value"),
+        check("documents.*.file")
+          .notEmpty()
+          .withMessage("Document file is required"),
+        check("documents.*.issueDate")
+          .notEmpty()
+          .withMessage("Issue date is required"),
+      ];
+    }
+
+    case "vehicle:update": {
+      return [
+        check("businessGroupId")
+          .optional()
+          .isMongoId()
+          .withMessage("Business group ID must be a valid MongoDB ObjectId"),
+        check("companyId")
+          .optional()
+          .isMongoId()
+          .withMessage("Company ID must be a valid MongoDB ObjectId"),
+        check("branchId")
+          .optional()
+          .isMongoId()
+          .withMessage("Branch ID must be a valid MongoDB ObjectId"),
+        check("vehicleName").optional(),
+        check("deviceType").optional(),
+        check("imeiNumber")
+          .optional()
+          .isString()
+          .withMessage("IMEI number must be a string"),
+        check("copyFrom").optional(),
+        check("serverAddress")
+          .optional()
+          .isURL()
+          .withMessage("Server address must be a valid URL"),
+        check("simNumber")
+          .optional()
+          .isString()
+          .withMessage("SIM number must be a string"),
+        check("secondrySimNumber")
+          .optional()
+          .isString()
+          .withMessage("Secondary SIM number must be a string"),
+        check("distanceCounter")
+          .optional()
+          .isIn(Object.values(DistanceCounter))
+          .withMessage("Invalid distance counter value"),
+        check("unitOfDistance")
+          .optional()
+          .isIn(Object.values(UnitOFDistance))
+          .withMessage("Invalid unit of distance value"),
+        check("speedDetection")
+          .optional()
+          .isIn(Object.values(SpeedDetection))
+          .withMessage("Invalid speed detection value"),
+        check("deviceAccuracyTolerance")
+          .optional()
+          .isString()
+          .withMessage("Device accuracy tolerance must be a string"),
+        check("plateNumber").optional(),
+        check("vehicleCategory")
+          .optional()
+          .isIn(Object.values(VehicleCategory))
+          .withMessage("Invalid vehicle category value"),
+        check("dvirTemplate").optional(),
+        check("manufacturerDate")
+          .optional()
+          .isISO8601()
+          .withMessage("Manufacturer date must be a valid ISO 8601 date"),
+        check("purchaseDate")
+          .optional()
+          .isISO8601()
+          .withMessage("Purchase date must be a valid ISO 8601 date"),
+        check("purchaseAmount")
+          .optional()
+          .isNumeric()
+          .withMessage("Purchase amount must be a number"),
+        check("weightCapacity")
+          .optional()
+          .isNumeric()
+          .withMessage("Weight capacity must be a number"),
+        check("gpsInstallationDate")
+          .optional()
+          .isISO8601()
+          .withMessage("GPS installation date must be a valid ISO 8601 date"),
+        check("gpsWarranty")
+          .optional()
+          .isNumeric()
+          .withMessage("GPS warranty must be a number"),
+        check("companyAverage")
+          .optional()
+          .isString()
+          .withMessage("Company average must be a string"),
+        check("permit")
+          .optional()
+          .isIn(Object.values(Permit))
+          .withMessage("Invalid permit value"),
+        check("installationDate")
+          .optional()
+          .isISO8601()
+          .withMessage("Installation date must be a valid ISO 8601 date"),
+        check("registrationNumber")
+          .optional()
+          .isString()
+          .withMessage("Registration number must be a string"),
+        check("fuelType")
+          .optional()
+          .isIn(Object.values(FuelType))
+          .withMessage("Invalid fuel type value"),
+        check("distanceBaseFuelConsumption")
+          .optional()
+          .isNumeric()
+          .withMessage("Distance base fuel consumption must be a number"),
+        check("durationBaseFuelConsumption")
+          .optional()
+          .isNumeric()
+          .withMessage("Duration base fuel consumption must be a number"),
+        check("fuelIdlingConsumption").optional(),
+        check("consumptionTolerancePercent")
+          .optional()
+          .isNumeric()
+          .withMessage("Consumption tolerance percent must be a number"),
+        check("vinNumber")
+          .optional()
+          .isNumeric()
+          .withMessage("VIN number must be a number"),
+        check("engineNumber")
+          .optional()
+          .isString()
+          .withMessage("Engine number must be a string"),
+        check("odometer").optional(),
+        check("lsbDetectionRadius").optional(),
+        check("engineHour").optional(),
+        check("passengerSeat")
+          .optional()
+          .isNumeric()
+          .withMessage("Passenger seat must be a number"),
+        check("costType")
+          .optional()
+          .isIn(Object.values(CostType))
+          .withMessage("Invalid cost type value"),
+        check("distance")
+          .optional()
+          .isNumeric()
+          .withMessage("Distance must be a number"),
+        check("duration")
+          .optional()
+          .isNumeric()
+          .withMessage("Duration must be a number"),
+        check("rfidTimeoutDuration")
+          .optional()
+          .isNumeric()
+          .withMessage("RFID timeout duration must be a number"),
+        check("sleepModeDuration")
+          .optional()
+          .isNumeric()
+          .withMessage("Sleep mode duration must be a number"),
+        check("minimumWorkingHour")
+          .optional()
+          .isNumeric()
+          .withMessage("Minimum working hour must be a number"),
+        check("weightSensor")
+          .optional()
+          .isBoolean()
+          .withMessage("Weight sensor must be a boolean"),
+        check("underweightTolerance")
+          .optional()
+          .isNumeric()
+          .withMessage("Underweight tolerance must be a number"),
+        check("overweightTolerance")
+          .optional()
+          .isNumeric()
+          .withMessage("Overweight tolerance must be a number"),
+        check("loadingUnloadingTolerance")
+          .optional()
+          .isNumeric()
+          .withMessage("Loading/unloading tolerance must be a number"),
+        check("fuelSensor")
+          .optional()
+          .isIn(Object.values(FuelSensor))
+          .withMessage("Invalid fuel sensor value"),
+        check("gSensor")
+          .optional()
+          .isBoolean()
+          .withMessage("G-sensor must be a boolean"),
+        check("documents.*.documentType")
+          .optional()
+          .isIn(Object.values(DocumentType))
+          .withMessage("Invalid document type value"),
+        check("documents.*.file").optional(),
+        check("documents.*.issueDate").optional(),
       ];
     }
 

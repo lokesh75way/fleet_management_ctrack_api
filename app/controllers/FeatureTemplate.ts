@@ -12,8 +12,10 @@ export const createTemplate = async (
 ) => {
   try {
     const { name, permission } = req.body;
+    
     const newPermission = new Permission({ name, permission });
     const data = await newPermission.save();
+    
     res.send(createResponse(data, "Feature template created succesfully"));
   } catch (error: any) {
     throw createHttpError(400, {
@@ -31,7 +33,7 @@ export const getAllTemplates = async (
   next: NextFunction
 ) => {
   try {
-    const data = await Permission.find();
+    const data = await Permission.find().populate("permission.moduleId");
 
     res.send(createResponse(data));
   } catch (error: any) {
