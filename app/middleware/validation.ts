@@ -1,6 +1,6 @@
 import { type Response, type Request, type NextFunction } from "express";
 import expressAsyncHandler from "express-async-handler";
-import { check, validationResult } from "express-validator";
+import { check, param, validationResult } from "express-validator";
 import createHttpError from "http-errors";
 import { UserRole } from "../schema/User";
 
@@ -298,7 +298,7 @@ export const validate = (validationName: string): any[] => {
         check("language")
           .optional()
           .isIn(["ENGLISH", "FRENCH", "ARABIC", "PORTUGUESE"]),
-          
+
         check("status").optional().isIn(["ACTIVE", "INACTIVE"]),
         check("workStartDay")
           .optional()
@@ -432,6 +432,325 @@ export const validate = (validationName: string): any[] => {
         check("permission.*.delete")
           .isBoolean()
           .withMessage("Delete must be a boolean value"),
+      ];
+    }
+
+    case "id:mongoId": {
+      return [
+        param("id")
+          .exists()
+          .notEmpty()
+          .isMongoId()
+          .bail()
+          .withMessage("Provide valid id"),
+      ];
+    }
+
+    case "driver:delete": {
+      return [
+        check("driverIds")
+          .exists()
+          .notEmpty()
+          .isArray({ min: 1 })
+          .bail()
+          .withMessage("Provide driver ids"),
+        check("driverIds.*")
+          .exists()
+          .notEmpty()
+          .trim()
+          .isMongoId()
+          .bail()
+          .withMessage("Enter valid driver id"),
+      ];
+    }
+
+    case "driver:add": {
+      return [
+        check("businessGroupId")
+          .exists()
+          .notEmpty()
+          .isMongoId()
+          .bail()
+          .withMessage("Provide valid group"),
+        check("companyId")
+          .exists()
+          .notEmpty()
+          .isMongoId()
+          .bail()
+          .withMessage("Provide valid company"),
+        check("branchId")
+          .exists()
+          .notEmpty()
+          .isMongoId()
+          .bail()
+          .withMessage("Provide valid barnch"),
+        check("firstName")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("First name is required"),
+        check("lastName")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Last name is required"),
+        check("employeeNumber")
+          .exists()
+          .notEmpty()
+          .isString()
+          .bail()
+          .withMessage("Enter vaild employee number"),
+        check("country")
+          .exists()
+          .notEmpty()
+          .isString()
+          .bail()
+          .withMessage("Country is required"),
+        check("state")
+          .optional({ values: "falsy" })
+          .isString()
+          .bail()
+          .withMessage("Enter vaild state name"),
+        check("city")
+          .exists()
+          .notEmpty()
+          .isString()
+          .bail()
+          .withMessage("City is required"),
+        check("zipCode")
+          .optional()
+          .isPostalCode("any")
+          .bail()
+          .withMessage("Enter valid zip code"),
+        check("street1").exists().notEmpty().withMessage("Street1 is required"),
+        check("street2").optional(),
+        check("contact1")
+          .exists()
+          .notEmpty()
+          .isMobilePhone("any")
+          .bail()
+          .withMessage("Contact number is required"),
+        check("contact2")
+          .optional({ values: "falsy" })
+          .isMobilePhone("any")
+          .bail()
+          .withMessage("Enter vaild contact"),
+        check("dateOfBirth")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter vaild date of birth"),
+        check("age")
+          .exists()
+          .notEmpty()
+          .isInt({ min: 1 })
+          .bail()
+          .withMessage("Age is required"),
+        check("dateOfJoining")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter vaild date of joining"),
+        check("dateOfLeaving")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter vaild date of leaving"),
+        check("drivingExperience")
+          .exists()
+          .notEmpty()
+          .isFloat({ min: 0 })
+          .bail()
+          .withMessage("Driving experience is required"),
+        check("licenceAvailable").optional().isBoolean(),
+        check("licenceNumber").optional({ values: "falsy" }).isString(),
+        check("licenceToDriver").optional({ values: "falsy" }).isString(),
+        check("licenceIssueDate")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter valid issue date"),
+        check("licenceExpiryDate")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter vaild expiry date"),
+        check("lifeInsuranceNumber").optional({ values: "falsy" }).isString(),
+        check("lifeInsuranceExpiry")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter vaild insurance expiry date"),
+        check("mediclaimExpiry")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter vaild medicalaim expiry date"),
+        check("mediclaimNumber").optional({ values: "falsy" }).isString(),
+        check("active").optional().isBoolean(),
+        check("documents")
+          .exists()
+          .notEmpty()
+          .isArray({ min: 1 })
+          .bail()
+          .withMessage("Atlease one document is required"),
+        check("documents.*.documentType")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Enter valid doc type"),
+        check("documents.*.file")
+          .exists()
+          .notEmpty()
+          .isURL()
+          .bail()
+          .withMessage("Provide valid document"),
+        check("documents.*.issueDate")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter vaild issue date"),
+        check("documents.*.expireDate")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter vaild issue date"),
+      ];
+    }
+
+    case "driver:update": {
+      return [
+        check("businessGroupId")
+          .optional()
+          .isMongoId()
+          .bail()
+          .withMessage("Provide valid group"),
+        check("companyId")
+          .optional()
+          .isMongoId()
+          .bail()
+          .withMessage("Provide valid company"),
+        check("branchId")
+          .optional()
+          .isMongoId()
+          .bail()
+          .withMessage("Provide valid barnch"),
+        check("firstName").optional(),
+        check("lastName").optional(),
+        check("employeeNumber")
+          .optional({ values: "falsy" })
+          .isString()
+          .bail()
+          .withMessage("Enter vaild employee number"),
+        check("country")
+          .optional()
+          .isString()
+          .bail()
+          .withMessage("Country is required"),
+        check("state")
+          .optional({ values: "falsy" })
+          .isString()
+          .bail()
+          .withMessage("Enter vaild state name"),
+        check("city")
+          .optional()
+          .isString()
+          .bail()
+          .withMessage("City is required"),
+        check("zipCode")
+          .optional()
+          .isPostalCode("any")
+          .bail()
+          .withMessage("Enter valid zip code"),
+        check("street1").optional(),
+        check("street2").optional(),
+        check("contact1")
+          .optional()
+          .isMobilePhone("any")
+          .bail()
+          .withMessage("Contact number is required"),
+        check("contact2")
+          .optional({ values: "falsy" })
+          .isMobilePhone("any")
+          .bail()
+          .withMessage("Enter vaild contact"),
+        check("dateOfBirth")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter vaild date of birth"),
+        check("age")
+          .optional()
+          .isInt({ min: 1 })
+          .bail()
+          .withMessage("Age is required"),
+        check("dateOfJoining")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter vaild date of joining"),
+        check("dateOfLeaving")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter vaild date of leaving"),
+        check("drivingExperience")
+          .optional()
+          .isFloat({ min: 0 })
+          .bail()
+          .withMessage("Driving experience is required"),
+        check("licenceAvailable").optional().isBoolean(),
+        check("licenceNumber").optional({ values: "falsy" }).isString(),
+        check("licenceToDriver").optional({ values: "falsy" }).isString(),
+        check("licenceIssueDate")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter valid issue date"),
+        check("licenceExpiryDate")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter vaild expiry date"),
+        check("lifeInsuranceNumber").optional({ values: "falsy" }).isString(),
+        check("lifeInsuranceExpiry")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter vaild insurance expiry date"),
+        check("mediclaimExpiry")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter vaild medicalaim expiry date"),
+        check("mediclaimNumber").optional({ values: "falsy" }).isString(),
+        check("active").optional().isBoolean(),
+        check("documents")
+          .optional({ values: "falsy" })
+          .isArray({ min: 1 })
+          .bail()
+          .withMessage("Atlease one document is required"),
+        check("documents.*.documentType")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Enter valid doc type"),
+        check("documents.*.file")
+          .exists()
+          .notEmpty()
+          .isURL()
+          .bail()
+          .withMessage("Provide valid document"),
+        check("documents.*.issueDate")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter vaild issue date"),
+        check("documents.*.expireDate")
+          .optional({ values: "falsy" })
+          .isDate()
+          .bail()
+          .withMessage("Enter vaild issue date"),
       ];
     }
 
