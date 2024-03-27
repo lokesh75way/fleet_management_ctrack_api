@@ -13,7 +13,7 @@ enum DocumentType {
   MEDICLAIM = "MEDICLAIM",
 }
 
-interface IDevice extends BaseSchema {
+interface IDriver extends BaseSchema {
   businessGroupId: Types.ObjectId | IBusinessGroup;
   companyId: Types.ObjectId | ICompany;
   branchId: Types.ObjectId | IBranch;
@@ -51,7 +51,7 @@ interface IDevice extends BaseSchema {
   }[];
 }
 
-const DeviceSchema = new Schema<IDevice>(
+const DeviceSchema = new Schema<IDriver>(
   {
     businessGroupId: {
       type: Schema.Types.ObjectId,
@@ -108,4 +108,4 @@ const DeviceSchema = new Schema<IDevice>(
   }
 );
 
-export default mongoose.model<IDevice>("device", DeviceSchema);
+export default mongoose.model<IDriver>("driver", DeviceSchema);
