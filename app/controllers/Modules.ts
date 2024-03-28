@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from "express";
 import { createResponse } from "../helper/response";
 import createHttpError from "http-errors";
 import Modules from "../schema/Modules";
-import Permission from "../schema/Permission";
 
 export const getAllModules = async (
   req: Request,
@@ -60,6 +59,7 @@ export const createModule = async (
   ) => {
     try {
       const { moduleId, title, basePath } = req.body;
+
       if (moduleId) {
         const data = await Modules.create({
           moduleId,

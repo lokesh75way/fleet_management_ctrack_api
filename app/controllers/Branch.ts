@@ -52,7 +52,7 @@ export const createCompanyBranch = async (
   }
 };
 
-export const updateBusinessUser = async (
+export const updateBranch = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -61,60 +61,20 @@ export const updateBusinessUser = async (
     const payload = req.body;
 
     // @ts-ignore
-    const id = req.user._id;
+    const branchId = payload.branchId;
 
-    const payloadUser = {
-      userName: payload.userName,
-      email: payload.email,
-      password: payload.password,
-      mobileNumber: payload.mobileNumber,
-      country: payload.country,
-      state: payload.state,
-      isActive: payload.isActive,
-      role: UserRole.BUSINESS_GROUP,
-      type: UserType.ADMIN,
-    };
     const payloadBranch = { ...payload };
 
-    delete payloadBranch.email;
-    delete payloadBranch.userName;
-    delete payloadBranch.password;
-    delete payloadBranch.mobileNumber;
+    delete payloadBranch.branchId;
 
-    let alreadyExists = await User.findOne({
-      $or: [{ email: payload.email }],
-    });
+    let alreadyExists = await CompanyBranch.findById(branchId);
+
     if (!alreadyExists) {
-      res.send(createHttpError(404, "Branch with this email is not exists"));
+      res.send(createHttpError(404, "Branch is not exists"));
       return;
     }
 
-    const updatedFields: any = {};
-
-    if (payloadUser.mobileNumber) {
-      updatedFields.mobileNumber = payloadUser.mobileNumber;
-    }
-    if (payloadUser.country) {
-      updatedFields.country = payloadUser.country;
-    }
-    if (payloadUser.userName) {
-      updatedFields.userName = payloadUser.userName;
-    }
-    if (payloadUser.state) {
-      updatedFields.state = payloadUser.state;
-    }
-
-    if (payloadUser.isActive) {
-      updatedFields.isActive = payloadUser.isActive;
-    }
-
-    await User.updateOne({ email: payload.email }, updatedFields);
-
-    const businessId = alreadyExists?.businessGroupId;
-
-    await BusinessGroup.findOneAndUpdate(businessId, payloadBranch, {
-      new: true,
-    });
+    await CompanyBranch.findOneAndUpdate({_id :branchId}, payloadBranch);
 
     res.send(createResponse({}, "Branch has been updated successfully!"));
   } catch (error: any) {
@@ -125,21 +85,21 @@ export const updateBusinessUser = async (
   }
 };
 
-export const deleteBusinessGroup = async (
+export const deleteBranch = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     const { id } = req.params;
-    const user = await User.findOne({ businessGroupId: id });
-    if (!user) {
-      res.send(createHttpError(404, "User is not exists"));
+    const branch = await CompanyBranch.findById(id);
+    if (!branch) {
+      res.send(createHttpError(404, "Branch is not exists"));
     }
-    if (user?.isDeleted) {
-      res.send(createHttpError(404, "User is already deleted"));
+    if (branch?.isDeleted) {
+      res.send(createHttpError(404, "Branch is already deleted"));
     }
-    await User.updateOne({ businessGroupId: id }, { isDeleted: true });
+    await CompanyBranch.updateOne({ _id: id }, { isDeleted: true });
     res.send(createResponse({}, "User has been deleted successfully."));
   } catch (error: any) {
     throw createHttpError(400, {
@@ -155,73 +115,34 @@ export const getAllBranch = async (
   next: NextFunction
 ) => {
   try {
-
     // @ts-ignore
     const id = req.user._id;
     // @ts-ignore
     const role = req.user.role;
-console.log(id)
-    let query: any = { "createdBy.isDeleted": false };
-   let localField = 'businessGroupId';
-    if (role === "BUSINESS_GROUP") {
-      query["parentCompany.createdBy"] = id;
-    }
 
-    if(role === "COMPANY"){
-        query["parentCompany.createdBy"] = id;
-        localField = "companyId"
-    }
-
-    console.log(query)
+    let query: any = { isDeleted: false };
 
     let { page, limit } = req.query;
     let page1 = parseInt(page as string) || 1;
     let limit1 = parseInt(limit as string) || 10;
 
-    const totalCount = await User.countDocuments({ isDeleted: false });
-
-    const totalPages = Math.ceil(totalCount / limit1);
-
     const startIndex = (page1 - 1) * limit1;
 
-    const groups = await CompanyBranch.aggregate([
-      {
-        $lookup: {
-          from: "companies",
-          localField: "companyId" ,
-          foreignField: "_id",
-          as: "parentCompany",
-        },
-      },
-      {
-        $unwind: "$parentCompany" 
-      },
-    //   {
-    //     $match : {
-    //         "parentCompany.userInfo._id" : id
-    //     }
-    //   },
-      {
-        $lookup : {
-            from : "users",
-            localField : "parentCompany.createdBy",
-            foreignField :"_id",
-            as : "userInfo",
-        }
-      },
-      
-    //   {
-    //     $match: query
-    //   },
-      {
-        $limit: limit1,
-      },
-      {
-        $skip: startIndex,
-      },
-    ]);
+    const user_id = await User.findById(id).select("companyId businessGroupId");
 
-    res.send(createResponse({ data: groups, totalPage: totalPages }));
+    if (role === UserRole.COMPANY) {
+      query.companyId = user_id?.companyId;
+    }
+
+    if (role === UserRole.BUSINESS_GROUP) {
+      query.businessGroupId = user_id?.businessGroupId;
+    }
+
+    const data = await CompanyBranch.find(query).limit(limit1).skip(startIndex);
+
+    const totalCount = await CompanyBranch.countDocuments(query);
+
+    res.send(createResponse({ data, totalCount }));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",

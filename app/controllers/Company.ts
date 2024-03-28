@@ -41,7 +41,7 @@ export const createCompany = async (
     }
 
     alreadyExists = await User.findOne({
-      username: payload.userName,
+      userName: payload.userName,
     });
 
     if (alreadyExists) {

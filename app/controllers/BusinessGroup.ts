@@ -40,7 +40,7 @@ export const createBusinessUser = async (
     }
 
     alreadyExists = await User.findOne({
-      username: payload.userName,
+      userName: payload.userName,
       //   { mobileNumber: payload.mobileNumber },
     });
 

@@ -5,6 +5,7 @@ import { IBusinessGroup } from "./BusinessGroup";
 import { IBranch } from "./CompanyBranch";
 import { IVehicle } from "./Vehicle";
 import { IPermission } from "./Permission";
+import { ICompany } from "./Company";
 
 export enum UserRole {
   SUPER_ADMIN = "SUPER_ADMIN",
@@ -34,7 +35,7 @@ export interface IUser extends BaseSchema {
   password: string;
   isValidPassword: (password: string) => Promise<boolean>;
   businessGroupId: Types.ObjectId | IBusinessGroup;
-  companyId?: Types.ObjectId | IBusinessGroup;
+  companyId?: Types.ObjectId | ICompany;
   branchIds?: Types.ObjectId[] | IBranch[];
   vehicleIds?: Types.ObjectId[] | IVehicle[];
   featureTemplateId?: Types.ObjectId | IPermission;

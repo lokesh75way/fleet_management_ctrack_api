@@ -4,25 +4,25 @@ import { IBusinessGroup } from "./BusinessGroup";
 import { ICompany } from "./Company";
 import { IBranch } from "./CompanyBranch";
 
-enum DistanceCounter {
+export enum DistanceCounter {
   GPS = "GPS",
   OBD = "OBD",
   RELATIVEODOMETER = "RELATIVEODOMETER",
   TACHOGRAPH = "TACHOGRAPH",
 }
 
-enum UnitOFDistance {
+export enum UnitOFDistance {
   KILOMETER = "KILOMETER",
   MILE = "MILE",
   NATURAL_MILE = "NATURAL_MILE",
 }
 
-enum VehicleCategory {
+export enum VehicleCategory {
   MOVABLE = "MOVABLE",
   IMMOVABLE = "IMMOVABLE",
 }
 
-enum Permit {
+export enum Permit {
   ITC = "ITC",
   NORMAL = "NORMAL",
   RENT = "RENT",
@@ -31,34 +31,34 @@ enum Permit {
   OTHER = "OTHER",
 }
 
-enum FuelType {
+export enum FuelType {
   PETROL = "PETROL",
   DISEAL = "DISEAL",
   GAS = "GAS",
   ELECTRIC = "ELECTRIC",
 }
 
-enum CostType {
+export enum CostType {
   DISTANCE = "DISTANCE",
   DURATION = "DURATION",
 }
 
-enum FuelSensor {
+export enum FuelSensor {
   SINGLE = "SINGLE",
   MULTIPLE = "MULTIPLE",
 }
 
-enum ReadingType {
+export enum ReadingType {
   DIRECT = "DIRECT",
   INVERSE = "INVERSE",
 }
 
-enum SpeedDetection {
+export enum SpeedDetection {
   DEVICE = "DEVICE",
-  LATING = "LATING"
+  LATING = "LATING",
 }
 
-enum DocumentType {
+export enum DocumentType {
   INSURANCE = "INSURANCE",
   PSU = "PSU",
   REGISTRARION_CERTIFICATE = "REGISTRARION_CERTIFICATE",
@@ -86,55 +86,66 @@ export interface IVehicle extends BaseSchema {
   speedDetection: SpeedDetection;
   deviceAccuracyTolerance: string;
   // profile
-    plateNumber: string;
-    vehicleCategory: VehicleCategory;
-    dvirTemplate: string;
-    purchaseAmount: number;
-    manufacturerDate: Date;
-    purchaseDate: Date;
-    weightCapacity: number;
-    gpsInstallationDate: Date;
-    gpsWarranty: number;
-    companyAverage: string;
-    permit: Permit;
-    installationDate: Date;
-    registrationNumber: string;
-    fuelType: FuelType;
-    distanceBaseFuelConsumption: number;
-    durationBaseFuelConsumption: number;
-    fuelIdlingConsumption: string;
-    consumptionTolerancePercent: number;
-    vinNumber: number;
-    engineNumber: string;
-    odometer: string;
-    lsbDetectionRadius: string;
-    engineHour: string;
-    passengerSeat: number;
-    costType: CostType;
-    distance: number;
-    duration: number;
-    rfidTimeoutDuration: number;
-    sleepModeDuration: number;
-    minimumWorkingHour: number;
-    weightSensor: boolean;
-    underweightTolerance: number;
-    overweightTolerance: number;
-    loadingUnloadingTolerance: number;
-    fuelSensor: FuelSensor;
-    gSensor: boolean;
+  plateNumber: string;
+  vehicleCategory: VehicleCategory;
+  dvirTemplate: string;
+  purchaseAmount: number;
+  manufacturerDate: Date;
+  purchaseDate: Date;
+  weightCapacity: number;
+  gpsInstallationDate: Date;
+  gpsWarranty: number;
+  companyAverage: string;
+  permit: Permit;
+  installationDate: Date;
+  registrationNumber: string;
+  fuelType: FuelType;
+  distanceBaseFuelConsumption: number;
+  durationBaseFuelConsumption: number;
+  fuelIdlingConsumption: string;
+  consumptionTolerancePercent: number;
+  vinNumber: number;
+  engineNumber: string;
+  odometer: string;
+  lsbDetectionRadius: string;
+  engineHour: string;
+  passengerSeat: number;
+  costType: CostType;
+  distance: number;
+  duration: number;
+  rfidTimeoutDuration: number;
+  sleepModeDuration: number;
+  minimumWorkingHour: number;
+  weightSensor: boolean;
+  underweightTolerance: number;
+  overweightTolerance: number;
+  loadingUnloadingTolerance: number;
+  fuelSensor: FuelSensor;
+  gSensor: boolean;
   documents: {
     documentType: DocumentType;
     file: string;
     issueDate: Date;
     expireDate: Date;
   }[];
+
+  isActive : boolean;
+  isDeleted : boolean;
 }
 
 const Vehicle = new Schema<IVehicle>(
   {
-    businessGroupId: { type: Schema.Types.ObjectId, ref: "business-group", required: true },
+    businessGroupId: {
+      type: Schema.Types.ObjectId,
+      ref: "business-group",
+      required: true,
+    },
     companyId: { type: Schema.Types.ObjectId, ref: "company", required: true },
-    branchId: { type: Schema.Types.ObjectId, ref: "company-branch", required: true },
+    branchId: {
+      type: Schema.Types.ObjectId,
+      ref: "company-branch",
+      required: true,
+    },
     vehicleName: { type: String, required: true },
     deviceType: { type: String },
     // deviceId: { type: Schema.Types.ObjectId, ref: "Device", required: true },
@@ -148,42 +159,42 @@ const Vehicle = new Schema<IVehicle>(
     speedDetection: { type: String },
     deviceAccuracyTolerance: { type: String },
     // profile
-      plateNumber: { type: String },
-      vehicleCategory: { type: String, enum: Object.values(VehicleCategory) },
-      dvirTemplate: { type: String },
-      manufacturerDate: { type: Date },
-      purchaseDate: { type: Date },
-      purchaseAmount: { type: Number },
-      weightCapacity: { type: Number },
-      gpsInstallationDate: { type: Date },
-      gpsWarranty: { type: Number },
-      companyAverage: { type: String },
-      permit: { type: String, enum: Object.values(Permit) },
-      installationDate: { type: Date },
-      registrationNumber: { type: String },
-      fuelType: { type: String, enum: Object.values(FuelType) },
-      distanceBaseFuelConsumption: { type: Number },
-      durationBaseFuelConsumption: { type: Number },
-      fuelIdlingConsumption: { type: String },
-      consumptionTolerancePercent: { type: Number },
-      vinNumber: { type: Number },
-      engineNumber: { type: String },
-      odometer: { type: String },
-      lsbDetectionRadius: { type: String },
-      engineHour: { type: String },
-      passengerSeat: { type: Number },
-      costType: { type: String, enum: Object.values(CostType) },
-      distance: { type: Number },
-      duration: { type: Number },
-      rfidTimeoutDuration: { type: Number },
-      sleepModeDuration: { type: Number },
-      minimumWorkingHour: { type: Number },
-      weightSensor: { type: Boolean },
-      underweightTolerance: { type: Number },
-      overweightTolerance: { type: Number },
-      loadingUnloadingTolerance: { type: Number },
-      fuelSensor: { type: String, enum: Object.values(FuelSensor) },
-      gSensor: { type: Boolean },
+    plateNumber: { type: String },
+    vehicleCategory: { type: String, enum: Object.values(VehicleCategory) },
+    dvirTemplate: { type: String },
+    manufacturerDate: { type: Date },
+    purchaseDate: { type: Date },
+    purchaseAmount: { type: Number },
+    weightCapacity: { type: Number },
+    gpsInstallationDate: { type: Date },
+    gpsWarranty: { type: Number },
+    companyAverage: { type: String },
+    permit: { type: String, enum: Object.values(Permit) },
+    installationDate: { type: Date },
+    registrationNumber: { type: String },
+    fuelType: { type: String, enum: Object.values(FuelType) },
+    distanceBaseFuelConsumption: { type: Number },
+    durationBaseFuelConsumption: { type: Number },
+    fuelIdlingConsumption: { type: String },
+    consumptionTolerancePercent: { type: Number },
+    vinNumber: { type: Number },
+    engineNumber: { type: String },
+    odometer: { type: String },
+    lsbDetectionRadius: { type: String },
+    engineHour: { type: String },
+    passengerSeat: { type: Number },
+    costType: { type: String, enum: Object.values(CostType) },
+    distance: { type: Number },
+    duration: { type: Number },
+    rfidTimeoutDuration: { type: Number },
+    sleepModeDuration: { type: Number },
+    minimumWorkingHour: { type: Number },
+    weightSensor: { type: Boolean },
+    underweightTolerance: { type: Number },
+    overweightTolerance: { type: Number },
+    loadingUnloadingTolerance: { type: Number },
+    fuelSensor: { type: String, enum: Object.values(FuelSensor) },
+    gSensor: { type: Boolean },
     documents: [
       {
         documentType: { type: String, enum: Object.values(DocumentType) },
@@ -192,10 +203,13 @@ const Vehicle = new Schema<IVehicle>(
         expireDate: { type: Date },
       },
     ],
+
+    isActive: { type: Boolean, default: true },
+    isDeleted: { type: Boolean, default: false },
   },
   {
     timestamps: true,
   }
 );
 
-export default mongoose.model<IVehicle>("vechicle", Vehicle);
+export default mongoose.model<IVehicle>("vehicle", Vehicle);

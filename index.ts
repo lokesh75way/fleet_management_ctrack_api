@@ -3,6 +3,7 @@ import express, { type Express, type Request, type Response } from "express";
 import bodyParser from "body-parser";
 import morgan from "morgan";
 import http from "http";
+import fileUpload from"express-fileupload";
 
 import errorHandler from "./app/middleware/errorHandler";
 import { initDB } from "./app/services/initDB";
@@ -14,6 +15,8 @@ import featureTemplate from './app/routes/featureTemplate'
 import businessGroup from "./app/routes/businessGroup";
 import companyRoutes from "./app/routes/company";
 import branchRoutes from './app/routes/branch';
+import profileRoutes from './app/routes/profileRoutes';
+import vehicleRoutes from './app/routes/vehicle';
 
 import { initPassport } from "./app/services/passport-jwt";
 import passport from "passport";
@@ -35,6 +38,12 @@ app.use(bodyParser.json());
 app.use(express.json());
 app.use(morgan("dev"));
 app.use(cors())
+app.use(
+  fileUpload({
+    useTempFiles: true,
+  })
+);
+
 
 const initApp = async (): Promise<void> => {
   // init mongodb
@@ -63,6 +72,8 @@ const initApp = async (): Promise<void> => {
   router.use("/business-group", adminAccess, businessGroup);
   router.use("/company", businessGroupAccess, companyRoutes);
   router.use("/branch",companyAccess, branchRoutes)
+  router.use("/profile",companyAccess , profileRoutes)
+  router.use("/vehicle",companyAccess , vehicleRoutes)
 
   // error handler
   app.use(errorHandler);
