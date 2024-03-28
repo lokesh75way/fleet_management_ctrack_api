@@ -17,6 +17,7 @@ import companyRoutes from "./app/routes/company";
 import branchRoutes from './app/routes/branch';
 import profileRoutes from './app/routes/profileRoutes';
 import vehicleRoutes from './app/routes/vehicle';
+import driverRoutes from './app/routes/driver'
 
 import { initPassport } from "./app/services/passport-jwt";
 import passport from "passport";
@@ -74,6 +75,7 @@ const initApp = async (): Promise<void> => {
   router.use("/branch",companyAccess, branchRoutes)
   router.use("/profile",companyAccess , profileRoutes)
   router.use("/vehicle",companyAccess , vehicleRoutes)
+  router.use("/driver",companyAccess , driverRoutes)
 
   // error handler
   app.use(errorHandler);
