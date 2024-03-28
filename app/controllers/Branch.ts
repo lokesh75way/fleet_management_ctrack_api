@@ -1,10 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { createResponse } from "../helper/response";
 import createHttpError from "http-errors";
-import BusinessGroup from "../schema/BusinessGroup";
+import BusinessGroup, { IBusinessGroup } from "../schema/BusinessGroup";
 import User, { UserRole, UserType } from "../schema/User";
+import CompanyBranch from "../schema/CompanyBranch";
 
-export const createBusinessUser = async (
+export const createCompanyBranch = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -14,70 +15,35 @@ export const createBusinessUser = async (
 
     // @ts-ignore
     const id = req.user._id;
-    const payloadUser = {
-      userName: payload.userName,
-      email: payload.email,
-      password: payload.password,
-      mobileNumber: payload.mobileNumber,
-      country: payload.country,
-      state: payload.state,
-      role: UserRole.BUSINESS_GROUP,
-      type: UserType.ADMIN,
-    };
-    const payloadGroup = { ...payload, createdBy: id };
 
-    delete payloadGroup.email;
-    delete payloadGroup.userName;
-    delete payloadGroup.password;
-    delete payloadGroup.mobileNumber;
+    const payloadBranch = { ...payload };
 
-    let alreadyExists = await User.findOne({
-      email: payload.email,
-    });
+    const alreadyExists = await User.findById(id);
 
-    if (alreadyExists) {
-      res.send(createHttpError(409, "Company with this email already exists"));
+    if (!alreadyExists) {
+      res.send(createHttpError(404, "Company doesn't not exist"));
     }
 
-    alreadyExists = await User.findOne({
-      username: payload.userName,
-      //   { mobileNumber: payload.mobileNumber },
+    const newBranch = await CompanyBranch.create({
+      ...payloadBranch,
     });
 
-    if (alreadyExists) {
-      res.send(
-        createHttpError(409, "Company with this username already exists")
-      );
+    if (!newBranch) {
+      res.send(createHttpError(400, "Branch is not created"));
     }
 
-    alreadyExists = await User.findOne({
-      mobileNumber: payload.mobileNumber,
-    });
-
-    if (alreadyExists) {
-      res.send(
-        createHttpError(409, "Company with this phone number already exists")
-      );
-    }
-
-    const newBusinessGroup = await BusinessGroup.create({
-      ...payloadGroup,
-    });
-    if (!newBusinessGroup) {
-      res.send(createHttpError(400, "Business group is not created"));
-    }
-    const newUser = await User.create({
-      ...payloadUser,
-      businessGroupId: newBusinessGroup._id,
-    });
+    const newUser = await User.updateOne(
+      {
+        _id: id,
+      },
+      { $push: { branchIds: newBranch._id } }
+    );
 
     if (!newUser) {
-      res.send(createHttpError(400, "User is not created"));
+      res.send(createHttpError(400, "User is not updated"));
     }
 
-    res.send(
-      createResponse({}, "Business group has been created successfully!")
-    );
+    res.send(createResponse({}, "Branch has been created successfully!"));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
@@ -104,23 +70,22 @@ export const updateBusinessUser = async (
       mobileNumber: payload.mobileNumber,
       country: payload.country,
       state: payload.state,
+      isActive: payload.isActive,
       role: UserRole.BUSINESS_GROUP,
       type: UserType.ADMIN,
     };
-    const payloadGroup = { ...payload };
+    const payloadBranch = { ...payload };
 
-    delete payloadGroup.email;
-    delete payloadGroup.userName;
-    delete payloadGroup.password;
-    delete payloadGroup.mobileNumber;
+    delete payloadBranch.email;
+    delete payloadBranch.userName;
+    delete payloadBranch.password;
+    delete payloadBranch.mobileNumber;
 
     let alreadyExists = await User.findOne({
       $or: [{ email: payload.email }],
     });
     if (!alreadyExists) {
-      res.send(
-        createHttpError(404, "Business group with this email is not exists")
-      );
+      res.send(createHttpError(404, "Branch with this email is not exists"));
       return;
     }
 
@@ -139,17 +104,19 @@ export const updateBusinessUser = async (
       updatedFields.state = payloadUser.state;
     }
 
+    if (payloadUser.isActive) {
+      updatedFields.isActive = payloadUser.isActive;
+    }
+
     await User.updateOne({ email: payload.email }, updatedFields);
 
     const businessId = alreadyExists?.businessGroupId;
 
-    await BusinessGroup.findOneAndUpdate(businessId, payloadGroup, {
+    await BusinessGroup.findOneAndUpdate(businessId, payloadBranch, {
       new: true,
     });
 
-    res.send(
-      createResponse({}, "Business group has been updated successfully!")
-    );
+    res.send(createResponse({}, "Branch has been updated successfully!"));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
@@ -182,22 +149,29 @@ export const deleteBusinessGroup = async (
   }
 };
 
-export const getAllGroups = async (
+export const getAllBranch = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
+
     // @ts-ignore
     const id = req.user._id;
     // @ts-ignore
     const role = req.user.role;
-
-    let query : any = { "createdBy.isDeleted": false };
-
-    if (role === 'BUSINESS_GROUP') {
-      query["createdBy._id"] = id;
+console.log(id)
+    let query: any = { "createdBy.isDeleted": false };
+   let localField = 'businessGroupId';
+    if (role === "BUSINESS_GROUP") {
+      query["parentCompany.createdBy"] = id;
     }
+
+    if(role === "COMPANY"){
+        query["parentCompany.createdBy"] = id;
+        localField = "companyId"
+    }
+
     console.log(query)
 
     let { page, limit } = req.query;
@@ -210,18 +184,35 @@ export const getAllGroups = async (
 
     const startIndex = (page1 - 1) * limit1;
 
-    const groups = await BusinessGroup.aggregate([
+    const groups = await CompanyBranch.aggregate([
       {
         $lookup: {
-          from: "users",
-          localField: "createdBy",
+          from: "companies",
+          localField: "companyId" ,
           foreignField: "_id",
-          as: "createdBy",
+          as: "parentCompany",
         },
       },
       {
-        $match: query
+        $unwind: "$parentCompany" 
       },
+    //   {
+    //     $match : {
+    //         "parentCompany.userInfo._id" : id
+    //     }
+    //   },
+      {
+        $lookup : {
+            from : "users",
+            localField : "parentCompany.createdBy",
+            foreignField :"_id",
+            as : "userInfo",
+        }
+      },
+      
+    //   {
+    //     $match: query
+    //   },
       {
         $limit: limit1,
       },

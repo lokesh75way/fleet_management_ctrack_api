@@ -9,6 +9,7 @@ import {
 } from "../services/passport-jwt";
 import bcrypt from "bcrypt";
 import { forgetPasswordEmailTemplate, sendEmail } from "../services/email";
+import Permission from "../schema/Permission";
 
 
 /**
@@ -27,8 +28,11 @@ export const adminLogin = async (
 
     const data = await User.findById(user._id)
     .select("userName firstName lastName email mobileNumber role type");
+
+    const permissions = await Permission.find();
+
     res.send(
-      createResponse({ user: data, token }, "Login successfully!")
+      createResponse({ user: data,permissions ,token }, "Login successfully!")
     );
   } catch (error: any) {
     throw createHttpError(400, {
