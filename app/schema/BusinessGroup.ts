@@ -1,5 +1,6 @@
 import mongoose, { Types } from "mongoose";
 import { type BaseSchema } from "./index";
+import  mongoose_delete , {SoftDeleteModel}  from 'mongoose-delete';
 import { IUser } from "./User";
 
 enum UnitOfDistance {
@@ -90,6 +91,8 @@ const BusinessGroupSchema = new Schema<IBusinessGroup>(
   },
   { timestamps: true }
 );
+
+BusinessGroupSchema.plugin(mongoose_delete , { deletedBy: true, deletedByType: String })
 
 export default mongoose.model<IBusinessGroup>(
   "business-group",

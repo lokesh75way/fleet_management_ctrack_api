@@ -45,12 +45,10 @@ app.use(
   })
 );
 
-
+// 65fd23ccf66c4bd52d11cc07
 const initApp = async (): Promise<void> => {
   // init mongodb
   await initDB();
-
-
   // passport init
   initPassport();
 

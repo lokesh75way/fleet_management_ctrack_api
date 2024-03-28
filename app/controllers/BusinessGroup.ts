@@ -9,7 +9,6 @@ export const createBusinessUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  try {
     const payload = req.body;
 
     // @ts-ignore
@@ -78,12 +77,6 @@ export const createBusinessUser = async (
     res.send(
       createResponse({}, "Business group has been created successfully!")
     );
-  } catch (error: any) {
-    throw createHttpError(400, {
-      message: error?.message ?? "An error occurred.",
-      data: { user: null },
-    });
-  }
 };
 
 export const updateBusinessUser = async (
@@ -93,9 +86,6 @@ export const updateBusinessUser = async (
 ) => {
   try {
     const payload = req.body;
-
-    // @ts-ignore
-    const id = req.user._id;
 
     const payloadUser = {
       userName: payload.userName,
@@ -165,14 +155,15 @@ export const deleteBusinessGroup = async (
 ) => {
   try {
     const { id } = req.params;
-    const user = await User.findOne({ businessGroupId: id });
+    console.log(id)
+    const user = await User.findOne({ _id: id });
     if (!user) {
       res.send(createHttpError(404, "User is not exists"));
     }
     if (user?.isDeleted) {
       res.send(createHttpError(404, "User is already deleted"));
     }
-    await User.updateOne({ businessGroupId: id }, { isDeleted: true });
+    await User.updateOne({ _id: id }, { isDeleted: true });
     res.send(createResponse({}, "User has been deleted successfully."));
   } catch (error: any) {
     throw createHttpError(400, {
@@ -193,11 +184,12 @@ export const getAllGroups = async (
     // @ts-ignore
     const role = req.user.role;
 
-    let query : any = { "createdBy.isDeleted": false };
+    let query : any = { "isDeleted": false, "role" : UserRole.BUSINESS_GROUP };
 
-    if (role === 'BUSINESS_GROUP') {
-      query["createdBy._id"] = id;
-    }
+    // if (role === UserRole.SUPER_ADMIN) {
+    //   query["businessGroupId.createdBy"] = id;
+    // }
+
     console.log(query)
 
     let { page, limit } = req.query;
@@ -210,25 +202,9 @@ export const getAllGroups = async (
 
     const startIndex = (page1 - 1) * limit1;
 
-    const groups = await BusinessGroup.aggregate([
-      {
-        $lookup: {
-          from: "users",
-          localField: "createdBy",
-          foreignField: "_id",
-          as: "createdBy",
-        },
-      },
-      {
-        $match: query
-      },
-      {
-        $limit: limit1,
-      },
-      {
-        $skip: startIndex,
-      },
-    ]);
+    const groups = await User.find(query).populate({path : "businessGroupId", match : {
+      createdBy : id
+    }}).limit(limit1).skip(startIndex)
 
     res.send(createResponse({ data: groups, totalPage: totalPages }));
   } catch (error: any) {
