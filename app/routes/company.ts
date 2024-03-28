@@ -1,8 +1,10 @@
 import express from "express";
-import passport from "passport";
+
 import { catchError, validate } from "../middleware/validation";
+
 import { createCompany , getAllCompanies, updateCompanyUser , deleteCompany} from "../controllers/Company";
 import asyncHandler from "express-async-handler"
+import Company from "../schema/Company";
 
 const router = express.Router();
 
@@ -18,4 +20,4 @@ router.patch('/', validate("company:update"), catchError , asyncHandler(updateCo
 // delete Business group
 router.delete('/:id',catchError, asyncHandler(deleteCompany))
 
-export default router;
+export default router
