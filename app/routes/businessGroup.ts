@@ -1,22 +1,45 @@
 import express from "express";
 import passport from "passport";
-import asyncHandler from "express-async-handler"
+import asyncHandler from "express-async-handler";
 import { catchError, validate } from "../middleware/validation";
-import { createBusinessUser, deleteBusinessGroup, getAllGroups, updateBusinessUser } from "../controllers/BusinessGroup";
+import {
+  createBusinessUser,
+  updatePassword,
+  getAllGroups,
+  updateBusinessUser,
+  deleteBusinessGroup,
+} from "../controllers/BusinessGroup";
 
 const router = express.Router();
 
 // create Business group
-router.post("/", validate("group:add"), catchError, asyncHandler(createBusinessUser));
+router.post(
+  "/",
+  validate("group:add"),
+  catchError,
+  asyncHandler(createBusinessUser)
+);
 
-// update Business group 
-router.patch('/', validate("group:update"), catchError , asyncHandler(updateBusinessUser))
+// update Business group
+router.patch(
+  "/",
+  validate("group:update"),
+  catchError,
+  asyncHandler(updateBusinessUser)
+);
 
 // get get all business group
-router.get('/',catchError,asyncHandler(getAllGroups))
+router.get("/", asyncHandler(getAllGroups));
 
 // delete Business group
-router.delete('/:id',catchError, asyncHandler(deleteBusinessGroup))
+router.delete("/:id", asyncHandler(deleteBusinessGroup));
 
+// change password
+router.post(
+  "/change-password",
+  validate("change:password"),
+  catchError,
+  asyncHandler(updatePassword)
+);
 
 export default router;
