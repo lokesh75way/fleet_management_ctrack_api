@@ -95,10 +95,10 @@ export const getAllCompanies = async (
     // @ts-ignore
     const role = req.user.role;
 
-    let query: any = { "createdBy.isDeleted": false };
-
+    let query: any = { isDeleted: false, role: UserRole.COMPANY };
+    let secondQuery: any;
     if (role === "BUSINESS_GROUP") {
-      query["createdBy._id"] = id;
+      secondQuery["createdBy"] = id;
     }
 
     let { page, limit } = req.query;
@@ -111,27 +111,12 @@ export const getAllCompanies = async (
 
     const startIndex = (page1 - 1) * limit1;
 
-    const groups = await Company.aggregate([
-      {
-        $lookup: {
-          from: "users",
-          localField: "createdBy",
-          foreignField: "_id",
-          as: "createdBy",
-        },
-      },
-      {
-        $match:query ,
-      },
-      {
-        $limit: limit1,
-      },
-      {
-        $skip: startIndex,
-      },
+    const companies = await User.find(query).populate([
+      { path: "companyId", match: secondQuery },
+      { path: "companyId", populate: { path: "businessGroupId" , select :"groupName" } },
     ]);
 
-    res.send(createResponse({ data: groups, totalPage: totalPages }));
+    res.send(createResponse({ data: companies, totalPage: totalPages }));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
@@ -217,15 +202,18 @@ export const deleteCompany = async (
 ) => {
   try {
     const { id } = req.params;
-    const user = await User.findOne({ companyId: id });
+    const user = await User.findOne({ _id: id });
     if (!user) {
       res.send(createHttpError(404, "User is not exists"));
+      return
     }
     if (user?.isDeleted) {
       res.send(createHttpError(404, "User is already deleted"));
+      return
     }
-    await User.updateOne({ companyId: id }, { isDeleted: true });
+    await User.updateOne({ _id: id }, { isDeleted: true });
     res.send(createResponse({}, "User has been deleted successfully."));
+    return
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
