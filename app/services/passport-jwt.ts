@@ -100,6 +100,7 @@ export const initPassport = (): void => {
             done(createError(401, "Your account is inactive! Please contact admin"), false);
             return;
           }
+          console.log(password)
           const validate = await user.isValidPassword(password);
           if (!validate) {
             done(createError(401, "Invalid email or password"), false);

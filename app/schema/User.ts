@@ -7,6 +7,8 @@ import { IVehicle } from "./Vehicle";
 import { IPermission } from "./Permission";
 import { ICompany } from "./Company";
 
+import  MongooseDelete , { SoftDeleteModel }  from 'mongoose-delete';
+
 export enum UserRole {
   SUPER_ADMIN = "SUPER_ADMIN",
   BUSINESS_GROUP = "BUSINESS_GROUP",
@@ -71,6 +73,10 @@ const UserSchema = new Schema<IUser>(
   },
   { timestamps: true }
 );
+
+
+UserSchema.plugin(MongooseDelete, {deletedBy : true , deletedByType : String})
+
 
 // save hashed password
 UserSchema.pre("save", async function (next) {

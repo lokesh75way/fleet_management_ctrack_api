@@ -17,6 +17,7 @@ import companyRoutes from "./app/routes/company";
 import branchRoutes from './app/routes/branch';
 import profileRoutes from './app/routes/profileRoutes';
 import vehicleRoutes from './app/routes/vehicle';
+import driverRoutes from './app/routes/driver'
 
 import { initPassport } from "./app/services/passport-jwt";
 import passport from "passport";
@@ -44,12 +45,10 @@ app.use(
   })
 );
 
-
+// 65fd23ccf66c4bd52d11cc07
 const initApp = async (): Promise<void> => {
   // init mongodb
   await initDB();
-
-
   // passport init
   initPassport();
 
@@ -75,6 +74,7 @@ const initApp = async (): Promise<void> => {
   router.use("/profile",companyAccess , profileRoutes)
   router.use("/vehicle",companyAccess , vehicleRoutes)
   router.use("/user", companyAccess, userRoutes);
+  router.use("/driver",companyAccess , driverRoutes)
 
   // error handler
   app.use(errorHandler);

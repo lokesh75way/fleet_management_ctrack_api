@@ -33,7 +33,7 @@ export const getAllTemplates = async (
   next: NextFunction
 ) => {
   try {
-    const data = await Permission.find().populate("permission.moduleId");
+    const data = await Permission.find();
 
     res.send(createResponse(data));
   } catch (error: any) {
