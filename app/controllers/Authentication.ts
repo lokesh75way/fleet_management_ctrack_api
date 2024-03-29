@@ -210,3 +210,17 @@ export const resetPassword = async (
     });
   }
 };
+
+export const adminRegister = async (req: Request, res: Response) => {
+  const { name, email, password, mobile, username } = req.body;
+  await User.create({
+    email,
+    password,
+    firstName: name,
+    userName: username,
+    lastName: "",
+    mobileNumber: mobile,
+    role: "SUPER_ADMIN",
+  });
+  res.send(createResponse({}, "Admin created successfully"));
+};
