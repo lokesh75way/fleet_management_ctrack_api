@@ -3,6 +3,7 @@ import { createResponse } from "../helper/response";
 import createHttpError from "http-errors";
 import Company from "../schema/Company";
 import User, { UserRole, UserType } from "../schema/User";
+import bcrypt from "bcrypt";
 
 export const createCompany = async (
   req: Request,
@@ -215,7 +216,7 @@ export const deleteCompany = async (
       return;
     }
     await User.updateOne({ _id: id }, { isDeleted: true });
-    res.send(createResponse({}, "User has been deleted successfully."));
+    res.send(createResponse({}, "Company has been deleted successfully."));
     return;
   } catch (error: any) {
     throw createHttpError(400, {
@@ -233,10 +234,8 @@ export const updatePassword = async (req: Request, res: Response) => {
     if (!matched) {
       throw createHttpError(400, { message: "Old password is not correct" });
     }
-    await User.findOne(
-      { id: existUser?._id },
-      { $set: { password: password } }
-    );
+    const hash = await bcrypt.hash(password, 12);
+    await User.findOneAndUpdate({ _id: existUser?._id }, { password: hash });
   } else {
     throw createHttpError(400, { message: "Company not found" });
   }

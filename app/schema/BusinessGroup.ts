@@ -5,7 +5,7 @@ import { IUser } from "./User";
 
 enum UnitOfDistance {
  MILES =  "MILES",
- KILOMETER =  "KILOMETER",
+ KILOMETERS =  "KILOMETERS",
  NAUTICAL_MILES =  "NAUTICAL_MILES"
 }
 

@@ -4,7 +4,7 @@ import { IUser } from "./User";
 
 enum UnitOfDistance {
   MILES = "MILES",
-  KILOMETER = "KILOMETER",
+  KILOMETERS = "KILOMETERS",
   NAUTICAL_MILES = "NAUTICAL_MILES",
 }
 
@@ -83,7 +83,7 @@ const CompanySchema = new Schema<ICompany>(
     faxNumber: { type: String },
     status : {type : String , enum : ["INACTIVE","ACTIVE"]},
     dateFormat: { type: String, enum: ["MM-DD-YYYY", "DD-MM-YYYY"] },
-    timeFormat: { type: String, enum: ["12", "24"] },
+    timeFormat: { type: String, enum: ["12 Hour", "24 Hour"] },
     unitOfDistance: { type: String, enum: UnitOfDistance },
     unitOfFuel: { type: String, enum: UnitOfFuel },
     language: { type: String, enum: Language },

@@ -3,6 +3,7 @@ import { createResponse } from "../helper/response";
 import createHttpError from "http-errors";
 import BusinessGroup from "../schema/BusinessGroup";
 import User, { UserRole, UserType } from "../schema/User";
+import bcrypt from "bcrypt";
 
 export const createBusinessUser = async (
   req: Request,
@@ -53,7 +54,10 @@ export const createBusinessUser = async (
 
   if (alreadyExists) {
     res.send(
-      createHttpError(409, "Business group with this phone number already exists")
+      createHttpError(
+        409,
+        "Business group with this phone number already exists"
+      )
     );
     return;
   }
@@ -82,62 +86,59 @@ export const updateBusinessUser = async (
   res: Response,
   next: NextFunction
 ) => {
-    const payload = req.body;
+  const payload = req.body;
+  console.log(payload)
+  const payloadUser = {
+    userName: payload.userName,
+    email: payload.email,
+    password: payload.password,
+    mobileNumber: payload.mobileNumber,
+    country: payload.country,
+    state: payload.state,
+    role: UserRole.BUSINESS_GROUP,
+    type: UserType.ADMIN,
+  };
+  const payloadGroup = { ...payload };
 
-    const payloadUser = {
-      userName: payload.userName,
-      email: payload.email,
-      password: payload.password,
-      mobileNumber: payload.mobileNumber,
-      country: payload.country,
-      state: payload.state,
-      role: UserRole.BUSINESS_GROUP,
-      type: UserType.ADMIN,
-    };
-    const payloadGroup = { ...payload };
+  delete payloadGroup.email;
+  delete payloadGroup.userName;
+  delete payloadGroup.password;
+  delete payloadGroup.mobileNumber;
 
-    delete payloadGroup.email;
-    delete payloadGroup.userName;
-    delete payloadGroup.password;
-    delete payloadGroup.mobileNumber;
-
-    let alreadyExists = await User.findOne({
-      $or: [{ email: payload.email }],
-    });
-    if (!alreadyExists) {
-      res.send(
-        createHttpError(404, "Business group with this email is not exists")
-      );
-      return;
-    }
-
-    const updatedFields: any = {};
-
-    if (payloadUser.mobileNumber) {
-      updatedFields.mobileNumber = payloadUser.mobileNumber;
-    }
-    if (payloadUser.country) {
-      updatedFields.country = payloadUser.country;
-    }
-    if (payloadUser.userName) {
-      updatedFields.userName = payloadUser.userName;
-    }
-    if (payloadUser.state) {
-      updatedFields.state = payloadUser.state;
-    }
-
-    await User.updateOne({ email: payload.email }, updatedFields);
-
-    const businessId = alreadyExists?.businessGroupId;
-
-    await BusinessGroup.findOneAndUpdate(businessId, payloadGroup, {
-      new: true,
-    });
-
+  let alreadyExists = await User.findOne({
+    $or: [{ email: payload.email }],
+  });
+  if (!alreadyExists) {
     res.send(
-      createResponse({}, "Business group has been updated successfully!")
+      createHttpError(404, "Business group with this email is not exists")
     );
-  
+    return;
+  }
+
+  const updatedFields: any = {};
+
+  if (payloadUser.mobileNumber) {
+    updatedFields.mobileNumber = payloadUser.mobileNumber;
+  }
+  if (payloadUser.country) {
+    updatedFields.country = payloadUser.country;
+  }
+  if (payloadUser.userName) {
+    updatedFields.userName = payloadUser.userName;
+  }
+  if (payloadUser.state) {
+    updatedFields.state = payloadUser.state;
+  }
+
+  await User.updateOne({ email: payload.email }, updatedFields);
+
+  const businessId = alreadyExists?.businessGroupId;
+console.log(payloadGroup)
+  await BusinessGroup.findOneAndUpdate(businessId, payloadGroup, {
+    new: true,
+  });
+
+  res.send(createResponse({}, "Business group has been updated successfully!"));
 };
 
 export const deleteBusinessGroup = async (
@@ -210,17 +211,17 @@ export const getAllGroups = async (
 export const updatePassword = async (req: Request, res: Response) => {
   const { password, oldPassword, _id } = req.body;
 
-  const existUser = await User.findOne({ businessGroupId: _id }).lean();
-
+  const existUser = await User.findOne({ _id: _id }).select(
+    "password"
+  );
+ 
   if (existUser) {
     const matched = await existUser.isValidPassword(oldPassword);
     if (!matched) {
       throw createHttpError(400, { message: "Old password is not correct" });
     }
-    await User.findOne(
-      { id: existUser?._id },
-      { $set: { password: password } }
-    );
+    const hash = await bcrypt.hash(password, 12);
+    await User.findOneAndUpdate({ _id: existUser?._id }, { password: hash });
   } else {
     throw createHttpError(400, { message: "Business group not found" });
   }

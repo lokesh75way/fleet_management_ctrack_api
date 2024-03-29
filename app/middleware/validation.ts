@@ -31,7 +31,7 @@ export const validate = (validationName: string): any[] => {
           .bail()
           .withMessage("Password is required")
           .custom((value, { req }) => {
-            if (value !== req.body.oldPassword) {
+            if (value === req.body.oldPassword) {
               throw new Error(
                 "Old password and new password should be different"
               );
@@ -319,7 +319,7 @@ export const validate = (validationName: string): any[] => {
 
         check("zipCode").optional(),
 
-        check("storageCapacity").optional().isNumeric(),
+        check("storageCapacity").optional(),
 
         check("logo").optional().isURL(),
 
@@ -339,7 +339,7 @@ export const validate = (validationName: string): any[] => {
 
         check("unitOfDistance")
           .optional()
-          .isIn(["MILES", "KILOMETER", "NAUTIC_MILES"]),
+          .isIn(["MILES", "KILOMETERS", "NAUTIC_MILES"]),
         check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
 
         check("language")
@@ -398,7 +398,7 @@ export const validate = (validationName: string): any[] => {
 
         check("city").optional().optional(),
 
-        check("zipCode").optional().isPostalCode("any"),
+        check("zipCode").optional(),
 
         check("storageCapacity").optional(),
 
@@ -416,11 +416,11 @@ export const validate = (validationName: string): any[] => {
 
         check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
 
-        check("timeFormat").optional().isIn(["12", "24"]),
+        check("timeFormat").optional().isIn(["12 Hour", "24 Hour"]),
 
         check("unitOfDistance")
           .optional()
-          .isIn(["MILES", "KILOMETER", "NAUTICAL_MILES"]),
+          .isIn(["MILES", "KILOMETERS", "NAUTICAL_MILES"]),
 
         check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
 
@@ -527,11 +527,11 @@ export const validate = (validationName: string): any[] => {
 
         check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
 
-        check("timeFormat").optional().isIn(["12", "24"]),
+        check("timeFormat").optional().isIn(["12 Hour", "24 Hour"]),
 
         check("unitOfDistance")
           .optional()
-          .isIn(["MILES", "KILOMETER", "NAUTICAL_MILES"]),
+          .isIn(["MILES", "KILOMETERS", "NAUTICAL_MILES"]),
 
         check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
 
@@ -611,11 +611,11 @@ export const validate = (validationName: string): any[] => {
 
         check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
 
-        check("timeFormat").optional().isIn(["12", "24"]),
+        check("timeFormat").optional().isIn(["12 Hour", "24 Hour"]),
 
         check("unitOfDistance")
           .optional()
-          .isIn(["MILES", "KILOMETER", "NAUTICAL_MILES"]),
+          .isIn(["MILES", "KILOMETERS", "NAUTICAL_MILES"]),
 
         check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
 
@@ -679,11 +679,11 @@ export const validate = (validationName: string): any[] => {
 
         check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
 
-        check("timeFormat").optional().isIn(["12", "24"]),
+        check("timeFormat").optional().isIn(["12 Hour", "24 Hour"]),
 
         check("unitOfDistance")
           .optional()
-          .isIn(["MILES", "KILOMETER", "NAUTIC_MILES"]),
+          .isIn(["MILES", "KILOMETERS", "NAUTIC_MILES"]),
 
         check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
 
@@ -742,11 +742,11 @@ export const validate = (validationName: string): any[] => {
 
         check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
 
-        check("timeFormat").optional().isIn(["12", "24"]),
+        check("timeFormat").optional().isIn(["12 Hour", "24 Hour"]),
 
         check("unitOfDistance")
           .optional()
-          .isIn(["MILES", "KILOMETER", "NAUTIC_MILES"]),
+          .isIn(["MILES", "KILOMETERS", "NAUTIC_MILES"]),
         check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
 
         check("language")
