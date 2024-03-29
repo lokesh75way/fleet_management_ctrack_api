@@ -10,7 +10,7 @@ export const createBusinessUser = async (
   next: NextFunction
 ) => {
   const payload = req.body;
-  console.log("Hello");
+
   // @ts-ignore
   const id = req.user._id;
   const payloadUser = {
@@ -35,17 +35,16 @@ export const createBusinessUser = async (
   });
 
   if (alreadyExists) {
-    res.send(createHttpError(409, "Business group with this email already exists"));
-    return;
+    res.send(createHttpError(409, "Company with this email already exists"));
   }
 
   alreadyExists = await User.findOne({
     userName: payload.userName,
+    //   { mobileNumber: payload.mobileNumber },
   });
 
   if (alreadyExists) {
-    res.send(createHttpError(409, "Business group with this username already exists"));
-    return;
+    res.send(createHttpError(409, "Company with this username already exists"));
   }
 
   alreadyExists = await User.findOne({
@@ -177,13 +176,7 @@ export const getAllGroups = async (
     // @ts-ignore
     const role = req.user.role;
 
-    let query: any = { isDeleted: false, role: UserRole.BUSINESS_GROUP };
-
-    // if (role === UserRole.SUPER_ADMIN) {
-    //   query["businessGroupId.createdBy"] = id;
-    // }
-
-    console.log(query);
+    const query: any = { isDeleted: false, role: UserRole.BUSINESS_GROUP };
 
     let { page, limit } = req.query;
     let page1 = parseInt(page as string) || 1;
@@ -212,4 +205,25 @@ export const getAllGroups = async (
       data: { user: null },
     });
   }
+};
+
+export const updatePassword = async (req: Request, res: Response) => {
+  const { password, oldPassword, _id } = req.body;
+
+  const existUser = await User.findOne({ businessGroupId: _id }).lean();
+
+  if (existUser) {
+    const matched = await existUser.isValidPassword(oldPassword);
+    if (!matched) {
+      throw createHttpError(400, { message: "Old password is not correct" });
+    }
+    await User.findOne(
+      { id: existUser?._id },
+      { $set: { password: password } }
+    );
+  } else {
+    throw createHttpError(400, { message: "Business group not found" });
+  }
+
+  res.send(createResponse({ _id }, "Password changed successfully"));
 };

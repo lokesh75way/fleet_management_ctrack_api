@@ -113,7 +113,10 @@ export const getAllCompanies = async (
 
     const companies = await User.find(query).populate([
       { path: "companyId", match: secondQuery },
-      { path: "companyId", populate: { path: "businessGroupId" , select :"groupName" } },
+      {
+        path: "companyId",
+        populate: { path: "businessGroupId", select: "groupName" },
+      },
     ]);
 
     res.send(createResponse({ data: companies, totalPage: totalPages }));
@@ -205,19 +208,38 @@ export const deleteCompany = async (
     const user = await User.findOne({ _id: id });
     if (!user) {
       res.send(createHttpError(404, "User is not exists"));
-      return
+      return;
     }
     if (user?.isDeleted) {
       res.send(createHttpError(404, "User is already deleted"));
-      return
+      return;
     }
     await User.updateOne({ _id: id }, { isDeleted: true });
     res.send(createResponse({}, "User has been deleted successfully."));
-    return
+    return;
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
       data: { user: null },
     });
   }
+};
+
+export const updatePassword = async (req: Request, res: Response) => {
+  const { password, oldPassword, _id } = req.body;
+  const existUser = await User.findOne({ companyId: _id }).lean();
+  if (existUser) {
+    const matched = await existUser.isValidPassword(oldPassword);
+    if (!matched) {
+      throw createHttpError(400, { message: "Old password is not correct" });
+    }
+    await User.findOne(
+      { id: existUser?._id },
+      { $set: { password: password } }
+    );
+  } else {
+    throw createHttpError(400, { message: "Company not found" });
+  }
+
+  res.send(createResponse({ _id }, "Password changed successfully"));
 };

@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response } from "express";
 import createHttpError from "http-errors";
 import Driver from "../schema/Driver";
 import { createResponse } from "../helper/response";
@@ -33,7 +33,7 @@ export const getDriver = async (req: Request, res: Response) => {
   if (driver == null)
     throw createHttpError(404, { message: "No driver found" });
 
-  res.send(createResponse({ driver }, "One driver found!"));
+  res.send(createResponse(driver, "One driver found!"));
 };
 
 export const deleteDrivers = async (req: Request, res: Response) => {

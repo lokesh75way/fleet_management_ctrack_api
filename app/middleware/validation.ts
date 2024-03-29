@@ -17,6 +17,40 @@ import {
 
 export const validate = (validationName: string): any[] => {
   switch (validationName) {
+    case "change:password": {
+      return [
+        check("_id").exists().notEmpty().bail().withMessage("Id is required"),
+        check("oldPassword")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Old password is required"),
+        check("password")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Password is required")
+          .custom((value, { req }) => {
+            if (value !== req.body.oldPassword) {
+              throw new Error(
+                "Old password and new password should be different"
+              );
+            }
+            return true;
+          }),
+        check("confirmPassword")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Confirm password is required")
+          .custom((value, { req }) => {
+            if (value !== req.body.password) {
+              throw new Error("Password confirmation does not match password");
+            }
+            return true;
+          }),
+      ];
+    }
     case "users:login": {
       return [
         check("email")
