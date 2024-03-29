@@ -9,74 +9,73 @@ export const createBusinessUser = async (
   res: Response,
   next: NextFunction
 ) => {
-    const payload = req.body;
+  const payload = req.body;
+  console.log("Hello");
+  // @ts-ignore
+  const id = req.user._id;
+  const payloadUser = {
+    userName: payload.userName,
+    email: payload.email,
+    password: payload.password,
+    mobileNumber: payload.mobileNumber,
+    country: payload.country,
+    state: payload.state,
+    role: UserRole.BUSINESS_GROUP,
+    type: UserType.ADMIN,
+  };
+  const payloadGroup = { ...payload, createdBy: id };
 
-    // @ts-ignore
-    const id = req.user._id;
-    const payloadUser = {
-      userName: payload.userName,
-      email: payload.email,
-      password: payload.password,
-      mobileNumber: payload.mobileNumber,
-      country: payload.country,
-      state: payload.state,
-      role: UserRole.BUSINESS_GROUP,
-      type: UserType.ADMIN,
-    };
-    const payloadGroup = { ...payload, createdBy: id };
+  delete payloadGroup.email;
+  delete payloadGroup.userName;
+  delete payloadGroup.password;
+  delete payloadGroup.mobileNumber;
 
-    delete payloadGroup.email;
-    delete payloadGroup.userName;
-    delete payloadGroup.password;
-    delete payloadGroup.mobileNumber;
+  let alreadyExists = await User.findOne({
+    email: payload.email,
+  });
 
-    let alreadyExists = await User.findOne({
-      email: payload.email,
-    });
+  if (alreadyExists) {
+    res.send(createHttpError(409, "Business group with this email already exists"));
+    return;
+  }
 
-    if (alreadyExists) {
-      res.send(createHttpError(409, "Company with this email already exists"));
-    }
+  alreadyExists = await User.findOne({
+    userName: payload.userName,
+  });
 
-    alreadyExists = await User.findOne({
-      userName: payload.userName,
-      //   { mobileNumber: payload.mobileNumber },
-    });
+  if (alreadyExists) {
+    res.send(createHttpError(409, "Business group with this username already exists"));
+    return;
+  }
 
-    if (alreadyExists) {
-      res.send(
-        createHttpError(409, "Company with this username already exists")
-      );
-    }
+  alreadyExists = await User.findOne({
+    mobileNumber: payload.mobileNumber,
+  });
 
-    alreadyExists = await User.findOne({
-      mobileNumber: payload.mobileNumber,
-    });
-
-    if (alreadyExists) {
-      res.send(
-        createHttpError(409, "Company with this phone number already exists")
-      );
-    }
-
-    const newBusinessGroup = await BusinessGroup.create({
-      ...payloadGroup,
-    });
-    if (!newBusinessGroup) {
-      res.send(createHttpError(400, "Business group is not created"));
-    }
-    const newUser = await User.create({
-      ...payloadUser,
-      businessGroupId: newBusinessGroup._id,
-    });
-
-    if (!newUser) {
-      res.send(createHttpError(400, "User is not created"));
-    }
-
+  if (alreadyExists) {
     res.send(
-      createResponse({}, "Business group has been created successfully!")
+      createHttpError(409, "Business group with this phone number already exists")
     );
+    return;
+  }
+
+  const newBusinessGroup = await BusinessGroup.create(payloadGroup);
+  if (!newBusinessGroup) {
+    res.send(createHttpError(400, "Business group is not created"));
+    return;
+  }
+  const newUser = await User.create({
+    ...payloadUser,
+    businessGroupId: newBusinessGroup._id,
+  });
+
+  if (!newUser) {
+    res.send(createHttpError(400, "User is not created"));
+    return;
+  }
+
+  res.send(createResponse({}, "Business group has been created successfully!"));
+  return;
 };
 
 export const updateBusinessUser = async (
@@ -84,7 +83,6 @@ export const updateBusinessUser = async (
   res: Response,
   next: NextFunction
 ) => {
-  try {
     const payload = req.body;
 
     const payloadUser = {
@@ -140,12 +138,7 @@ export const updateBusinessUser = async (
     res.send(
       createResponse({}, "Business group has been updated successfully!")
     );
-  } catch (error: any) {
-    throw createHttpError(400, {
-      message: error?.message ?? "An error occurred.",
-      data: { user: null },
-    });
-  }
+  
 };
 
 export const deleteBusinessGroup = async (
@@ -155,7 +148,7 @@ export const deleteBusinessGroup = async (
 ) => {
   try {
     const { id } = req.params;
-    console.log(id)
+    console.log(id);
     const user = await User.findOne({ _id: id });
     if (!user) {
       res.send(createHttpError(404, "User is not exists"));
@@ -184,13 +177,13 @@ export const getAllGroups = async (
     // @ts-ignore
     const role = req.user.role;
 
-    let query : any = { "isDeleted": false, "role" : UserRole.BUSINESS_GROUP };
+    let query: any = { isDeleted: false, role: UserRole.BUSINESS_GROUP };
 
     // if (role === UserRole.SUPER_ADMIN) {
     //   query["businessGroupId.createdBy"] = id;
     // }
 
-    console.log(query)
+    console.log(query);
 
     let { page, limit } = req.query;
     let page1 = parseInt(page as string) || 1;
@@ -202,9 +195,15 @@ export const getAllGroups = async (
 
     const startIndex = (page1 - 1) * limit1;
 
-    const groups = await User.find(query).populate({path : "businessGroupId", match : {
-      createdBy : id
-    }}).limit(limit1).skip(startIndex)
+    const groups = await User.find(query)
+      .populate({
+        path: "businessGroupId",
+        match: {
+          createdBy: id,
+        },
+      })
+      .limit(limit1)
+      .skip(startIndex);
 
     res.send(createResponse({ data: groups, totalPage: totalPages }));
   } catch (error: any) {

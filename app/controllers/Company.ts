@@ -180,7 +180,7 @@ export const updateCompanyUser = async (
 
     await User.updateOne({ email: payload.email }, updatedFields);
 
-    const companyId = alreadyExists?.businessGroupId;
+    const companyId = alreadyExists?.companyId;
 
     await Company.findOneAndUpdate(companyId, payloadCompany, {
       new: true,

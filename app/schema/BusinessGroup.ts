@@ -6,7 +6,7 @@ import { IUser } from "./User";
 enum UnitOfDistance {
  MILES =  "MILES",
  KILOMETER =  "KILOMETER",
- NAUTIC_MILES =  "NAUTIC_MILES"
+ NAUTICAL_MILES =  "NAUTICAL_MILES"
 }
 
 enum UnitOfFuel {
@@ -37,8 +37,8 @@ export interface IBusinessGroup extends BaseSchema {
   groupName: string;
   logo: string;
   helpDeskEmail: string;
-  helpDeskPhone: string;
-  whatsappNumber: string;
+  helpDeskTelephoneNumber: string;
+  whatsappContactNumber: string;
   // address
   country: string;
   state: string;
@@ -48,8 +48,9 @@ export interface IBusinessGroup extends BaseSchema {
   street2: string;
   contactPerson: string;
   faxNumber: string;
-  capacity: number;
+  capacity: String;
   // setting
+  status : string;
   dateFormat: string;
   timeFormat: string;
   unitOfDistance: string;
@@ -67,8 +68,8 @@ const BusinessGroupSchema = new Schema<IBusinessGroup>(
     groupName: { type: String },
     logo: { type: String },
     helpDeskEmail: { type: String },
-    helpDeskPhone: { type: String },
-    whatsappNumber: { type: String },
+    helpDeskTelephoneNumber: { type: String , required : true },
+    whatsappContactNumber: { type: String },
     country: { type: String },
     state: { type: String },
     city: { type: String },
@@ -77,12 +78,13 @@ const BusinessGroupSchema = new Schema<IBusinessGroup>(
     street2: { type: String },
     contactPerson: { type: String },
     faxNumber: { type: String },
+    status : {type : String , enum : ["INACTIVE","ACTIVE"]},
     dateFormat: { type: String, enum: ["MM-DD-YYYY","DD-MM-YYYY"] },
-    timeFormat: { type: String, enum : ["12","24"] },
+    timeFormat: { type: String, enum : ["12 Hour","24 Hour"] },
     unitOfDistance: { type: String , enum : UnitOfDistance },
     unitOfFuel: { type: String , enum : UnitOfFuel },
     language: { type: String , enum : Language },
-    capacity: { type: Number },
+    capacity: { type: String },
     workStartDay: { type: String , enum : WeekDays },
     currency: { type: String },
     timezone: { type: String },

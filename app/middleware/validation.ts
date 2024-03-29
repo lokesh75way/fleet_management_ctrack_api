@@ -264,7 +264,10 @@ export const validate = (validationName: string): any[] => {
           .bail()
           .withMessage("Enter valid email"),
 
-        check("helpDeskTelephoneNumber").optional(),
+        check("helpDeskTelephoneNumber")
+          .exists()
+          .notEmpty()
+          .isMobilePhone("any"),
 
         check("mobileNumber")
           .exists()
@@ -298,7 +301,7 @@ export const validate = (validationName: string): any[] => {
 
         check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
 
-        check("timeFormat").optional().isIn(["12", "24"]),
+        check("timeFormat").optional().isIn(["12 Hour", "24 Hour"]),
 
         check("unitOfDistance")
           .optional()
@@ -318,7 +321,7 @@ export const validate = (validationName: string): any[] => {
             "MONDAY",
             "TUESDAY",
             "WEDNESDAY",
-            "THRUSDAY",
+            "THURSDAY",
             "FRIDAY",
             "SATURDAY",
           ]),
@@ -363,7 +366,7 @@ export const validate = (validationName: string): any[] => {
 
         check("zipCode").optional().isPostalCode("any"),
 
-        check("storageCapacity").optional().isNumeric(),
+        check("storageCapacity").optional(),
 
         check("logo").optional().isURL(),
 
@@ -383,7 +386,7 @@ export const validate = (validationName: string): any[] => {
 
         check("unitOfDistance")
           .optional()
-          .isIn(["MILES", "KILOMETER", "NAUTIC_MILES"]),
+          .isIn(["MILES", "KILOMETER", "NAUTICAL_MILES"]),
 
         check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
 
@@ -400,7 +403,7 @@ export const validate = (validationName: string): any[] => {
             "MONDAY",
             "TUESDAY",
             "WEDNESDAY",
-            "THRUSDAY",
+            "THURSDAY",
             "FRIDAY",
             "SATURDAY",
           ]),
@@ -413,9 +416,8 @@ export const validate = (validationName: string): any[] => {
 
     case "company:add": {
       return [
-        check("businessGroupId")
-          .optional(),
-          // Temp
+        check("businessGroupId").optional(),
+        // Temp
 
         check("userName")
           .exists({ values: "falsy" })
@@ -475,7 +477,7 @@ export const validate = (validationName: string): any[] => {
 
         check("zipCode").optional().isPostalCode("any"),
 
-        check("storageCapacity").optional().isNumeric(),
+        check("storageCapacity").optional(),
 
         check("logo").optional().isURL(),
 
@@ -495,7 +497,7 @@ export const validate = (validationName: string): any[] => {
 
         check("unitOfDistance")
           .optional()
-          .isIn(["MILES", "KILOMETER", "NAUTIC_MILES"]),
+          .isIn(["MILES", "KILOMETER", "NAUTICAL_MILES"]),
 
         check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
 
@@ -512,7 +514,7 @@ export const validate = (validationName: string): any[] => {
             "MONDAY",
             "TUESDAY",
             "WEDNESDAY",
-            "THRUSDAY",
+            "THURSDAY",
             "FRIDAY",
             "SATURDAY",
           ]),
@@ -545,11 +547,11 @@ export const validate = (validationName: string): any[] => {
           .isEmail()
           .withMessage("Enter valid email"),
 
-        check("helpDeskTelephoneNumber").optional().isMobilePhone("any"),
+        check("helpDeskTelephoneNumber").optional(),
 
-        check("mobileNumber").optional().isMobilePhone("any"),
+        check("mobileNumber").optional(),
 
-        check("whatsappContactNumber").optional().isMobilePhone("any"),
+        check("whatsappContactNumber").optional(),
 
         check("country").optional().optional(),
 
@@ -559,7 +561,7 @@ export const validate = (validationName: string): any[] => {
 
         check("zipCode").optional().isPostalCode("any"),
 
-        check("storageCapacity").optional().isNumeric(),
+        check("storageCapacity").optional(),
 
         check("logo").optional().isURL(),
 
@@ -579,7 +581,8 @@ export const validate = (validationName: string): any[] => {
 
         check("unitOfDistance")
           .optional()
-          .isIn(["MILES", "KILOMETER", "NAUTIC_MILES"]),
+          .isIn(["MILES", "KILOMETER", "NAUTICAL_MILES"]),
+
         check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
 
         check("language")
@@ -595,7 +598,7 @@ export const validate = (validationName: string): any[] => {
             "MONDAY",
             "TUESDAY",
             "WEDNESDAY",
-            "THRUSDAY",
+            "THURSDAY",
             "FRIDAY",
             "SATURDAY",
           ]),
@@ -663,7 +666,7 @@ export const validate = (validationName: string): any[] => {
             "MONDAY",
             "TUESDAY",
             "WEDNESDAY",
-            "THRUSDAY",
+            "THURSDAY",
             "FRIDAY",
             "SATURDAY",
           ]),
@@ -725,7 +728,7 @@ export const validate = (validationName: string): any[] => {
             "MONDAY",
             "TUESDAY",
             "WEDNESDAY",
-            "THRUSDAY",
+            "THURSDAY",
             "FRIDAY",
             "SATURDAY",
           ]),
@@ -984,7 +987,6 @@ export const validate = (validationName: string): any[] => {
       ];
     }
 
-   
     case "id:mongoId": {
       return [
         param("id")
@@ -1349,7 +1351,7 @@ export const validate = (validationName: string): any[] => {
           .withMessage("Invalid document type value"),
         check("documents.*.file").optional(),
         check("documents.*.issueDate").optional(),
-          
+
         check("companyId")
           .optional()
           .isMongoId()

@@ -7,7 +7,7 @@ import { IUser } from "./User";
 enum UnitOfDistance {
   MILES = "MILES",
   KILOMETER = "KILOMETER",
-  NAUTIC_MILES = "NAUTIC_MILES",
+  NAUTICAL_MILES = "NAUTICAL_MILES",
 }
 
 enum UnitOfFuel {
@@ -65,7 +65,7 @@ const BranchSchema = new Schema<IBranch>(
     businessGroupId: { type: Schema.Types.ObjectId, ref: "business-group", required: true },
     companyId: { type: Schema.Types.ObjectId, ref: "company", required: true },
     parentBranchId: { type: Schema.Types.ObjectId, ref: "company-branch", required: false },
-  
+   
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
 
