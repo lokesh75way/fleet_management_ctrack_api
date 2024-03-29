@@ -68,7 +68,7 @@ const CompanySchema = new Schema<ICompany>(
       ref: "business-group",
       required: true,
     },
-    companyName: { type: String, required: true },
+    companyName: { type: String, required: true  },
     logo: { type: String },
     helpDeskEmail: { type: String },
     helpDeskTelephoneNumber: { type: String , required : true },

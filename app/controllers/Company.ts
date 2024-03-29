@@ -118,7 +118,7 @@ export const getAllCompanies = async (
         path: "companyId",
         populate: { path: "businessGroupId", select: "groupName" },
       },
-    ]);
+    ]).sort({ _id: -1 });
 
     res.send(createResponse({ data: companies, totalPage: totalPages }));
   } catch (error: any) {
@@ -162,7 +162,7 @@ export const updateCompanyUser = async (
     });
     if (!alreadyExists) {
       res.send(
-        createHttpError(404, "Business group with this email is not exists")
+        createHttpError(404, "Company with this email is not exists")
       );
       return;
     }
@@ -208,11 +208,11 @@ export const deleteCompany = async (
     const { id } = req.params;
     const user = await User.findOne({ _id: id });
     if (!user) {
-      res.send(createHttpError(404, "User is not exists"));
+      res.send(createHttpError(404, "Company is not exists"));
       return;
     }
     if (user?.isDeleted) {
-      res.send(createHttpError(404, "User is already deleted"));
+      res.send(createHttpError(404, "Company is already deleted"));
       return;
     }
     await User.updateOne({ _id: id }, { isDeleted: true });
@@ -228,7 +228,7 @@ export const deleteCompany = async (
 
 export const updatePassword = async (req: Request, res: Response) => {
   const { password, oldPassword, _id } = req.body;
-  const existUser = await User.findOne({ companyId: _id }).lean();
+  const existUser = await User.findOne({ _id: _id }).select("password");
   if (existUser) {
     const matched = await existUser.isValidPassword(oldPassword);
     if (!matched) {

@@ -390,7 +390,7 @@ export const validate = (validationName: string): any[] => {
 
         check("mobileNumber").optional().isMobilePhone("any"),
 
-        check("whatsappContactNumber").optional().isMobilePhone("any"),
+        check("whatsappContactNumber").optional(),
 
         check("country").optional().optional(),
 
@@ -683,7 +683,7 @@ export const validate = (validationName: string): any[] => {
 
         check("unitOfDistance")
           .optional()
-          .isIn(["MILES", "KILOMETERS", "NAUTIC_MILES"]),
+          .isIn(["MILES", "KILOMETERS", "NAUTICAL_MILES"]),
 
         check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
 
@@ -746,7 +746,7 @@ export const validate = (validationName: string): any[] => {
 
         check("unitOfDistance")
           .optional()
-          .isIn(["MILES", "KILOMETERS", "NAUTIC_MILES"]),
+          .isIn(["MILES", "KILOMETERS", "NAUTICAL_MILES"]),
         check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
 
         check("language")

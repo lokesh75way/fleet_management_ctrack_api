@@ -31,6 +31,8 @@ export const createBusinessUser = async (
   delete payloadGroup.password;
   delete payloadGroup.mobileNumber;
 
+  
+
   let alreadyExists = await User.findOne({
     email: payload.email,
   });
@@ -46,6 +48,14 @@ export const createBusinessUser = async (
 
   if (alreadyExists) {
     res.send(createHttpError(409, "Company with this username already exists"));
+  }
+
+  alreadyExists = await BusinessGroup.findOne({
+    groupName: payload.groupName,
+  });
+
+  if (alreadyExists) {
+    res.send(createHttpError(409, "Group Name with this name already exists"));
   }
 
   alreadyExists = await User.findOne({
@@ -73,7 +83,7 @@ export const createBusinessUser = async (
   });
 
   if (!newUser) {
-    res.send(createHttpError(400, "User is not created"));
+    res.send(createHttpError(400, "Business group is not created"));
     return;
   }
 
@@ -151,13 +161,13 @@ export const deleteBusinessGroup = async (
     console.log(id);
     const user = await User.findOne({ _id: id });
     if (!user) {
-      res.send(createHttpError(404, "User is not exists"));
+      res.send(createHttpError(404, "Business group is not exists"));
     }
     if (user?.isDeleted) {
-      res.send(createHttpError(404, "User is already deleted"));
+      res.send(createHttpError(404, "Business group is already deleted"));
     }
     await User.updateOne({ _id: id }, { isDeleted: true });
-    res.send(createResponse({}, "User has been deleted successfully."));
+    res.send(createResponse({}, "Business group has been deleted successfully."));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
@@ -195,7 +205,9 @@ export const getAllGroups = async (
         match: {
           createdBy: id,
         },
+        
       })
+      .sort({ _id: -1 }) 
       .limit(limit1)
       .skip(startIndex);
 
