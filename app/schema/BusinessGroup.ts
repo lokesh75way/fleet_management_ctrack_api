@@ -65,7 +65,7 @@ export interface IBusinessGroup extends BaseSchema {
 
 const BusinessGroupSchema = new Schema<IBusinessGroup>(
   {
-    groupName: { type: String },
+    groupName: { type: String , unique: true },
     logo: { type: String },
     helpDeskEmail: { type: String },
     helpDeskTelephoneNumber: { type: String , required : true },
