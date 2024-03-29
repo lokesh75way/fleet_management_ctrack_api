@@ -1,3 +1,4 @@
+import { createCompany } from "../controllers/Company";
 import asyncHandler from "express-async-handler";
 import {
   createDriver,

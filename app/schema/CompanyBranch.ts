@@ -6,8 +6,8 @@ import { IUser } from "./User";
 
 enum UnitOfDistance {
   MILES = "MILES",
-  KILOMETER = "KILOMETER",
-  NAUTIC_MILES = "NAUTIC_MILES",
+  KILOMETERS = "KILOMETERS",
+  NAUTICAL_MILES = "NAUTICAL_MILES",
 }
 
 enum UnitOfFuel {
@@ -65,7 +65,7 @@ const BranchSchema = new Schema<IBranch>(
     businessGroupId: { type: Schema.Types.ObjectId, ref: "business-group", required: true },
     companyId: { type: Schema.Types.ObjectId, ref: "company", required: true },
     parentBranchId: { type: Schema.Types.ObjectId, ref: "company-branch", required: false },
-  
+   
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
 
@@ -77,7 +77,7 @@ const BranchSchema = new Schema<IBranch>(
     street1: { type: String },
     street2: { type: String },
     dateFormat: { type: String, enum: ["MM-DD-YYYY", "DD-MM-YYYY"] },
-    timeFormat: { type: String, enum: ["12", "24"] },
+    timeFormat: { type: String, enum: ["12 Hour", "24 Hour"] },
     unitOfDistance: { type: String, enum: UnitOfDistance },
     unitOfFuel: { type: String, enum: UnitOfFuel },
     language: { type: String, enum: Language },

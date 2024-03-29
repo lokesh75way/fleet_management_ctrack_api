@@ -73,7 +73,6 @@ export const updateBranch = async (
       res.send(createHttpError(404, "Branch is not exists"));
       return;
     }
-
     await CompanyBranch.findOneAndUpdate({ _id: branchId }, payloadBranch);
 
     res.send(createResponse({}, "Branch has been updated successfully!"));

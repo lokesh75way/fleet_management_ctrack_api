@@ -12,7 +12,7 @@ export enum DistanceCounter {
 }
 
 export enum UnitOFDistance {
-  KILOMETER = "KILOMETER",
+  KILOMETERS = "KILOMETERS",
   MILE = "MILE",
   NATURAL_MILE = "NATURAL_MILE",
 }

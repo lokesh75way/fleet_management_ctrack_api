@@ -11,28 +11,25 @@ import bcrypt from "bcrypt";
 import { forgetPasswordEmailTemplate, sendEmail } from "../services/email";
 import Permission from "../schema/Permission";
 
-
 /**
  * User login
  * @param { email, password } req.body
  * @param res
  */
-export const adminLogin = async (
-  req: Request,
-  res: Response
-) => {
+export const adminLogin = async (req: Request, res: Response) => {
   try {
     const user = req.user as IUser;
     const { user: userData, token } = await generateToken(user);
     const options = { new: true };
 
-    const data = await User.findById(user._id)
-    .select("userName firstName lastName email mobileNumber role type");
+    const data = await User.findById(user._id).select(
+      "userName firstName lastName email mobileNumber role type"
+    );
 
     const permissions = await Permission.find().populate("permission.moduleId");
 
     res.send(
-      createResponse({ user: data ,token , permissions }, "Login successfully!")
+      createResponse({ user: data, token, permissions }, "Login successfully!")
     );
   } catch (error: any) {
     throw createHttpError(400, {
@@ -65,9 +62,9 @@ export const changePassword = async (
     const validate = await user?.isValidPassword(password);
     if (!validate) {
       throw createHttpError(400, {
-          message: `Current password did not match! Please try again.`,
-          data: { user: null },
-        });
+        message: `Current password did not match! Please try again.`,
+        data: { user: null },
+      });
     }
 
     const hash = await bcrypt.hash(newPassword, 12);
@@ -80,9 +77,9 @@ export const changePassword = async (
     res.send(createResponse({}, "Password changes successfully!"));
   } catch (error: any) {
     throw createHttpError(400, {
-        message: error?.message ?? "An error occurred.",
-        data: { user: null },
-      });
+      message: error?.message ?? "An error occurred.",
+      data: { user: null },
+    });
   }
 };
 
@@ -114,9 +111,9 @@ export const profileUpdate = async (
     res.send(createResponse(user, `Profile updated successfully!`));
   } catch (error: any) {
     throw createHttpError(400, {
-        message: error?.message,
-        data: { user: null },
-      });
+      message: error?.message,
+      data: { user: null },
+    });
   }
 };
 
@@ -151,18 +148,18 @@ export const forgetPassword = async (
         subject: "Password reset link",
         html: body,
       });
-       res.send(
+      res.send(
         createResponse(
           {},
           `A password reset link send to your registered email`
         )
       );
     }
-  } catch (error:any) {
+  } catch (error: any) {
     throw createHttpError(400, {
-        message: error?.message ?? "An error occurred.",
-        data: { user: null },
-      });
+      message: error?.message ?? "An error occurred.",
+      data: { user: null },
+    });
   }
 };
 
@@ -182,9 +179,9 @@ export const resetPassword = async (
 
     if (!verify) {
       throw createHttpError(400, {
-          message: `Invalid link or expired!`,
-          data: { user: null },
-        })
+        message: `Invalid link or expired!`,
+        data: { user: null },
+      });
     }
 
     // @ts-ignore
@@ -200,16 +197,30 @@ export const resetPassword = async (
 
     if (!updatePassword) {
       throw createHttpError(400, {
-          message: `Failed to set new password!`,
-          data: { user: null },
-        })
+        message: `Failed to set new password!`,
+        data: { user: null },
+      });
     }
 
     res.send(createResponse({}, `Password changed successfully!`));
   } catch (error: any) {
     throw createHttpError(400, {
-        message: error?.message ?? "An error occurred.",
-        data: { user: null },
-      })
+      message: error?.message ?? "An error occurred.",
+      data: { user: null },
+    });
   }
+};
+
+export const adminRegister = async (req: Request, res: Response) => {
+  const { name, email, password, mobile, username } = req.body;
+  await User.create({
+    email,
+    password,
+    firstName: name,
+    userName: username,
+    lastName: "",
+    mobileNumber: mobile,
+    role: "SUPER_ADMIN",
+  });
+  res.send(createResponse({}, "Admin created successfully"));
 };
