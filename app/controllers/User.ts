@@ -20,7 +20,7 @@ export const addSubAdmin = async (req: Request, res: Response, next: NextFunctio
                 message: `Subadmin already exist with this email!`,
             });
         }
-
+        console.log(payload)
         const createSubadmin = await new User(payload).save();
         createSubadmin['password'] = "";
 
@@ -96,10 +96,10 @@ export const getAllSubadmin = async (req: Request, res: Response, next: NextFunc
     try {
         const condition = {
             isDeleted: false,
-            role: UserRole.SUPER_ADMIN,
-            type: UserType.STAFF,
+            role: { $in: [UserRole.SUPER_ADMIN, UserRole.user] },
+            type: { $in: [UserType.STAFF, UserType.admin] },
         };
-        const data = await User.find(condition).select("_id email name isActive createdAt").sort({
+        const data = await User.find(condition).select("-password").sort({
             createdAt: -1
         });
         const count = await User.count(condition);

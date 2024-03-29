@@ -73,11 +73,11 @@ const initApp = async (): Promise<void> => {
   router.use("/branch",companyAccess, branchRoutes)
   router.use("/profile",companyAccess , profileRoutes)
   router.use("/vehicle",companyAccess , vehicleRoutes)
+  router.use("/user", companyAccess, userRoutes);
   router.use("/driver",companyAccess , driverRoutes)
 
   // error handler
   app.use(errorHandler);
-
   http.createServer(app).listen(port);
   console.log(
     `Server is running at http://localhost:${port}`
