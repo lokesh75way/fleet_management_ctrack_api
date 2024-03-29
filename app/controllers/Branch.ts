@@ -74,7 +74,7 @@ export const updateBranch = async (
       return;
     }
 
-    await CompanyBranch.findOneAndUpdate({_id :branchId}, payloadBranch);
+    await CompanyBranch.findOneAndUpdate({ _id: branchId }, payloadBranch);
 
     res.send(createResponse({}, "Branch has been updated successfully!"));
   } catch (error: any) {
@@ -129,7 +129,7 @@ export const getAllBranch = async (
     const startIndex = (page1 - 1) * limit1;
 
     const user_id = await User.findById(id).select("companyId businessGroupId");
-
+    
     if (role === UserRole.COMPANY) {
       query.companyId = user_id?.companyId;
     }
@@ -137,8 +137,9 @@ export const getAllBranch = async (
     if (role === UserRole.BUSINESS_GROUP) {
       query.businessGroupId = user_id?.businessGroupId;
     }
+    console.log(query);
 
-    const data = await CompanyBranch.find(query).limit(limit1).skip(startIndex);
+    const data = await CompanyBranch.find(query).populate([{path : "businessGroupId" , select : "groupName"},{path : "companyId" , select : "companyName"}, {path : "parentBranchId", select :"branchName"}]).limit(limit1).skip(startIndex);
 
     const totalCount = await CompanyBranch.countDocuments(query);
 

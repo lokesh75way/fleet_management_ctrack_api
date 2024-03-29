@@ -265,7 +265,7 @@ export const validate = (validationName: string): any[] => {
           .bail()
           .withMessage("Enter valid email"),
 
-        check("helpDeskTelephoneNumber").optional().isMobilePhone("any"),
+        check("helpDeskTelephoneNumber").optional(),
 
         check("mobileNumber")
           .exists()
@@ -273,7 +273,7 @@ export const validate = (validationName: string): any[] => {
           .isMobilePhone("any")
           .withMessage("Enter a valid mobile number"),
 
-        check("whatsappContactNumber").optional().isMobilePhone("any"),
+        check("whatsappContactNumber").optional(),
 
         check("country").exists().notEmpty().withMessage("Country is required"),
 
@@ -281,7 +281,7 @@ export const validate = (validationName: string): any[] => {
 
         check("city").exists().notEmpty().withMessage("City is required"),
 
-        check("zipCode").optional().isPostalCode("any"),
+        check("zipCode").optional(),
 
         check("storageCapacity").optional().isNumeric(),
 
@@ -415,9 +415,8 @@ export const validate = (validationName: string): any[] => {
     case "company:add": {
       return [
         check("businessGroupId")
-          .exists({ values: "falsy" })
-          .bail()
-          .withMessage("Business group required"),
+          .optional(),
+          // Temp
 
         check("userName")
           .exists({ values: "falsy" })
@@ -467,7 +466,7 @@ export const validate = (validationName: string): any[] => {
           .isMobilePhone("any")
           .withMessage("Enter a valid mobile number"),
 
-        check("whatsappContactNumber").optional().isMobilePhone("any"),
+        check("whatsappContactNumber").optional(),
 
         check("country").exists().notEmpty().withMessage("Country is required"),
 
