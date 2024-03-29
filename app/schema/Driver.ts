@@ -5,7 +5,7 @@ import Company, { ICompany } from "./Company";
 import CompanyBranch, { IBranch } from "./CompanyBranch";
 
 // Define enums
-enum DocumentType {
+export enum DocumentType {
   DRIVING_LICENSE = "DRIVING_LICENSE",
   AADHAR_CARD = "AADHAR_CARD",
   PAN_CARD = "PAN_CARD",
@@ -13,7 +13,7 @@ enum DocumentType {
   MEDICLAIM = "MEDICLAIM",
 }
 
-interface IDriver extends BaseSchema {
+export interface IDriver extends BaseSchema {
   businessGroupId: Types.ObjectId | IBusinessGroup;
   companyId: Types.ObjectId | ICompany;
   branchId: Types.ObjectId | IBranch;
@@ -49,6 +49,7 @@ interface IDriver extends BaseSchema {
     issueDate: Date;
     expireDate: Date;
   }[];
+  isDeleted: boolean;
 }
 
 const DeviceSchema = new Schema<IDriver>(
@@ -102,6 +103,7 @@ const DeviceSchema = new Schema<IDriver>(
         expireDate: { type: Date },
       },
     ],
+    isDeleted: { type: Boolean, default: false },
   },
   {
     timestamps: true,

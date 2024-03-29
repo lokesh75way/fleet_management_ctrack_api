@@ -14,6 +14,7 @@ import {
   UnitOFDistance,
   VehicleCategory,
 } from "../schema/Vehicle";
+import { DocumentType as DriverDocumentType } from "../schema/Driver";
 
 export const validate = (validationName: string): any[] => {
   switch (validationName) {
@@ -985,7 +986,6 @@ export const validate = (validationName: string): any[] => {
       ];
     }
 
-   
     case "id:mongoId": {
       return [
         param("id")
@@ -1146,10 +1146,10 @@ export const validate = (validationName: string): any[] => {
           .bail()
           .withMessage("Atlease one document is required"),
         check("documents.*.documentType")
-          .exists()
           .notEmpty()
-          .bail()
-          .withMessage("Enter valid doc type"),
+          .withMessage("Document type is required")
+          .isIn(Object.values(DriverDocumentType))
+          .withMessage("Invalid document type value"),
         check("documents.*.file")
           .exists()
           .notEmpty()
@@ -1174,183 +1174,8 @@ export const validate = (validationName: string): any[] => {
         check("businessGroupId")
           .optional()
           .isMongoId()
-          .withMessage("Business group ID must be a valid MongoDB ObjectId"),
-        check("companyId")
-          .optional()
-          .isMongoId()
-          .withMessage("Company ID must be a valid MongoDB ObjectId"),
-        check("branchId")
-          .optional()
-          .isMongoId()
-          .withMessage("Branch ID must be a valid MongoDB ObjectId"),
-        check("vehicleName").optional(),
-        check("deviceType").optional(),
-        check("imeiNumber")
-          .optional()
-          .isString()
-          .withMessage("IMEI number must be a string"),
-        check("copyFrom").optional(),
-        check("serverAddress")
-          .optional()
-          .isURL()
-          .withMessage("Server address must be a valid URL"),
-        check("simNumber")
-          .optional()
-          .isString()
-          .withMessage("SIM number must be a string"),
-        check("secondrySimNumber")
-          .optional()
-          .isString()
-          .withMessage("Secondary SIM number must be a string"),
-        check("distanceCounter")
-          .optional()
-          .isIn(Object.values(DistanceCounter))
-          .withMessage("Invalid distance counter value"),
-        check("unitOfDistance")
-          .optional()
-          .isIn(Object.values(UnitOFDistance))
-          .withMessage("Invalid unit of distance value"),
-        check("speedDetection")
-          .optional()
-          .isIn(Object.values(SpeedDetection))
-          .withMessage("Invalid speed detection value"),
-        check("deviceAccuracyTolerance")
-          .optional()
-          .isString()
-          .withMessage("Device accuracy tolerance must be a string"),
-        check("plateNumber").optional(),
-        check("vehicleCategory")
-          .optional()
-          .isIn(Object.values(VehicleCategory))
-          .withMessage("Invalid vehicle category value"),
-        check("dvirTemplate").optional(),
-        check("manufacturerDate")
-          .optional()
-          .isISO8601()
-          .withMessage("Manufacturer date must be a valid ISO 8601 date"),
-        check("purchaseDate")
-          .optional()
-          .isISO8601()
-          .withMessage("Purchase date must be a valid ISO 8601 date"),
-        check("purchaseAmount")
-          .optional()
-          .isNumeric()
-          .withMessage("Purchase amount must be a number"),
-        check("weightCapacity")
-          .optional()
-          .isNumeric()
-          .withMessage("Weight capacity must be a number"),
-        check("gpsInstallationDate")
-          .optional()
-          .isISO8601()
-          .withMessage("GPS installation date must be a valid ISO 8601 date"),
-        check("gpsWarranty")
-          .optional()
-          .isNumeric()
-          .withMessage("GPS warranty must be a number"),
-        check("companyAverage")
-          .optional()
-          .isString()
-          .withMessage("Company average must be a string"),
-        check("permit")
-          .optional()
-          .isIn(Object.values(Permit))
-          .withMessage("Invalid permit value"),
-        check("installationDate")
-          .optional()
-          .isISO8601()
-          .withMessage("Installation date must be a valid ISO 8601 date"),
-        check("registrationNumber")
-          .optional()
-          .isString()
-          .withMessage("Registration number must be a string"),
-        check("fuelType")
-          .optional()
-          .isIn(Object.values(FuelType))
-          .withMessage("Invalid fuel type value"),
-        check("distanceBaseFuelConsumption")
-          .optional()
-          .isNumeric()
-          .withMessage("Distance base fuel consumption must be a number"),
-        check("durationBaseFuelConsumption")
-          .optional()
-          .isNumeric()
-          .withMessage("Duration base fuel consumption must be a number"),
-        check("fuelIdlingConsumption").optional(),
-        check("consumptionTolerancePercent")
-          .optional()
-          .isNumeric()
-          .withMessage("Consumption tolerance percent must be a number"),
-        check("vinNumber")
-          .optional()
-          .isNumeric()
-          .withMessage("VIN number must be a number"),
-        check("engineNumber")
-          .optional()
-          .isString()
-          .withMessage("Engine number must be a string"),
-        check("odometer").optional(),
-        check("lsbDetectionRadius").optional(),
-        check("engineHour").optional(),
-        check("passengerSeat")
-          .optional()
-          .isNumeric()
-          .withMessage("Passenger seat must be a number"),
-        check("costType")
-          .optional()
-          .isIn(Object.values(CostType))
-          .withMessage("Invalid cost type value"),
-        check("distance")
-          .optional()
-          .isNumeric()
-          .withMessage("Distance must be a number"),
-        check("duration")
-          .optional()
-          .isNumeric()
-          .withMessage("Duration must be a number"),
-        check("rfidTimeoutDuration")
-          .optional()
-          .isNumeric()
-          .withMessage("RFID timeout duration must be a number"),
-        check("sleepModeDuration")
-          .optional()
-          .isNumeric()
-          .withMessage("Sleep mode duration must be a number"),
-        check("minimumWorkingHour")
-          .optional()
-          .isNumeric()
-          .withMessage("Minimum working hour must be a number"),
-        check("weightSensor")
-          .optional()
-          .isBoolean()
-          .withMessage("Weight sensor must be a boolean"),
-        check("underweightTolerance")
-          .optional()
-          .isNumeric()
-          .withMessage("Underweight tolerance must be a number"),
-        check("overweightTolerance")
-          .optional()
-          .isNumeric()
-          .withMessage("Overweight tolerance must be a number"),
-        check("loadingUnloadingTolerance")
-          .optional()
-          .isNumeric()
-          .withMessage("Loading/unloading tolerance must be a number"),
-        check("fuelSensor")
-          .optional()
-          .isIn(Object.values(FuelSensor))
-          .withMessage("Invalid fuel sensor value"),
-        check("gSensor")
-          .optional()
-          .isBoolean()
-          .withMessage("G-sensor must be a boolean"),
-        check("documents.*.documentType")
-          .optional()
-          .isIn(Object.values(DocumentType))
-          .withMessage("Invalid document type value"),
-        check("documents.*.file").optional(),
-        check("documents.*.issueDate").optional(),
-          
+          .bail()
+          .withMessage("Provide valid group"),
         check("companyId")
           .optional()
           .isMongoId()
@@ -1364,17 +1189,13 @@ export const validate = (validationName: string): any[] => {
         check("firstName").optional(),
         check("lastName").optional(),
         check("employeeNumber")
-          .optional({ values: "falsy" })
-          .isString()
-          .bail()
-          .withMessage("Enter vaild employee number"),
-        check("country")
           .optional()
           .isString()
           .bail()
-          .withMessage("Country is required"),
+          .withMessage("Enter vaild employee number"),
+        check("country").optional().isString(),
         check("state")
-          .optional({ values: "falsy" })
+          .optional()
           .isString()
           .bail()
           .withMessage("Enter vaild state name"),
@@ -1382,7 +1203,7 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .bail()
-          .withMessage("City is required"),
+          .withMessage("Enter valid city name"),
         check("zipCode")
           .optional()
           .isPostalCode("any")
@@ -1394,14 +1215,14 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isMobilePhone("any")
           .bail()
-          .withMessage("Contact number is required"),
+          .withMessage("Enter valid contact number"),
         check("contact2")
-          .optional({ values: "falsy" })
+          .optional()
           .isMobilePhone("any")
           .bail()
           .withMessage("Enter vaild contact"),
         check("dateOfBirth")
-          .optional({ values: "falsy" })
+          .optional()
           .isDate()
           .bail()
           .withMessage("Enter vaild date of birth"),
@@ -1409,58 +1230,54 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isInt({ min: 1 })
           .bail()
-          .withMessage("Age is required"),
+          .withMessage("Enter valid age"),
         check("dateOfJoining")
-          .optional({ values: "falsy" })
+          .optional()
           .isDate()
           .bail()
           .withMessage("Enter vaild date of joining"),
         check("dateOfLeaving")
-          .optional({ values: "falsy" })
+          .optional()
           .isDate()
           .bail()
           .withMessage("Enter vaild date of leaving"),
-        check("drivingExperience")
-          .optional()
-          .isFloat({ min: 0 })
-          .bail()
-          .withMessage("Driving experience is required"),
+        check("drivingExperience").optional().isFloat({ min: 0 }),
         check("licenceAvailable").optional().isBoolean(),
-        check("licenceNumber").optional({ values: "falsy" }).isString(),
-        check("licenceToDriver").optional({ values: "falsy" }).isString(),
+        check("licenceNumber").optional().isString(),
+        check("licenceToDriver").optional().isString(),
         check("licenceIssueDate")
-          .optional({ values: "falsy" })
+          .optional()
           .isDate()
           .bail()
           .withMessage("Enter valid issue date"),
         check("licenceExpiryDate")
-          .optional({ values: "falsy" })
+          .optional()
           .isDate()
           .bail()
           .withMessage("Enter vaild expiry date"),
-        check("lifeInsuranceNumber").optional({ values: "falsy" }).isString(),
+        check("lifeInsuranceNumber").optional().isString(),
         check("lifeInsuranceExpiry")
-          .optional({ values: "falsy" })
+          .optional()
           .isDate()
           .bail()
           .withMessage("Enter vaild insurance expiry date"),
         check("mediclaimExpiry")
-          .optional({ values: "falsy" })
+          .optional()
           .isDate()
           .bail()
           .withMessage("Enter vaild medicalaim expiry date"),
-        check("mediclaimNumber").optional({ values: "falsy" }).isString(),
+        check("mediclaimNumber").optional().isString(),
         check("active").optional().isBoolean(),
         check("documents")
-          .optional({ values: "falsy" })
+          .optional()
           .isArray({ min: 1 })
           .bail()
           .withMessage("Atlease one document is required"),
         check("documents.*.documentType")
-          .exists()
           .notEmpty()
-          .bail()
-          .withMessage("Enter valid doc type"),
+          .withMessage("Document type is required")
+          .isIn(Object.values(DriverDocumentType))
+          .withMessage("Invalid document type value"),
         check("documents.*.file")
           .exists()
           .notEmpty()
@@ -1468,12 +1285,12 @@ export const validate = (validationName: string): any[] => {
           .bail()
           .withMessage("Provide valid document"),
         check("documents.*.issueDate")
-          .optional({ values: "falsy" })
+          .optional()
           .isDate()
           .bail()
           .withMessage("Enter vaild issue date"),
         check("documents.*.expireDate")
-          .optional({ values: "falsy" })
+          .optional()
           .isDate()
           .bail()
           .withMessage("Enter vaild issue date"),
