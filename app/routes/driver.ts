@@ -3,6 +3,7 @@ import asyncHandler from "express-async-handler";
 import {
   createDriver,
   deleteDrivers,
+  getAllDrivers,
   getDriver,
   updateDriver,
 } from "../controllers/Driver";
@@ -27,17 +28,7 @@ router.put(
   asyncHandler(updateDriver)
 );
 
-router.get(
-  "/",
-  asyncHandler(async (req, res) => {
-    const drivers = await Driver.find({}, null)
-      .populate("companyId")
-      .populate("branchId")
-      .populate("businessGroupId");
-
-    res.send(createResponse(drivers, "All drivers"));
-  })
-);
+router.get("/", asyncHandler(getAllDrivers));
 
 router.get("/:id", validate("id:mongoId"), catchError, asyncHandler(getDriver));
 
