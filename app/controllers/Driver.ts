@@ -126,12 +126,14 @@ export const getAllDrivers = async (req: Request, res: Response) => {
     query.businessGroupId = user_id?.businessGroupId;
   }
 
-  const driver = await Driver.find(query)
+  const data = await Driver.find(query)
     .populate("companyId")
     .populate("branchId")
     .populate("businessGroupId")
     .limit(limit1)
     .skip(startIndex);
 
-  res.send(createResponse(driver, "All drivers"));
+    const totalCount = await Driver.countDocuments(query);
+
+    res.send(createResponse({ data, totalCount }, "All drivers"));
 };
