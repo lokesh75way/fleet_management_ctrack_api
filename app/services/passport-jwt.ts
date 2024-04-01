@@ -112,6 +112,7 @@ export const initPassport = (): void => {
           }
           console.log(password);
           const validate = await user.isValidPassword(password);
+          console.log(validate)
           if (!validate) {
             done(createError(401, "Invalid email or password"), false);
             return;
