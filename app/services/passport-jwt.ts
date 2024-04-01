@@ -6,7 +6,6 @@ import User, { UserRole, IUser } from "../schema/User";
 import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 
-
 export const initPassport = (): void => {
   passport.use(
     new Strategy(
@@ -34,7 +33,7 @@ export const initPassport = (): void => {
           }
 
           if (!admin) throw new Error("User not found!");
-       
+
           // return done(null, user);
           done(null, token.user);
         } catch (error) {
@@ -80,27 +79,38 @@ export const initPassport = (): void => {
       },
       async (email, password, done) => {
         try {
-          const user = await User.findOne({ 
-            $or:[
-              { email: email },
-              { userName: email },
-            ]
-           }).select("_id password isDeleted isActive email role type firstName lastName userName");
+          console.log(email);
+          const user = await User.findOne({
+            $or: [{ email: email }, { userName: email }],
+          }).select(
+            "_id password isDeleted isActive email role type firstName lastName userName"
+          );
           if (user == null) {
             done(createError(401, "User not found"), false);
             return;
           }
-
           if (user.isDeleted) {
-            done(createError(401, "Your account has been deleted! Please contact admin"), false);
+            done(
+              createError(
+                401,
+                "Your account has been deleted! Please contact admin"
+              ),
+              false
+            );
             return;
           }
 
           if (!user.isActive) {
-            done(createError(401, "Your account is inactive! Please contact admin"), false);
+            done(
+              createError(
+                401,
+                "Your account is inactive! Please contact admin"
+              ),
+              false
+            );
             return;
           }
-          console.log(password)
+          console.log(password);
           const validate = await user.isValidPassword(password);
           if (!validate) {
             done(createError(401, "Invalid email or password"), false);
@@ -121,32 +131,32 @@ export const generateToken = (data: any) => {
   const tokenData = {
     id: data._id,
     role: data?.role,
-    type: data?.type
-  }
+    type: data?.type,
+  };
   const jwtSecret = process.env.JWT_SECRET ?? "";
   const token = jwt.sign({ user: tokenData }, jwtSecret);
 
-  const user = data
-  user['password'] = "";
+  const user = data;
+  user["password"] = "";
 
   return {
     user,
-    token
-  }
-}
+    token,
+  };
+};
 
 export const generatePasswordToken = (user: IUser) => {
   const tokenData = {
-    id: user._id
-  }
+    id: user._id,
+  };
   const jwtSecret = process.env.JWT_SECRET ?? "";
   const token = jwt.sign({ user: tokenData }, jwtSecret);
 
-  return token
-}
+  return token;
+};
 
 export const verifyPasswordToken = (token: string) => {
   const jwtSecret = process.env.JWT_SECRET ?? "";
   const verify = jwt.verify(token, jwtSecret);
-  return verify
-}
+  return verify;
+};

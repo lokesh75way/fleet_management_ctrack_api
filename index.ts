@@ -32,7 +32,6 @@ const envFilePath = path.resolve(`./.env.${process.env.NODE_ENV}`);
 dotenv.config({ path: envFilePath });
 
 const port = Number(process.env.PORT) ?? 5000;
-
 const app: Express = express();
 const router = express.Router();
 
@@ -61,7 +60,7 @@ const initApp = async (): Promise<void> => {
   });
 
   // permission
-  const adminAccess = [passport.authenticate("jwt", { session: false })];
+  const adminAccess = [passport.authenticate("jwt", { session: false }), roleAuth(UserRole.SUPER_ADMIN)];
   const businessGroupAccess = [
     passport.authenticate("jwt", { session: false }),
     roleAuth(UserRole.SUPER_ADMIN, UserRole.BUSINESS_GROUP),

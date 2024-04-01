@@ -31,14 +31,15 @@ export const createBusinessUser = async (
   delete payloadGroup.password;
   delete payloadGroup.mobileNumber;
 
-  
-
   let alreadyExists = await User.findOne({
     email: payload.email,
   });
 
   if (alreadyExists) {
-    res.send(createHttpError(409, "Company with this email already exists"));
+    res.send(
+      createResponse({success : false , message :"Business group with this email already exists" },"Business group with this email already exists" )
+    );
+    return;
   }
 
   alreadyExists = await User.findOne({
@@ -47,7 +48,10 @@ export const createBusinessUser = async (
   });
 
   if (alreadyExists) {
-    res.send(createHttpError(409, "Company with this username already exists"));
+    res.send(
+      createResponse({success : false , message : "Business group with this username already exists"}, "Business group with this username already exists")
+    );
+    return;
   }
 
   alreadyExists = await BusinessGroup.findOne({
@@ -55,7 +59,8 @@ export const createBusinessUser = async (
   });
 
   if (alreadyExists) {
-    res.send(createHttpError(409, "Group Name with this name already exists"));
+    res.send(createResponse({success : false , message :  "Group Name with this name already exists"}, "Group Name with this name already exists"));
+    return;
   }
 
   alreadyExists = await User.findOne({
@@ -64,17 +69,14 @@ export const createBusinessUser = async (
 
   if (alreadyExists) {
     res.send(
-      createHttpError(
-        409,
-        "Business group with this phone number already exists"
-      )
+      createResponse({success : false , message :"Business group with this phone number already exists" }, "Business group with this phone number already exists")
     );
     return;
   }
 
   const newBusinessGroup = await BusinessGroup.create(payloadGroup);
   if (!newBusinessGroup) {
-    res.send(createHttpError(400, "Business group is not created"));
+    res.send(createResponse({success : false , message : "Business group is not created"}, "Business group is not created"));
     return;
   }
   const newUser = await User.create({
@@ -83,11 +85,11 @@ export const createBusinessUser = async (
   });
 
   if (!newUser) {
-    res.send(createHttpError(400, "Business group is not created"));
+    res.send(createResponse({success : false , message : "Business group is not created"}, "Business group is not created"));
     return;
   }
 
-  res.send(createResponse({}, "Business group has been created successfully!"));
+  res.send(createResponse({success : true ,message : "Business group has been created successfully!"}, "Business group has been created successfully!"));
   return;
 };
 
@@ -97,7 +99,7 @@ export const updateBusinessUser = async (
   next: NextFunction
 ) => {
   const payload = req.body;
-  console.log(payload)
+  console.log(payload);
   const payloadUser = {
     userName: payload.userName,
     email: payload.email,
@@ -118,10 +120,9 @@ export const updateBusinessUser = async (
   let alreadyExists = await User.findOne({
     $or: [{ email: payload.email }],
   });
+
   if (!alreadyExists) {
-    res.send(
-      createHttpError(404, "Business group with this email is not exists")
-    );
+    res.send(createResponse({success : false , message : "Business group with this email is not exists"}, "Business group with this email is not exists"));
     return;
   }
 
@@ -143,12 +144,12 @@ export const updateBusinessUser = async (
   await User.updateOne({ email: payload.email }, updatedFields);
 
   const businessId = alreadyExists?.businessGroupId;
-console.log(payloadGroup)
+  console.log(payloadGroup);
   await BusinessGroup.findOneAndUpdate(businessId, payloadGroup, {
     new: true,
   });
 
-  res.send(createResponse({}, "Business group has been updated successfully!"));
+  res.send(createResponse({success : true , message : "Business group has been updated successfully!"}, "Business group has been updated successfully!"));
 };
 
 export const deleteBusinessGroup = async (
@@ -162,12 +163,16 @@ export const deleteBusinessGroup = async (
     const user = await User.findOne({ _id: id });
     if (!user) {
       res.send(createHttpError(404, "Business group is not exists"));
+      return;
     }
     if (user?.isDeleted) {
       res.send(createHttpError(404, "Business group is already deleted"));
+      return;
     }
     await User.updateOne({ _id: id }, { isDeleted: true });
-    res.send(createResponse({}, "Business group has been deleted successfully."));
+    res.send(
+      createResponse({}, "Business group has been deleted successfully.")
+    );
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
@@ -193,7 +198,7 @@ export const getAllGroups = async (
     let page1 = parseInt(page as string) || 1;
     let limit1 = parseInt(limit as string) || 10;
 
-    const totalCount = await User.countDocuments({ isDeleted: false });
+    const totalCount = await User.countDocuments(query);
 
     const totalPages = Math.ceil(totalCount / limit1);
 
@@ -202,16 +207,15 @@ export const getAllGroups = async (
     const groups = await User.find(query)
       .populate({
         path: "businessGroupId",
-        match: {
-          createdBy: id,
-        },
-        
+        // match: {
+        //   createdBy: id,
+        // },
       })
-      .sort({ _id: -1 }) 
+      .sort({ _id: -1 })
       .limit(limit1)
       .skip(startIndex);
 
-    res.send(createResponse({ data: groups, totalPage: totalPages }));
+    res.send(createResponse({ data: groups,totalCount , totalPage: totalPages }));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
@@ -223,10 +227,8 @@ export const getAllGroups = async (
 export const updatePassword = async (req: Request, res: Response) => {
   const { password, oldPassword, _id } = req.body;
 
-  const existUser = await User.findOne({ _id: _id }).select(
-    "password"
-  );
- 
+  const existUser = await User.findOne({ _id: _id }).select("password");
+
   if (existUser) {
     const matched = await existUser.isValidPassword(oldPassword);
     if (!matched) {

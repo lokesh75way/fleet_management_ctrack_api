@@ -1,6 +1,6 @@
 import mongoose, { type Types } from "mongoose";
 import { type BaseSchema } from "./index";
-
+import  MongooseDelete , { SoftDeleteModel }  from 'mongoose-delete';
 const Schema = mongoose.Schema;
 
 export interface IPermission extends BaseSchema {
@@ -44,4 +44,9 @@ const PermissionSchema = new Schema<IPermission>(
 );
 
 
-export default mongoose.model<IPermission>("permission", PermissionSchema);
+
+PermissionSchema.plugin(MongooseDelete, {deletedBy : true , deletedByType : String})
+
+
+
+export default mongoose.model<IPermission>("permission", PermissionSchema) as SoftDeleteModel<any, any>;

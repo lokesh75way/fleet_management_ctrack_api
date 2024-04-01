@@ -38,7 +38,13 @@ export const createCompany = async (
     });
 
     if (alreadyExists) {
-      res.send(createHttpError(409, "Company with this email already exists"));
+      res.send(
+        createResponse(
+          { success: false, message: "Company with this email already exists" },
+          "Company with this email already exists"
+        )
+      );
+      return;
     }
 
     alreadyExists = await User.findOne({
@@ -47,8 +53,15 @@ export const createCompany = async (
 
     if (alreadyExists) {
       res.send(
-        createHttpError(409, "Company with this username already exists")
+        createResponse(
+          {
+            success: false,
+            message: "Company with this username already exists",
+          },
+          "Company with this username already exists"
+        )
       );
+      return;
     }
 
     alreadyExists = await User.findOne({
@@ -57,8 +70,15 @@ export const createCompany = async (
 
     if (alreadyExists) {
       res.send(
-        createHttpError(409, "Company with this phone number already exists")
+        createResponse(
+          {
+            success: false,
+            message: "Company with this phone number already exists",
+          },
+          "Company with this phone number already exists"
+        )
       );
+      return;
     }
 
     const newCompany = await Company.create({
@@ -76,7 +96,7 @@ export const createCompany = async (
       res.send(createHttpError(400, "User is not created"));
     }
 
-    res.send(createResponse({}, "Company has been created successfully!"));
+    res.send(createResponse({success : true , message :"Company has been created successfully!"}, "Company has been created successfully!"));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
@@ -106,21 +126,25 @@ export const getAllCompanies = async (
     let page1 = parseInt(page as string) || 1;
     let limit1 = parseInt(limit as string) || 10;
 
-    const totalCount = await User.countDocuments({ isDeleted: false });
+    const totalCount = await User.countDocuments(query);
 
     const totalPages = Math.ceil(totalCount / limit1);
 
     const startIndex = (page1 - 1) * limit1;
 
-    const companies = await User.find(query).populate([
-      { path: "companyId", match: secondQuery },
-      {
-        path: "companyId",
-        populate: { path: "businessGroupId", select: "groupName" },
-      },
-    ]).sort({ _id: -1 });
+    const companies = await User.find(query)
+      .populate([
+        { path: "companyId", match: secondQuery },
+        {
+          path: "companyId",
+          populate: { path: "businessGroupId", select: "groupName" },
+        },
+      ])
+      .limit(limit1)
+      .skip(startIndex)
+      .sort({ _id: -1 });
 
-    res.send(createResponse({ data: companies, totalPage: totalPages }));
+    res.send(createResponse({ data: companies,totalCount, totalPage: totalPages }));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
@@ -161,9 +185,7 @@ export const updateCompanyUser = async (
       $or: [{ email: payload.email }],
     });
     if (!alreadyExists) {
-      res.send(
-        createHttpError(404, "Company with this email is not exists")
-      );
+      res.send(createHttpError(404, "Company with this email is not exists"));
       return;
     }
 

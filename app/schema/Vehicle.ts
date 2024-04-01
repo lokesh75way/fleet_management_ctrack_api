@@ -7,14 +7,14 @@ import { IBranch } from "./CompanyBranch";
 export enum DistanceCounter {
   GPS = "GPS",
   OBD = "OBD",
-  RELATIVEODOMETER = "RELATIVEODOMETER",
+  RELATIVE_ODOMETER = "RELATIVE_ODOMETER",
   TACHOGRAPH = "TACHOGRAPH",
 }
 
 export enum UnitOFDistance {
   KILOMETERS = "KILOMETERS",
-  MILE = "MILE",
-  NATURAL_MILE = "NATURAL_MILE",
+  MILES = "MILE",
+  NAUTICAL_MILES = "NAUTICAL_MILES",
 }
 
 export enum VehicleCategory {
@@ -33,7 +33,7 @@ export enum Permit {
 
 export enum FuelType {
   PETROL = "PETROL",
-  DISEAL = "DISEAL",
+  DIESEAL = "DIESEL",
   GAS = "GAS",
   ELECTRIC = "ELECTRIC",
 }
