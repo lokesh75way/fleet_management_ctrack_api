@@ -36,7 +36,7 @@ export const forgetPasswordEmailTemplate = (token: string, name: string): string
     <h3>Welcome to App</h3>
     <p>Dear ${name},</p>
     <p>Click here to reset your password </p>
-    <button> <a href=${process.env.APP_URL}/password-reset/${token}> Click Me </a> </button>
+    <button> <a href=${process.env.APP_URL}/resetpassword/${token}> Click Me </a> </button>
     <
   </body>
 </html>`;
