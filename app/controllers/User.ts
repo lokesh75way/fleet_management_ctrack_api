@@ -11,7 +11,6 @@ export const addSubAdmin = async (req: Request, res: Response, next: NextFunctio
     try {
         const payload = req.body;
         payload.email = payload.email.trim().toLocaleLowerCase();
-        payload.password = "";
 
         const checkIfExist = await User.findOne({ email: payload.email });
         
@@ -20,9 +19,7 @@ export const addSubAdmin = async (req: Request, res: Response, next: NextFunctio
                 message: `Subadmin already exist with this email!`,
             });
         }
-        console.log(payload)
         const createSubadmin = await new User(payload).save();
-        createSubadmin['password'] = "";
 
         const token = await generatePasswordToken(createSubadmin);
         const html = subadminInvitationEmailTemplate(token, payload.email);
