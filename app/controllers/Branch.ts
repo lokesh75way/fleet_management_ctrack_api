@@ -138,7 +138,15 @@ export const getAllBranch = async (
     }
     console.log(query);
 
-    const data = await CompanyBranch.find(query).populate([{path : "businessGroupId" , select : "groupName"},{path : "companyId" , select : "companyName"}, {path : "parentBranchId", select :"branchName"}]).limit(limit1).skip(startIndex);
+    const data = await CompanyBranch.find(query)
+    .populate([
+      { path: "businessGroupId", select: "groupName" },
+      { path: "companyId", select: "companyName" },
+      { path: "parentBranchId", select: "branchName" }
+    ])
+    .sort({ createdAt: -1 }) // Sorting by createdAt field in descending order
+    .limit(limit1)
+    .skip(startIndex);
 
     const totalCount = await CompanyBranch.countDocuments(query);
 

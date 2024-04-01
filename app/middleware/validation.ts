@@ -318,7 +318,16 @@ export const validate = (validationName: string): any[] => {
 
         check("city").exists().notEmpty().withMessage("City is required"),
 
-        check("zipCode").optional(),
+        check("zipCode")
+          .optional()
+          .custom((value, { req }) => {
+            if (value) {
+              check("zipCode")
+                .isPostalCode("any")
+                .withMessage("Invalid postal code");
+            }
+            return true;
+          }),
 
         check("storageCapacity").optional(),
 
@@ -340,7 +349,9 @@ export const validate = (validationName: string): any[] => {
 
         check("unitOfDistance")
           .optional()
-          .isIn(["MILES", "KILOMETERS", "NAUTIC_MILES"]),
+          .bail()
+          .isIn(["MILES", "KILOMETERS", "NAUTICAL_MILES"]),
+
         check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
 
         check("language")
@@ -399,7 +410,17 @@ export const validate = (validationName: string): any[] => {
 
         check("city").optional().optional(),
 
-        check("zipCode").optional(),
+        check("zipCode")
+        .optional()
+        .custom((value, { req }) => {
+          if (value) {
+            check("zipCode")
+              .isPostalCode("any")
+              .withMessage("Invalid postal code");
+          }
+          return true;
+        }),
+
 
         check("storageCapacity").optional(),
 
@@ -510,7 +531,17 @@ export const validate = (validationName: string): any[] => {
 
         check("city").exists().notEmpty().withMessage("City is required"),
 
-        check("zipCode").optional().isPostalCode("any"),
+        check("zipCode")
+          .optional()
+          .custom((value, { req }) => {
+            if (value) {
+              check("zipCode")
+                .isPostalCode("any")
+                .withMessage("Invalid postal code");
+            }
+            return true;
+          }),
+
 
         check("storageCapacity").optional(),
 
@@ -594,7 +625,17 @@ export const validate = (validationName: string): any[] => {
 
         check("city").optional().optional(),
 
-        check("zipCode").optional().isPostalCode("any"),
+        check("zipCode")
+        .optional()
+        .custom((value, { req }) => {
+          if (value) {
+            check("zipCode")
+              .isPostalCode("any")
+              .withMessage("Invalid postal code");
+          }
+          return true;
+        }),
+
 
         check("storageCapacity").optional(),
 
@@ -670,7 +711,17 @@ export const validate = (validationName: string): any[] => {
 
         check("city").exists().notEmpty().withMessage("City is required"),
 
-        check("zipCode").optional().isPostalCode("any"),
+        check("zipCode")
+        .optional()
+        .custom((value, { req }) => {
+          if (value) {
+            check("zipCode")
+              .isPostalCode("any")
+              .withMessage("Invalid postal code");
+          }
+          return true;
+        }),
+
 
         check("file").optional().isURL(),
 
@@ -733,7 +784,17 @@ export const validate = (validationName: string): any[] => {
 
         check("city").optional().optional(),
 
-        check("zipCode").optional().isPostalCode("any"),
+        check("zipCode")
+        .optional()
+        .custom((value, { req }) => {
+          if (value) {
+            check("zipCode")
+              .isPostalCode("any")
+              .withMessage("Invalid postal code");
+          }
+          return true;
+        }),
+
 
         check("file").optional().isURL(),
 
@@ -825,7 +886,46 @@ export const validate = (validationName: string): any[] => {
           .withMessage("Delete must be a boolean value"),
       ];
     }
-
+    case "module:update-permission": {
+      return [
+        check("name")
+          .optional()
+          .bail()
+          .isString()
+          .notEmpty()
+          .withMessage("Name must be a non-empty string"),
+        check("permission")
+          .optional()
+          .bail()
+          .isArray()
+          .withMessage("Permission must be an array"),
+        check("permission.*.moduleId")
+          .optional()
+          .bail()
+          .isMongoId()
+          .withMessage("Module ID must be a valid MongoDB ObjectId"),
+        check("permission.*.add")
+          .optional()
+          .bail()
+          .isBoolean()
+          .withMessage("Add must be a boolean value"),
+        check("permission.*.view")
+          .optional()
+          .bail()
+          .isBoolean()
+          .withMessage("View must be a boolean value"),
+        check("permission.*.modify")
+          .optional()
+          .bail()
+          .isBoolean()
+          .withMessage("Modify must be a boolean value"),
+        check("permission.*.delete")
+          .optional()
+          .bail()
+          .isBoolean()
+          .withMessage("Delete must be a boolean value"),
+      ];
+    }
     case "vehicle:add": {
       return [
         check("businessGroupId")
@@ -839,8 +939,8 @@ export const validate = (validationName: string): any[] => {
           .isMongoId()
           .withMessage("Company ID must be a valid MongoDB ObjectId"),
         check("branchId")
-          .notEmpty()
-          .withMessage("Branch ID is required")
+          .optional()
+          .bail()
           .isMongoId()
           .withMessage("Branch ID must be a valid MongoDB ObjectId"),
         check("vehicleName").notEmpty().withMessage("Vehicle name is required"),
@@ -1104,11 +1204,17 @@ export const validate = (validationName: string): any[] => {
           .isString()
           .bail()
           .withMessage("City is required"),
-        check("zipCode")
+          check("zipCode")
           .optional()
-          .isPostalCode("any")
-          .bail()
-          .withMessage("Enter valid zip code"),
+          .custom((value, { req }) => {
+            if (value) {
+              check("zipCode")
+                .isPostalCode("any")
+                .withMessage("Invalid postal code");
+            }
+            return true;
+          }),
+
         check("street1").exists().notEmpty().withMessage("Street1 is required"),
         check("street2").optional(),
         check("contact1")
@@ -1240,11 +1346,17 @@ export const validate = (validationName: string): any[] => {
           .isString()
           .bail()
           .withMessage("Enter valid city name"),
-        check("zipCode")
+          check("zipCode")
           .optional()
-          .isPostalCode("any")
-          .bail()
-          .withMessage("Enter valid zip code"),
+          .custom((value, { req }) => {
+            if (value) {
+              check("zipCode")
+                .isPostalCode("any")
+                .withMessage("Invalid postal code");
+            }
+            return true;
+          }),
+
         check("street1").optional(),
         check("street2").optional(),
         check("contact1")

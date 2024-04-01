@@ -26,7 +26,7 @@ export const adminLogin = async (req: Request, res: Response) => {
       "userName firstName lastName email mobileNumber role type"
     );
 
-    const permissions = await Permission.find().populate("permission.moduleId");
+    const permissions = await Permission.find({_id : '660a85e4e14e371191156f97'}).populate("permission.moduleId");
 
     res.send(
       createResponse({ user: data, token, permissions }, "Login successfully!")
