@@ -121,7 +121,7 @@ export const getAllBranch = async (
     const id = req.user._id;
     // @ts-ignore
     const role = req.user.role;
-    const { companyId } = req.query;
+    const { companyId , branchId } = req.query;
     let query: any = { isDeleted: false };
 
     let { page, limit } = req.query;
@@ -144,9 +144,9 @@ export const getAllBranch = async (
       .populate([
         { path: "businessGroupId", select: "groupName" },
         { path: "companyId", select: "companyName", match: { _id: companyId } },
-        { path: "parentBranchId", select: "branchName" },
+        { path: "parentBranchId", select: "branchName" , match : {_id : branchId} },
       ])
-      .sort({ createdAt: -1 }) // Sorting by createdAt field in descending order
+      .sort({ createdAt: -1 })
       .limit(limit1)
       .skip(startIndex);
 
