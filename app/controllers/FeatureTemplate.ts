@@ -15,7 +15,7 @@ export const createTemplate = async (req: Request, res: Response) => {
 };
 
 export const getAllTemplates = async (req: Request, res: Response) => {
-  const query: any = { Deleted: false };
+  const query: any = { deleted: false };
 
   let { page, limit } = req.query;
   let page1 = parseInt(page as string) || 1;
@@ -26,9 +26,9 @@ export const getAllTemplates = async (req: Request, res: Response) => {
   const totalPages = Math.ceil(totalCount / limit1);
 
   const startIndex = (page1 - 1) * limit1;
-  const data = await Permission.find({deleted : false}).limit(limit1)
+  const data = await Permission.find(query).limit(limit1)
   .skip(startIndex)
-  .sort({ _id: -1 });;
+  .sort({ _id: -1 });
 
   res.send(createResponse({data , totalCount  , totalPages}));
 };

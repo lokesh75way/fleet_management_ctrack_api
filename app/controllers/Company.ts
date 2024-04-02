@@ -4,6 +4,7 @@ import createHttpError from "http-errors";
 import Company from "../schema/Company";
 import User, { UserRole, UserType } from "../schema/User";
 import bcrypt from "bcrypt";
+import { Query } from "accesscontrol";
 
 export const createCompany = async (
   req: Request,
@@ -96,7 +97,12 @@ export const createCompany = async (
       res.send(createHttpError(400, "User is not created"));
     }
 
-    res.send(createResponse({success : true , message :"Company has been created successfully!"}, "Company has been created successfully!"));
+    res.send(
+      createResponse(
+        { success: true, message: "Company has been created successfully!" },
+        "Company has been created successfully!"
+      )
+    );
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
@@ -122,7 +128,7 @@ export const getAllCompanies = async (
       secondQuery["createdBy"] = id;
     }
 
-    let { page, limit } = req.query;
+    let { page, limit, businessGroupId } = req.query;
     let page1 = parseInt(page as string) || 1;
     let limit1 = parseInt(limit as string) || 10;
 
@@ -132,19 +138,31 @@ export const getAllCompanies = async (
 
     const startIndex = (page1 - 1) * limit1;
 
-    const companies = await User.find(query)
+    let companies: any[] = await User.find(query)
       .populate([
-        { path: "companyId", match: secondQuery },
+        { path: "companyId" },
         {
           path: "companyId",
-          populate: { path: "businessGroupId", select: "groupName" },
+          populate: {
+            path: "businessGroupId",
+            select: "groupName",
+            match: { _id: businessGroupId },
+          },
         },
       ])
       .limit(limit1)
       .skip(startIndex)
       .sort({ _id: -1 });
 
-    res.send(createResponse({ data: companies,totalCount, totalPage: totalPages }));
+    if (businessGroupId) {
+      companies = companies.filter(
+        (company) => company.companyId.businessGroupId
+      );
+    }
+
+    res.send(
+      createResponse({ data: companies, totalCount, totalPage: totalPages })
+    );
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
