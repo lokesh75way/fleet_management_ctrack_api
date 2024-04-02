@@ -63,7 +63,7 @@ const initApp = async (): Promise<void> => {
   const adminAccess = [passport.authenticate("jwt", { session: false }), roleAuth(UserRole.SUPER_ADMIN , UserRole.BUSINESS_GROUP)];
   const businessGroupAccess = [
     passport.authenticate("jwt", { session: false }),
-    roleAuth(UserRole.SUPER_ADMIN, UserRole.BUSINESS_GROUP),
+    roleAuth(UserRole.SUPER_ADMIN, UserRole.BUSINESS_GROUP , UserRole.COMPANY),
   ];
   const companyAccess = [
     passport.authenticate("jwt", { session: false }),
