@@ -116,6 +116,7 @@ export const getAllBranch = async (
   try {
     // @ts-ignore
     const id = req.user._id;
+    console.log(id)
     // @ts-ignore
     const role = req.user.role;
 
@@ -128,6 +129,7 @@ export const getAllBranch = async (
     const startIndex = (page1 - 1) * limit1;
 
     const user_id = await User.findById(id).select("companyId businessGroupId");
+    console.log(user_id)
     
     if (role === UserRole.COMPANY) {
       query.companyId = user_id?.companyId;
@@ -136,7 +138,6 @@ export const getAllBranch = async (
     if (role === UserRole.BUSINESS_GROUP) {
       query.businessGroupId = user_id?.businessGroupId;
     }
-    console.log(query);
 
     const data = await CompanyBranch.find(query)
     .populate([

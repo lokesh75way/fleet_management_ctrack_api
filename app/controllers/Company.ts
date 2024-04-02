@@ -117,7 +117,7 @@ export const getAllCompanies = async (
     const role = req.user.role;
 
     let query: any = { isDeleted: false, role: UserRole.COMPANY };
-    let secondQuery: any;
+    let secondQuery: any = {};
     if (role === "BUSINESS_GROUP") {
       secondQuery["createdBy"] = id;
     }

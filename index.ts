@@ -60,14 +60,14 @@ const initApp = async (): Promise<void> => {
   });
 
   // permission
-  const adminAccess = [passport.authenticate("jwt", { session: false }), roleAuth(UserRole.SUPER_ADMIN)];
+  const adminAccess = [passport.authenticate("jwt", { session: false }), roleAuth(UserRole.SUPER_ADMIN , UserRole.BUSINESS_GROUP)];
   const businessGroupAccess = [
     passport.authenticate("jwt", { session: false }),
     roleAuth(UserRole.SUPER_ADMIN, UserRole.BUSINESS_GROUP),
   ];
   const companyAccess = [
     passport.authenticate("jwt", { session: false }),
-    roleAuth(UserRole.SUPER_ADMIN, UserRole.COMPANY, UserRole.BUSINESS_GROUP),
+    roleAuth(UserRole.SUPER_ADMIN, UserRole.COMPANY, UserRole.BUSINESS_GROUP , UserRole.USER),
   ];
 
   // routes
