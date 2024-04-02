@@ -13,13 +13,12 @@ export enum UserRole {
   SUPER_ADMIN = "SUPER_ADMIN",
   BUSINESS_GROUP = "BUSINESS_GROUP",
   COMPANY = "COMPANY",
-  user = "user",
+  USER = "USER",
 }
 
 export enum UserType {
   ADMIN = "ADMIN",
   STAFF = "STAFF",
-  admin = "admin",
 }
 
 const Schema = mongoose.Schema;
