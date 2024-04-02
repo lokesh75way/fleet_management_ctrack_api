@@ -18,6 +18,7 @@ import branchRoutes from "./app/routes/branch";
 import profileRoutes from "./app/routes/profileRoutes";
 import vehicleRoutes from "./app/routes/vehicle";
 import driverRoutes from "./app/routes/driver";
+import fileRoutes from './app/routes/file-upload'
 
 import { initPassport } from "./app/services/passport-jwt";
 import passport from "passport";
@@ -81,6 +82,7 @@ const initApp = async (): Promise<void> => {
   router.use("/vehicles", companyAccess, vehicleRoutes);
   router.use("/users", companyAccess, userRoutes);
   router.use("/drivers", companyAccess, driverRoutes);
+  router.use("/file-upload", fileRoutes)
 
   // error handler
   app.use(errorHandler);
