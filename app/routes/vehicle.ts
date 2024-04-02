@@ -13,6 +13,4 @@ router.patch("/:id", validate("vehicle:update"), catchError, asyncHandler(update
 
 router.delete("/:id", asyncHandler(deleteVehicle));
 
-router.post("/file-upload",asyncHandler(fileUploader))
-
 export default router;
