@@ -150,7 +150,8 @@ export const fileUploader = async (
 ) => {
   try {
     const file :any = req.files?.fileName;
-    
+    console.log(file)
+    console.log(req.files)
     if (!file) return next(createHttpError(404, "File not found."));
     if (file?.tempFilePath) {
       const result = await cloudinary?.uploader.upload(file?.tempFilePath);
