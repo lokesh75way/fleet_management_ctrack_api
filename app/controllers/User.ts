@@ -94,7 +94,7 @@ export const getAllSubadmin = async (req: Request, res: Response, next: NextFunc
         const condition = {
             isDeleted: false,
             role: { $in: [UserRole.SUPER_ADMIN, UserRole.user] },
-            type: { $in: [UserType.STAFF, UserType.admin] },
+            type: { $in: [UserType.STAFF, UserType.ADMIN] },
         };
         const data = await User.find(condition).select("-password").sort({
             createdAt: -1
