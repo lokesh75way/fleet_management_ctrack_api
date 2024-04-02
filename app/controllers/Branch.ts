@@ -35,11 +35,18 @@ export const createCompanyBranch = async (
       { $push: { branchIds: newBranch._id } }
     );
 
-    if (!newUser) {
+    const newUser2 = await User.updateOne(
+      {
+        companyId : payload.companyId
+      },
+      { $push: { branchIds: newBranch._id } }
+    )
+  
+    if (!newUser && ! newUser2) {
       res.send(createHttpError(400, "User is not updated"));
     }
 
-    res.send(createResponse({}, "Branch has been created successfully!"));
+    res.send(createResponse(newBranch, "Branch has been created successfully!"));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
@@ -112,10 +119,9 @@ export const getAllBranch = async (
   try {
     // @ts-ignore
     const id = req.user._id;
-    console.log(id);
     // @ts-ignore
     const role = req.user.role;
-
+    const { companyId } = req.query;
     let query: any = { isDeleted: false };
 
     let { page, limit } = req.query;
@@ -125,7 +131,6 @@ export const getAllBranch = async (
     const startIndex = (page1 - 1) * limit1;
 
     const user_id = await User.findById(id).select("companyId businessGroupId");
-    console.log(user_id);
 
     if (role === UserRole.COMPANY) {
       query.companyId = user_id?.companyId;
@@ -135,10 +140,10 @@ export const getAllBranch = async (
       query.businessGroupId = user_id?.businessGroupId;
     }
 
-    const data = await CompanyBranch.find(query)
+    let data = await CompanyBranch.find(query)
       .populate([
         { path: "businessGroupId", select: "groupName" },
-        { path: "companyId", select: "companyName" },
+        { path: "companyId", select: "companyName", match: { _id: companyId } },
         { path: "parentBranchId", select: "branchName" },
       ])
       .sort({ createdAt: -1 }) // Sorting by createdAt field in descending order
@@ -146,6 +151,13 @@ export const getAllBranch = async (
       .skip(startIndex);
 
     const totalCount = await CompanyBranch.countDocuments(query);
+
+    if (companyId) {
+      data = data.filter(
+        (company) => company.companyId
+      );
+    }
+
 
     res.send(createResponse({ data, totalCount }));
   } catch (error: any) {

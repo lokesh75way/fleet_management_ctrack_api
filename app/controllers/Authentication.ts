@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import User, { IUser } from "../schema/User";
+import User, { IUser, UserRole } from "../schema/User";
 import { createResponse } from "../helper/response";
 import createHttpError from "http-errors";
 import {
@@ -10,6 +10,7 @@ import {
 import bcrypt from "bcrypt";
 import { forgetPasswordEmailTemplate, sendEmail } from "../services/email";
 import Permission from "../schema/Permission";
+import { AdminTemplate } from "../utils";
 
 /**
  * User login
@@ -23,10 +24,25 @@ export const adminLogin = async (req: Request, res: Response) => {
     const options = { new: true };
 
     const data = await User.findById(user._id).select(
-      "userName firstName lastName email mobileNumber role type"
+      "userName firstName lastName email mobileNumber role type featureTemplateId businessGroupId companyId branchIds vehicleIds"
     );
+    if (!data) {
+      res.send(createResponse({}, "User not found!"));
+      return;
+    }
 
-    const permissions = await Permission.find({_id : '660a85e4e14e371191156f97'}).populate("permission.moduleId");
+    let permissions;
+    if (
+      data.role === UserRole.SUPER_ADMIN ||
+      data.role === UserRole.BUSINESS_GROUP ||
+      data.role === UserRole.COMPANY
+    ) {
+      permissions = AdminTemplate;
+    } else {
+      permissions = await Permission.find({
+        _id: data.featureTemplateId,
+      }).populate("permission.moduleId");
+    }
 
     res.send(
       createResponse({ user: data, token, permissions }, "Login successfully!")
