@@ -18,11 +18,7 @@ export const createCompanyBranch = async (
 
     const payloadBranch = { ...payload };
 
-    const alreadyExists = await User.findById(id);
-
-    if (!alreadyExists) {
-      res.send(createHttpError(404, "Company doesn't not exist"));
-    }
+    console.log(payloadBranch);
 
     const newBranch = await CompanyBranch.create({
       ...payloadBranch,
@@ -34,7 +30,7 @@ export const createCompanyBranch = async (
 
     const newUser = await User.updateOne(
       {
-        _id: id,
+        businessGroupId: payload.businessGroupId,
       },
       { $push: { branchIds: newBranch._id } }
     );
@@ -116,7 +112,7 @@ export const getAllBranch = async (
   try {
     // @ts-ignore
     const id = req.user._id;
-    console.log(id)
+    console.log(id);
     // @ts-ignore
     const role = req.user.role;
 
@@ -129,8 +125,8 @@ export const getAllBranch = async (
     const startIndex = (page1 - 1) * limit1;
 
     const user_id = await User.findById(id).select("companyId businessGroupId");
-    console.log(user_id)
-    
+    console.log(user_id);
+
     if (role === UserRole.COMPANY) {
       query.companyId = user_id?.companyId;
     }
@@ -140,14 +136,14 @@ export const getAllBranch = async (
     }
 
     const data = await CompanyBranch.find(query)
-    .populate([
-      { path: "businessGroupId", select: "groupName" },
-      { path: "companyId", select: "companyName" },
-      { path: "parentBranchId", select: "branchName" }
-    ])
-    .sort({ createdAt: -1 }) // Sorting by createdAt field in descending order
-    .limit(limit1)
-    .skip(startIndex);
+      .populate([
+        { path: "businessGroupId", select: "groupName" },
+        { path: "companyId", select: "companyName" },
+        { path: "parentBranchId", select: "branchName" },
+      ])
+      .sort({ createdAt: -1 }) // Sorting by createdAt field in descending order
+      .limit(limit1)
+      .skip(startIndex);
 
     const totalCount = await CompanyBranch.countDocuments(query);
 

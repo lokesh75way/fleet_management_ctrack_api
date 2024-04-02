@@ -60,7 +60,7 @@ const initApp = async (): Promise<void> => {
   });
 
   // permission
-  const adminAccess = [passport.authenticate("jwt", { session: false }), roleAuth(UserRole.SUPER_ADMIN , UserRole.BUSINESS_GROUP)];
+  const adminAccess = [passport.authenticate("jwt", { session: false }), roleAuth(UserRole.SUPER_ADMIN , UserRole.BUSINESS_GROUP , UserRole.COMPANY)];
   const businessGroupAccess = [
     passport.authenticate("jwt", { session: false }),
     roleAuth(UserRole.SUPER_ADMIN, UserRole.BUSINESS_GROUP , UserRole.COMPANY),
@@ -75,7 +75,7 @@ const initApp = async (): Promise<void> => {
   router.use("/feature-template", adminAccess, featureTemplate);
   router.use("/modules", adminAccess, modules);
   router.use("/business-groups", adminAccess, businessGroup);
-  router.use("/companies", businessGroupAccess, companyRoutes);
+  router.use("/companies", adminAccess, companyRoutes);
   router.use("/branches", companyAccess, branchRoutes);
   router.use("/profile", companyAccess, profileRoutes);
   router.use("/vehicles", companyAccess, vehicleRoutes);
