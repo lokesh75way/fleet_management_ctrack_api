@@ -3,7 +3,10 @@ import dotenv from "dotenv";
 import type Mail from "nodemailer/lib/mailer";
 import createHttpError from "http-errors";
 
-dotenv.config();
+//load env based on environment
+const envFile = process.env.NODE_ENV === 'production' ? './.env.production' : './.env.development';
+dotenv.config({ path: envFile });
+dotenv.config( { path: "./.env.development" })
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
