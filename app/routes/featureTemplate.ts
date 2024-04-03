@@ -3,6 +3,7 @@ import passport from "passport";
 import asyncHandler from "express-async-handler"
 import { catchError, validate } from "../middleware/validation";
 import {  createTemplate,  deletePermission,  getAllTemplates, updateFeatureTemplate } from "../controllers/FeatureTemplate";
+import { permissionAccess } from "../middleware/featureTemplate";
 
 const router = express.Router();
 
