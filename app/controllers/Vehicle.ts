@@ -5,13 +5,11 @@ import User, { UserRole, UserType } from "../schema/User";
 import Vehicle from "../schema/Vehicle";
 import { v2 as cloudinary } from "cloudinary";
 
-
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
-
 
 export const createVehicle = async (
   req: Request,
@@ -149,12 +147,16 @@ export const fileUploader = async (
   next: NextFunction
 ) => {
   try {
-    const file :any = req.files?.fileName;
-    console.log(file)
+    const file: any = req.files?.file;
     if (!file) return next(createHttpError(404, "File not found."));
     if (file?.tempFilePath) {
       const result = await cloudinary?.uploader.upload(file?.tempFilePath);
-      res.send(createResponse({link : result?.secure_url}, "File uploaded successfully"));
+      res.send(
+        createResponse(
+          { link: result?.secure_url },
+          "File uploaded successfully"
+        )
+      );
       return;
     }
     res.send(createResponse({}, "File is not uploaded"));

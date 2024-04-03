@@ -1,4 +1,4 @@
-export const AdminTemplate = {
+export const AdminTemplate =[ {
     "_id": "660a85e4e14e371191156f97",
     "name": "Admin Template",
     "permission": [
@@ -407,4 +407,4 @@ export const AdminTemplate = {
     "createdAt": "2024-04-01T10:01:08.467Z",
     "updatedAt": "2024-04-01T10:01:08.467Z",
     "__v": 0
-}
+}]
