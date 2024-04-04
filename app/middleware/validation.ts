@@ -944,7 +944,7 @@ export const validate = (validationName: string): any[] => {
           .isMongoId()
           .withMessage("Branch ID must be a valid MongoDB ObjectId"),
         check("vehicleName").notEmpty().withMessage("Vehicle name is required"),
-        check("deviceType").optional(),
+        check("deviceType").notEmpty().isString().withMessage("Device type is required"),
         check("imeiNumber")
           .notEmpty()
           .withMessage("IMEI number is required")
@@ -956,11 +956,11 @@ export const validate = (validationName: string): any[] => {
           .isURL()
           .withMessage("Server address must be a valid URL"),
         check("simNumber")
-          .optional()
+          .notEmpty()
           .isString()
           .withMessage("SIM number must be a string"),
         check("secondrySimNumber")
-          .optional()
+          .notEmpty()
           .isString()
           .withMessage("Secondary SIM number must be a string"),
         check("distanceCounter")
@@ -978,7 +978,7 @@ export const validate = (validationName: string): any[] => {
           .isIn(Object.values(SpeedDetection))
           .withMessage("Invalid speed detection value"),
         check("deviceAccuracyTolerance")
-          .optional()
+          .notEmpty()
           .isString()
           .withMessage("Device accuracy tolerance must be a string"),
         check("plateNumber").notEmpty().withMessage("Plate number is required"),
@@ -997,11 +997,11 @@ export const validate = (validationName: string): any[] => {
           .isISO8601()
           .withMessage("Purchase date must be a valid ISO 8601 date"),
         check("purchaseAmount")
-          .optional()
+          .notEmpty()
           .isNumeric()
           .withMessage("Purchase amount must be a number"),
         check("weightCapacity")
-          .optional()
+          .notEmpty()
           .isNumeric()
           .withMessage("Weight capacity must be a number"),
         check("gpsInstallationDate")
@@ -1009,7 +1009,7 @@ export const validate = (validationName: string): any[] => {
           .isISO8601()
           .withMessage("GPS installation date must be a valid ISO 8601 date"),
         check("gpsWarranty")
-          .optional()
+          .notEmpty()
           .isNumeric()
           .withMessage("GPS warranty must be a number"),
         check("companyAverage")
@@ -1017,7 +1017,7 @@ export const validate = (validationName: string): any[] => {
           .isString()
           .withMessage("Company average must be a string"),
         check("permit")
-          .optional()
+          .notEmpty()
           .isIn(Object.values(Permit))
           .withMessage("Invalid permit value"),
         check("installationDate")
@@ -1029,7 +1029,7 @@ export const validate = (validationName: string): any[] => {
           .isString()
           .withMessage("Registration number must be a string"),
         check("fuelType")
-          .optional()
+          .notEmpty()
           .isIn(Object.values(FuelType))
           .withMessage("Invalid fuel type value"),
         check("distanceBaseFuelConsumption")
@@ -1069,7 +1069,7 @@ export const validate = (validationName: string): any[] => {
           .isNumeric()
           .withMessage("Distance must be a number"),
         check("duration")
-          .optional()
+          .notEmpty()
           .isNumeric()
           .withMessage("Duration must be a number"),
         check("rfidTimeoutDuration")
