@@ -28,6 +28,7 @@ import { checkPermission } from "./app/middleware/permissions";
 import cors from "cors";
 import { createAdmin } from "./app/helper/createAdmin";
 import path from "path";
+import { initTeltonikaServer } from "./app/services/Teltonika";
 
 const envFilePath = path.resolve(`./.env.${process.env.NODE_ENV}`);
 dotenv.config({ path: envFilePath });
@@ -83,6 +84,8 @@ const initApp = async (): Promise<void> => {
   router.use("/users", companyAccess, userRoutes);
   router.use("/drivers", companyAccess, driverRoutes);
   router.use("/file-upload", fileRoutes)
+
+  await initTeltonikaServer();
 
   // error handler
   app.use(errorHandler);
