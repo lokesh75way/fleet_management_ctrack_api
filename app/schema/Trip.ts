@@ -19,6 +19,7 @@ interface ITrip extends BaseSchema {
     fuelConsumption: number;
     lastModifiedBy: Types.ObjectId | IUser;
     createdBy: Types.ObjectId | IUser;
+    isDeleted : Boolean;
     lastModifiedAt: Date;
     reachTime: Date;
     startTime: Date;
@@ -34,6 +35,7 @@ const TripSchema = new Schema<ITrip>(
         fuelConsumption: { type: Number, required: true },
         reachTime: { type: Date, required: true },
         startTime: { type: Date, required: true },
+        isDeleted : {type : Boolean , default : false},
         lastModifiedBy: { type: Schema.Types.ObjectId, ref: 'user' },
         createdBy: { type: Schema.Types.ObjectId, ref: 'user' },
     },

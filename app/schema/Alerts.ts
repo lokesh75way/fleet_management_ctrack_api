@@ -39,6 +39,7 @@ export interface IAlert extends BaseSchema {
   validFrom: Date;
   validTo: Date;
   action: string;
+  isDeleted : boolean;
   severity: Severity;
 }
 
@@ -59,6 +60,10 @@ const AlertSchema = new Schema<IAlert>(
     },
     alertName: { 
         type: String
+    },
+    isDeleted : {
+        type : Boolean,
+        default : false
     },
     alertType: { 
         type: String

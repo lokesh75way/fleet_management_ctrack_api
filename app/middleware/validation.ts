@@ -3,9 +3,6 @@ import expressAsyncHandler from "express-async-handler";
 import { check, param, validationResult } from "express-validator";
 import createHttpError from "http-errors";
 import { UserRole } from "../schema/User";
-;
-
-
 import {
   CostType,
   DistanceCounter,
@@ -415,16 +412,15 @@ export const validate = (validationName: string): any[] => {
         check("city").optional().optional(),
 
         check("zipCode")
-        .optional()
-        .custom((value, { req }) => {
-          if (value) {
-            check("zipCode")
-              .isPostalCode("any")
-              .withMessage("Invalid postal code");
-          }
-          return true;
-        }),
-
+          .optional()
+          .custom((value, { req }) => {
+            if (value) {
+              check("zipCode")
+                .isPostalCode("any")
+                .withMessage("Invalid postal code");
+            }
+            return true;
+          }),
 
         check("storageCapacity").optional(),
 
@@ -546,7 +542,6 @@ export const validate = (validationName: string): any[] => {
             return true;
           }),
 
-
         check("storageCapacity").optional(),
 
         check("logo").optional().isURL(),
@@ -630,16 +625,15 @@ export const validate = (validationName: string): any[] => {
         check("city").optional().optional(),
 
         check("zipCode")
-        .optional()
-        .custom((value, { req }) => {
-          if (value) {
-            check("zipCode")
-              .isPostalCode("any")
-              .withMessage("Invalid postal code");
-          }
-          return true;
-        }),
-
+          .optional()
+          .custom((value, { req }) => {
+            if (value) {
+              check("zipCode")
+                .isPostalCode("any")
+                .withMessage("Invalid postal code");
+            }
+            return true;
+          }),
 
         check("storageCapacity").optional(),
 
@@ -716,16 +710,15 @@ export const validate = (validationName: string): any[] => {
         check("city").exists().notEmpty().withMessage("City is required"),
 
         check("zipCode")
-        .optional()
-        .custom((value, { req }) => {
-          if (value) {
-            check("zipCode")
-              .isPostalCode("any")
-              .withMessage("Invalid postal code");
-          }
-          return true;
-        }),
-
+          .optional()
+          .custom((value, { req }) => {
+            if (value) {
+              check("zipCode")
+                .isPostalCode("any")
+                .withMessage("Invalid postal code");
+            }
+            return true;
+          }),
 
         check("file").optional().isURL(),
 
@@ -789,16 +782,15 @@ export const validate = (validationName: string): any[] => {
         check("city").optional().optional(),
 
         check("zipCode")
-        .optional()
-        .custom((value, { req }) => {
-          if (value) {
-            check("zipCode")
-              .isPostalCode("any")
-              .withMessage("Invalid postal code");
-          }
-          return true;
-        }),
-
+          .optional()
+          .custom((value, { req }) => {
+            if (value) {
+              check("zipCode")
+                .isPostalCode("any")
+                .withMessage("Invalid postal code");
+            }
+            return true;
+          }),
 
         check("file").optional().isURL(),
 
@@ -1208,7 +1200,7 @@ export const validate = (validationName: string): any[] => {
           .isString()
           .bail()
           .withMessage("City is required"),
-          check("zipCode")
+        check("zipCode")
           .optional()
           .custom((value, { req }) => {
             if (value) {
@@ -1350,7 +1342,7 @@ export const validate = (validationName: string): any[] => {
           .isString()
           .bail()
           .withMessage("Enter valid city name"),
-          check("zipCode")
+        check("zipCode")
           .optional()
           .custom((value, { req }) => {
             if (value) {
@@ -1449,64 +1441,92 @@ export const validate = (validationName: string): any[] => {
       ];
     }
 
-    case "trip:add" : {
+    case "trip:add": {
       return [
-          check('driverId')
+        check("driverId")
           .exists()
           .isMongoId()
           .bail()
           .notEmpty()
-          .withMessage('Driver ID is required'),
+          .withMessage("Driver ID is required"),
 
-          check('tripStatus')
+        check("tripStatus")
           .exists()
           .notEmpty()
           .bail()
           .isString()
           .isIn(Object.values(TripStatus))
-          .withMessage('Invalid trip status'),
+          .withMessage("Invalid trip status"),
 
-          check('startLocation')
+        check("startLocation")
           .exists()
           .notEmpty()
           .isString()
           .bail()
-          .withMessage('Start location is required'),
+          .withMessage("Start location is required"),
 
-          check('reachLocation')
+        check("reachLocation")
           .exists()
           .notEmpty()
           .isString()
           .bail()
-          .withMessage('Reach location is required'),
+          .withMessage("Reach location is required"),
 
-          check('distance')
+        check("distance")
           .exists()
           .isNumeric()
           .notEmpty()
           .bail()
-          .withMessage('Distance must be a number'),
+          .withMessage("Distance must be a number"),
 
-          check('fuelConsumption').exists()
+        check("fuelConsumption")
+          .exists()
           .isNumeric()
           .notEmpty()
           .bail()
-          .withMessage('Fuel consumption must be a number'),
+          .withMessage("Fuel consumption must be a number"),
 
-          check('reachTime')
+        check("reachTime")
           .exists()
           .notEmpty()
           .bail()
           .isISO8601()
-      
-          .withMessage('Reach time must be a date'),
 
-          check('startTime').exists()
+          .withMessage("Reach time must be a date"),
+
+        check("startTime")
+          .exists()
           .notEmpty()
           .bail()
           .isISO8601()
-          
-          .withMessage('Start time must be a date'),
+
+          .withMessage("Start time must be a date"),
+      ];
+    }
+
+    case "trip:update": {
+      return [
+        check("driverId").optional({values : "falsy"}).isMongoId(),
+
+        check("tripStatus")
+          .optional({ values: "falsy" })
+          .isString()
+          .isIn(Object.values(TripStatus)),
+
+        check("startLocation").optional({ values: "falsy" }).isString(),
+
+        check("reachLocation").optional({ values: "falsy" }).isString(),
+
+        check("distance").optional({ values: "falsy" }).isNumeric(),
+
+        check("fuelConsumption")
+          .exists()
+          .optional({ values: "falsy" })
+          .isNumeric(),
+
+        check("reachTime").optional({ values: "falsy" }).isISO8601(),
+
+        check("startTime").optional({ values: "falsy" }).isISO8601(),
       ];
     }
 
