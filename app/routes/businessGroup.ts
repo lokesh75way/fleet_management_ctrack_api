@@ -9,6 +9,7 @@ import {
   updateBusinessUser,
   deleteBusinessGroup,
 } from "../controllers/BusinessGroup";
+import { permissionAccess } from "../middleware/featureTemplate";
 
 const router = express.Router();
 
@@ -29,7 +30,7 @@ router.patch(
 );
 
 // get get all business group
-router.get("/", asyncHandler(getAllGroups));
+router.get("/",permissionAccess ,asyncHandler(getAllGroups));
 
 // delete Business group
 router.delete("/:id", asyncHandler(deleteBusinessGroup));

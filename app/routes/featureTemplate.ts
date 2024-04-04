@@ -8,10 +8,10 @@ import { permissionAccess } from "../middleware/featureTemplate";
 const router = express.Router();
 
 // to create feature template
-router.post('/',validate("module:permission"),catchError,asyncHandler(createTemplate));
+router.post('/',permissionAccess,validate("module:permission"),catchError,asyncHandler(createTemplate));
 
 // to list all feature templates
-router.get("/", catchError , asyncHandler(getAllTemplates));
+router.get("/", permissionAccess,catchError , asyncHandler(getAllTemplates));
 
 // to update feature templates
 router.patch("/", validate("module:update-permission"),catchError , asyncHandler(updateFeatureTemplate))

@@ -7,6 +7,11 @@ import { Mongoose } from "mongoose";
 
 export const createTemplate = async (req: Request, res: Response) => {
   const { name, permission } = req.body;
+  const permissions = await Permission.findOne({ name });
+  if (permissions) {
+    res.send(createResponse({}, "Name must be unique"));
+    return;
+  }
 
   const newPermission = new Permission({ name, permission });
   const data = await newPermission.save();
@@ -15,7 +20,17 @@ export const createTemplate = async (req: Request, res: Response) => {
 };
 
 export const getAllTemplates = async (req: Request, res: Response) => {
-  const query: any = { deleted: false };
+  const query: any = {
+    deleted: false,
+    // name: {
+    //   $nin: [
+    //     process.env.ADMIN_TEMPLATE,
+    //     process.env.GROUP_TEMPLATE,
+    //     process.env.COMPANY_TEMPLATE,
+    //   ],
+    // },
+  };
+  console.log(query);
 
   let { page, limit } = req.query;
   let page1 = parseInt(page as string) || 1;
@@ -26,11 +41,12 @@ export const getAllTemplates = async (req: Request, res: Response) => {
   const totalPages = Math.ceil(totalCount / limit1);
 
   const startIndex = (page1 - 1) * limit1;
-  const data = await Permission.find(query).limit(limit1)
-  .skip(startIndex)
-  .sort({ _id: -1 });
+  const data = await Permission.find(query)
+    .limit(limit1)
+    .skip(startIndex)
+    .sort({ _id: -1 });
 
-  res.send(createResponse({data , totalCount  , totalPages}));
+  res.send(createResponse({ data, totalCount, totalPages }));
 };
 
 export const updateFeatureTemplate = async (req: Request, res: Response) => {
@@ -47,15 +63,15 @@ export const updateFeatureTemplate = async (req: Request, res: Response) => {
 export const deletePermission = async (req: Request, res: Response) => {
   const { id } = req.params;
   const data = await Permission.findOne({ _id: id });
-
+  
   if (!data) {
     res.send(createHttpError(404, "Template not found!"));
     return;
   }
 
-  if(data.deleted){
-    res.send(createHttpError(400,"template is already deleted"));
-    return
+  if (data.deleted) {
+    res.send(createHttpError(400, "template is already deleted"));
+    return;
   }
   await Permission.deleteById(id);
   res.send(createResponse({}, "User deleted successfully!"));

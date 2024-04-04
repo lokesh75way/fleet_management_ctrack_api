@@ -144,7 +144,6 @@ const Vehicle = new Schema<IVehicle>(
     branchId: {
       type: Schema.Types.ObjectId,
       ref: "company-branch",
-      required: true,
     },
     vehicleName: { type: String, required: true },
     deviceType: { type: String },
