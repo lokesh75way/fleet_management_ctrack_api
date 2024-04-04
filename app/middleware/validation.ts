@@ -16,6 +16,7 @@ import {
 } from "../schema/Vehicle";
 import { DocumentType as DriverDocumentType } from "../schema/Driver";
 import { TripStatus } from "../schema/Trip";
+import { TaskCategory, TaskPriority } from "../schema/Task";
 
 export const validate = (validationName: string): any[] => {
   switch (validationName) {
@@ -1527,6 +1528,33 @@ export const validate = (validationName: string): any[] => {
         check("reachTime").optional({ values: "falsy" }).isISO8601(),
 
         check("startTime").optional({ values: "falsy" }).isISO8601(),
+      ];
+    }
+
+    case "task:create" : {
+      return [
+        check('technicianId').notEmpty().isMongoId().withMessage('Technician ID is required'),
+        check('taskCategory').notEmpty().withMessage('Task category is required')
+          .isIn(Object.values(TaskCategory)).withMessage('Invalid task category'),
+        check('taskName').notEmpty().withMessage('Task name is required'),
+        check('taskPriority').notEmpty().withMessage('Task priority is required')
+          .isIn(Object.values(TaskPriority)).withMessage('Invalid task priority'),
+        check('serviceLocation').notEmpty().withMessage('Service location is required'),
+        check('plannedReportingDate').notEmpty().withMessage('Planned reporting date is required'),
+        check('reportingTime').notEmpty().withMessage('Reporting time is required'),
+      ];
+    }
+    case "task:update" : {
+      return [
+        check('technicianId').optional().isMongoId().withMessage("Id must be valid mongodb ID"),
+        check('taskCategory').optional()
+          .isIn(Object.values(TaskCategory)).withMessage('Invalid task category'),
+        check('taskName').optional(),
+        check('taskPriority').optional()
+          .isIn(Object.values(TaskPriority)).withMessage('Invalid task priority'),
+        check('serviceLocation').optional(),
+        check('plannedReportingDate').optional(),
+        check('reportingTime').optional()
       ];
     }
 
