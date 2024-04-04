@@ -10,7 +10,7 @@ import {
 import bcrypt from "bcrypt";
 import { forgetPasswordEmailTemplate, sendEmail } from "../services/email";
 import Permission from "../schema/Permission";
-import { AdminTemplate } from "../utils";
+import { getTemplate } from "../utils";
 
 /**
  * User login
@@ -30,18 +30,24 @@ export const adminLogin = async (req: Request, res: Response) => {
       res.send(createResponse({}, "User not found!"));
       return;
     }
-
+    console.log(data);
     let permissions;
     if (
       data.role === UserRole.SUPER_ADMIN ||
       data.role === UserRole.BUSINESS_GROUP ||
       data.role === UserRole.COMPANY
     ) {
-      permissions = AdminTemplate;
+      permissions = await getTemplate(data.role);
+      console.log(permissions);
     } else {
       permissions = await Permission.find({
         _id: data.featureTemplateId,
       }).populate("permission.moduleId");
+
+      // await User.updateOne(
+      //   { _id: user._id },
+      //   { featureTemplateId: permissions._id }
+      // );
     }
 
     res.send(
