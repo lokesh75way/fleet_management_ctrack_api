@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import User, { UserRole, IUser, UserType } from "../schema/User";
 import Trip, {TripStatus} from "../schema/Trip";
 import { createResponse } from "../helper/response";
 import createHttpError from "http-errors";
@@ -11,29 +10,23 @@ import Permission from "../schema/Permission";
 export const addTrip = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const payload = req.body;
+        // @ts-ignore
+        const id = req.user._id;
+        payload.createdBy = id;
+        payload.lastModifiedBy = id;
         console.log(payload)
-        // const checkIfExist = await User.findOne({ email: payload.email });
-        // console.log(payload)
-        // if(checkIfExist) {
-        //     throw createHttpError(400, {
-        //         message: `Subadmin already exist with this email!`,
-        //     });
-        // }
-        // const createSubadmin = await new User(payload).save();
+        const checkIfExist = await Trip.findOne({ payload });
+        console.log(payload)
+        if(checkIfExist) {
+            throw createHttpError(400, {
+                message: `Trip already exist!`,
+            });
+        }
+        const createdTrip = await new Trip(payload).save();
 
-        // const token = await generatePasswordToken(createSubadmin);
-        // const html = subadminInvitationEmailTemplate(token, payload.email);
-        // const send = sendEmail({
-        //     to: payload.email, 
-        //     subject: "Registration For App", 
-        //     html: html
-        // })
 
-        // res.send(
-        //     createResponse(createSubadmin, "Subadmin created successfully!")
-        // );
         res.send(
-            createResponse({}, "Trip created successfully!")
+            createResponse(createdTrip, "Trip created successfully!")
         );
     } catch (error) {
         throw createHttpError(400, {
@@ -43,75 +36,49 @@ export const addTrip = async (req: Request, res: Response, next: NextFunction) =
     }
 } 
 
-// export const updateSubAdmin = async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const payload = req.body;
-//         const condition = { _id: req.params.id };
-//         const options = { new: true };
 
-//         const updateData = await User.findOneAndUpdate( condition, payload, options ).select("-password");
+export const deleteTrip = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const condition = { _id: req.params.id };
 
-//         if (!updateData) {
-//             throw createHttpError(400, {
-//                 message: `Failed to update subadmin!`,
-//                 data: { user: null },
-//             });
-//         }
-//         res.send(
-//             createResponse(updateData, `Subadmin updated successfully!`)
-//         );
-//     } catch (error) {
-//         throw createHttpError(400, {
-//             message: error,
-//             data: { user: null },
-//         })
-//     }
-// }
+        const updateData = await Trip.findOneAndUpdate( condition, { isDeleted: true } );
+        if (!updateData) {
+            throw createHttpError(400, {
+                message: `Failed to delete Trip!`,
+                data: { user: null },
+            });
+        }
 
-// export const deleteSubAdmin = async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const condition = { _id: req.params.id };
+        res.send(
+            createResponse({}, `Trip deleted successfully!`)
+        );
 
-//         const updateData = await User.findOneAndUpdate( condition, { isDeleted: true } ).select("-password");
-//         if (!updateData) {
-//             throw createHttpError(400, {
-//                 message: `Failed to update subadmin!`,
-//                 data: { user: null },
-//             });
-//         }
+    } catch (error) {
+        throw createHttpError(400, {
+            message: error ?? "An error occurred.",
+            data: { user: null },
+        })
+    }
+}
 
-//         res.send(
-//             createResponse({}, `Subadmin updated successfully!`)
-//         );
+export const getAllTrips = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const condition = {
+            isDeleted: false,
+        };
+        const data = await Trip.find(condition).sort({
+            createdAt: -1
+        });
+        const count = await Trip.count(condition);
 
-//     } catch (error) {
-//         throw createHttpError(400, {
-//             message: error ?? "An error occurred.",
-//             data: { user: null },
-//         })
-//     }
-// }
+        res.send(
+            createResponse({data, count}, `Trip found successfully!`)
+        );
 
-// export const getAllSubadmin = async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const condition = {
-//             isDeleted: false,
-//             role: { $in: [UserRole.SUPER_ADMIN, UserRole.USER] },
-//             type: { $in: [UserType.STAFF, UserType.ADMIN] },
-//         };
-//         const data = await User.find(condition).select("-password").sort({
-//             createdAt: -1
-//         });
-//         const count = await User.count(condition);
-
-//         res.send(
-//             createResponse({data, count}, `Subadmin found successfully!`)
-//         );
-
-//     } catch (error: any) {
-//         throw createHttpError(400, {
-//             message: error?.message ?? "An error occurred.",
-//             data: { user: null },
-//         })
-//     }
-// }
+    } catch (error: any) {
+        throw createHttpError(400, {
+            message: error?.message ?? "An error occurred.",
+            data: { user: null },
+        })
+    }
+}

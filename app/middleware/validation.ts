@@ -3,7 +3,7 @@ import expressAsyncHandler from "express-async-handler";
 import { check, param, validationResult } from "express-validator";
 import createHttpError from "http-errors";
 import { UserRole } from "../schema/User";
-import moment from "moment";
+;
 
 
 import {
@@ -1497,13 +1497,15 @@ export const validate = (validationName: string): any[] => {
           .exists()
           .notEmpty()
           .bail()
-          .isDate()
+          .isISO8601()
+      
           .withMessage('Reach time must be a date'),
 
           check('startTime').exists()
           .notEmpty()
           .bail()
-          .isDate()
+          .isISO8601()
+          
           .withMessage('Start time must be a date'),
       ];
     }

@@ -18,6 +18,7 @@ interface ITrip extends BaseSchema {
     distance: number;
     fuelConsumption: number;
     lastModifiedBy: Types.ObjectId | IUser;
+    createdBy: Types.ObjectId | IUser;
     lastModifiedAt: Date;
     reachTime: Date;
     startTime: Date;
@@ -34,6 +35,7 @@ const TripSchema = new Schema<ITrip>(
         reachTime: { type: Date, required: true },
         startTime: { type: Date, required: true },
         lastModifiedBy: { type: Schema.Types.ObjectId, ref: 'user' },
+        createdBy: { type: Schema.Types.ObjectId, ref: 'user' },
     },
     { timestamps: true }
 );
