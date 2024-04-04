@@ -70,12 +70,6 @@ export const handleTeltonikaPackets = async (packet: string) => {
     }
 }
 
-// export const testTeltonika = async () => {
-//     const result = await handleTeltonikaPackets(packet);
-//     const imei = await handleTeltonikaPackets(packet2);
-//     console.log(`Teltonika data for imei no. (${imei}) :`, result)
-// };
-
 /**
  * Function to save traking - history in database.
  * @param { payload } 
