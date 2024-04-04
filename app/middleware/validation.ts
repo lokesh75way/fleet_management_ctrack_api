@@ -3,6 +3,9 @@ import expressAsyncHandler from "express-async-handler";
 import { check, param, validationResult } from "express-validator";
 import createHttpError from "http-errors";
 import { UserRole } from "../schema/User";
+import moment from "moment";
+
+
 import {
   CostType,
   DistanceCounter,
@@ -15,6 +18,7 @@ import {
   VehicleCategory,
 } from "../schema/Vehicle";
 import { DocumentType as DriverDocumentType } from "../schema/Driver";
+import { TripStatus } from "../schema/Trip";
 
 export const validate = (validationName: string): any[] => {
   switch (validationName) {
@@ -1442,6 +1446,65 @@ export const validate = (validationName: string): any[] => {
           .isDate()
           .bail()
           .withMessage("Enter vaild issue date"),
+      ];
+    }
+
+    case "trip:add" : {
+      return [
+          check('driverId')
+          .exists()
+          .isMongoId()
+          .bail()
+          .notEmpty()
+          .withMessage('Driver ID is required'),
+
+          check('tripStatus')
+          .exists()
+          .notEmpty()
+          .bail()
+          .isString()
+          .isIn(Object.values(TripStatus))
+          .withMessage('Invalid trip status'),
+
+          check('startLocation')
+          .exists()
+          .notEmpty()
+          .isString()
+          .bail()
+          .withMessage('Start location is required'),
+
+          check('reachLocation')
+          .exists()
+          .notEmpty()
+          .isString()
+          .bail()
+          .withMessage('Reach location is required'),
+
+          check('distance')
+          .exists()
+          .isNumeric()
+          .notEmpty()
+          .bail()
+          .withMessage('Distance must be a number'),
+
+          check('fuelConsumption').exists()
+          .isNumeric()
+          .notEmpty()
+          .bail()
+          .withMessage('Fuel consumption must be a number'),
+
+          check('reachTime')
+          .exists()
+          .notEmpty()
+          .bail()
+          .isDate()
+          .withMessage('Reach time must be a date'),
+
+          check('startTime').exists()
+          .notEmpty()
+          .bail()
+          .isDate()
+          .withMessage('Start time must be a date'),
       ];
     }
 
