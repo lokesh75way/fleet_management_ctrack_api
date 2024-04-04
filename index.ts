@@ -84,7 +84,7 @@ const initApp = async (): Promise<void> => {
   router.use("/users", companyAccess, userRoutes);
   router.use("/drivers", companyAccess, driverRoutes);
   router.use("/file-upload", fileRoutes)
-  router.use("/alert", companyAccess, alertRoutes);
+  router.use("/alerts", companyAccess, alertRoutes);
 
   // error handler
   app.use(errorHandler);
