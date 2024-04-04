@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express";
-import Alert, { BasedOn, AlertValue, ValidDays, Severity, AlertTypes } from "../schema/Alerts";
+import Alert from "../schema/Alerts";
 import { createResponse } from "../helper/response";
 import createHttpError from "http-errors";
 
