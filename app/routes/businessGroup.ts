@@ -30,7 +30,7 @@ router.patch(
 );
 
 // get get all business group
-router.get("/",permissionAccess ,asyncHandler(getAllGroups));
+router.get("/" ,asyncHandler(getAllGroups));
 
 // delete Business group
 router.delete("/:id", asyncHandler(deleteBusinessGroup));
