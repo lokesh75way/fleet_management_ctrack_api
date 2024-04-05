@@ -49,7 +49,6 @@ export interface IAlert extends BaseSchema {
   action: string;
   isDeleted : boolean;
   severity: Severity;
-  isDeleted: boolean;
 }
 
 const AlertSchema = new Schema<IAlert>(
@@ -89,7 +88,6 @@ const AlertSchema = new Schema<IAlert>(
         Notification: { type: Boolean }
       },
     severity: { type: String, enum: Object.values(Severity) },
-    isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

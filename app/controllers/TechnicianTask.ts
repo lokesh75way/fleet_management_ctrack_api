@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { createResponse } from "../helper/response";
 import createHttpError from "http-errors";
 import Task from "../schema/Task";
+import Technician from "../schema/Technician";
 
 export const createTechnicianTask = async (
   req: Request,
@@ -13,7 +14,10 @@ export const createTechnicianTask = async (
   // @ts-ignore
   const id = req.user._id;
 
-
+  const technician = await Technician.findById({ _id: payload.technicianId });
+  if (!technician) {
+    throw createHttpError(400, "Invalid technician! Please select valid technician");
+  }
 
   const createdTrip = await Task.create({...payload, createdBy : id});
 
@@ -99,6 +103,11 @@ export const updateTechnicianTasks = async (
   ) => {
     const id = req.params.id;
     const payload = req.body;
+
+    const technician = await Technician.findById({ _id: payload.technicianId });
+    if (!technician) {
+      throw createHttpError(400, "Invalid technician! Please select valid technician");
+    }
   
     const task = await Task.findOne({ _id: id });
   
@@ -106,7 +115,6 @@ export const updateTechnicianTasks = async (
       res.send(createHttpError(404, "Not found"));
       return;
     }
-  
    
     const updatedTask = await Task.updateOne({ _id: id },payload);
   

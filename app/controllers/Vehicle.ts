@@ -103,6 +103,7 @@ export const getVehicles = async (
 
     const data = await Vehicle.find(query)
       .populate("branchId")
+      .sort({ createdAt: -1 })
       .limit(limit1)
       .skip(startIndex);
 

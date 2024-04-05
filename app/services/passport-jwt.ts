@@ -79,7 +79,6 @@ export const initPassport = (): void => {
       },
       async (email, password, done) => {
         try {
-          console.log(email);
           const user = await User.findOne({
             $or: [{ email: email }, { userName: email }],
           }).select(
@@ -110,9 +109,7 @@ export const initPassport = (): void => {
             );
             return;
           }
-          console.log(password);
           const validate = await user.isValidPassword(password);
-          console.log(validate)
           if (!validate) {
             done(createError(401, "Invalid email or password"), false);
             return;
