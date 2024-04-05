@@ -24,6 +24,13 @@ export const createVehicle = async (
       res.send(createHttpError(404, "Company doesn't not exist"));
     }
 
+    const existingVehicle = await Vehicle.findOne({plateNumber : req.body.plateNumber});
+
+    if(existingVehicle){
+      res.send(createHttpError(409,"Vehicle with this plate number already exists"));
+      return;
+    }
+
     const vehicle = await Vehicle.create(req.body);
 
     const newUser = await User.updateOne(
@@ -37,7 +44,9 @@ export const createVehicle = async (
       res.send(createHttpError(400, "User is not updated"));
     }
 
-    res.send(createResponse(vehicle, "Vehicle has been created successfully!"));
+    const populatedVehicle = await vehicle.populate([{path : "businessGroupId" , select : "groupName"},{path : "companyId" , select : "companyName"}])
+
+    res.send(createResponse(populatedVehicle, "Vehicle has been created successfully!"));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",

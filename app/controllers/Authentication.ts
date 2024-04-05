@@ -30,7 +30,6 @@ export const adminLogin = async (req: Request, res: Response) => {
       res.send(createResponse({}, "User not found!"));
       return;
     }
-    console.log(data);
     let permissions;
     if (
       data.role === UserRole.SUPER_ADMIN ||
@@ -44,10 +43,6 @@ export const adminLogin = async (req: Request, res: Response) => {
         _id: data.featureTemplateId,
       }).populate("permission.moduleId");
 
-      // await User.updateOne(
-      //   { _id: user._id },
-      //   { featureTemplateId: permissions._id }
-      // );
     }
 
     res.send(

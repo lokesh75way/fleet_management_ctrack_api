@@ -15,6 +15,10 @@ import {
   VehicleCategory,
 } from "../schema/Vehicle";
 import { DocumentType as DriverDocumentType } from "../schema/Driver";
+import { Gender, LeaveType } from "../schema/Technician";
+import { CATEGORY, GEOFENCE_ACCESS } from "../schema/Geofence";
+import { GEOFENCE_TYPE } from "../schema/Geofence";
+import GeoFenceLocation from "../schema/GeofenceLocation";
 
 export const validate = (validationName: string): any[] => {
   switch (validationName) {
@@ -933,9 +937,8 @@ export const validate = (validationName: string): any[] => {
           .withMessage("Company ID is required")
           .isMongoId()
           .withMessage("Company ID must be a valid MongoDB ObjectId"),
-        check("branchId")
-          .optional({ checkFalsy: false }),
-         
+        check("branchId").optional({ checkFalsy: false }),
+
         check("vehicleName").notEmpty().withMessage("Vehicle name is required"),
         check("deviceType").optional(),
         check("imeiNumber")
@@ -1118,11 +1121,11 @@ export const validate = (validationName: string): any[] => {
     case "vehicle:update": {
       return [
         check("businessGroupId")
-          .optional({values : "falsy"})
+          .optional({ values: "falsy" })
           .isMongoId()
           .withMessage("Business group ID must be a valid MongoDB ObjectId"),
         check("companyId")
-          .optional({values : "falsy"})
+          .optional({ values: "falsy" })
           .isMongoId()
           .withMessage("Company ID must be a valid MongoDB ObjectId"),
         check("branchId")
@@ -1130,10 +1133,10 @@ export const validate = (validationName: string): any[] => {
           .bail()
           .isMongoId()
           .withMessage("Branch ID must be a valid MongoDB ObjectId"),
-        check("vehicleName").optional({values : "falsy"}),
+        check("vehicleName").optional({ values: "falsy" }),
         check("deviceType").optional(),
         check("imeiNumber")
-          .optional({values : "falsy"})
+          .optional({ values: "falsy" })
           .isString()
           .withMessage("IMEI number must be a string"),
         check("copyFrom").optional(),
@@ -1150,11 +1153,11 @@ export const validate = (validationName: string): any[] => {
           .isString()
           .withMessage("Secondary SIM number must be a string"),
         check("distanceCounter")
-          .optional({values : "falsy"})
+          .optional({ values: "falsy" })
           .isIn(Object.values(DistanceCounter))
           .withMessage("Invalid distance counter value"),
         check("unitOfDistance")
-          .optional({values : "falsy"})
+          .optional({ values: "falsy" })
           .isIn(Object.values(UnitOFDistance))
           .withMessage("Invalid unit of distance value"),
         check("speedDetection")
@@ -1165,9 +1168,9 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Device accuracy tolerance must be a string"),
-        check("plateNumber").optional({values : "falsy"}),
+        check("plateNumber").optional({ values: "falsy" }),
         check("vehicleCategory")
-          .optional({values : "falsy"})
+          .optional({ values: "falsy" })
           .isIn(Object.values(VehicleCategory))
           .withMessage("Invalid vehicle category value"),
         check("dvirTemplate").optional(),
@@ -1292,13 +1295,11 @@ export const validate = (validationName: string): any[] => {
           .isBoolean()
           .withMessage("G-sensor must be a boolean"),
         check("documents.*.documentType")
-          .optional({values : "falsy"})
+          .optional({ values: "falsy" })
           .isIn(Object.values(DocumentType))
           .withMessage("Invalid document type value"),
-        check("documents.*.file")
-          .optional({values : "falsy"}),
-        check("documents.*.issueDate")
-          .optional({values : "falsy"})
+        check("documents.*.file").optional({ values: "falsy" }),
+        check("documents.*.issueDate").optional({ values: "falsy" }),
       ];
     }
 
@@ -1350,7 +1351,7 @@ export const validate = (validationName: string): any[] => {
           .notEmpty()
           .isMongoId()
           .bail()
-          .withMessage("Provide valid barnch"),
+          .withMessage("Provide valid branch"),
         check("firstName")
           .exists()
           .notEmpty()
@@ -1625,6 +1626,310 @@ export const validate = (validationName: string): any[] => {
       ];
     }
 
+    case "technician:create": {
+      return [
+        check("company")
+          .notEmpty()
+          .withMessage("Company is required")
+          .bail()
+          .isMongoId()
+          .withMessage("Id must be mongoDB ID"),
+        check("firstName").notEmpty().withMessage("First name is required"),
+        check("lastName").notEmpty().withMessage("Last name is required"),
+        check("technicianNo")
+          .notEmpty()
+          .withMessage("Technician number is required"),
+        check("email")
+          .notEmpty()
+          .withMessage("Email is required")
+          .isEmail()
+          .withMessage("Invalid email address"),
+        check("mobileNumber")
+          .notEmpty()
+          .withMessage("Mobile number is required")
+          .isMobilePhone("any")
+          .withMessage("Invalid mobile number"),
+        check("gender")
+          .notEmpty()
+          .withMessage("Gender is required")
+          .isIn(Object.values(Gender))
+          .withMessage("Invalid gender"),
+        check("dateOfJoin")
+          .notEmpty()
+          .withMessage("Date of join is required")
+          .isDate()
+          .withMessage("Invalid date of join"),
+        check("dateOfBirth")
+          .notEmpty()
+          .withMessage("Date of birth is required")
+          .isDate()
+          .withMessage("Invalid date of birth"),
+        check("emergencyContact")
+          .notEmpty()
+          .withMessage("Emergency contact is required")
+          .isMobilePhone("any")
+          .withMessage("Invalid mobile number"),
+        check("address.street1").notEmpty().withMessage("Street1 is required"),
+        check("address.city").notEmpty().withMessage("City is required"),
+        check("address.zipCode")
+          .notEmpty()
+          .withMessage("Zip code is required")
+          .isPostalCode("any")
+          .withMessage("Invalid postal code"),
+        check("address.country").notEmpty().withMessage("Country is required"),
+        check("leave.*.leaveType")
+          .optional()
+          .isIn(Object.values(LeaveType))
+          .withMessage("Invalid leave type"),
+        check("leave.*.days")
+          .optional()
+          .isInt({ min: 0 })
+          .withMessage("Invalid number of days for leave"),
+      ];
+    }
+
+    case "tehcnician:modify": {
+      return [
+        check("company")
+          .optional()
+          .isMongoId()
+          .withMessage("Company ID must be a valid MongoDB ID"),
+        check("firstName").optional(),
+        check("lastName").optional(),
+        check("technicianNo").optional(),
+        check("email")
+          .optional()
+          .isEmail()
+          .withMessage("Invalid email address"),
+        check("mobileNumber")
+          .optional()
+          .isMobilePhone("any")
+          .withMessage("Invalid mobile number"),
+        check("gender")
+          .optional()
+          .isIn(Object.values(Gender))
+          .withMessage("Invalid gender"),
+        check("dateOfJoin")
+          .optional()
+          .isDate()
+          .withMessage("Invalid date of join"),
+        check("dateOfBirth")
+          .optional()
+          .isDate()
+          .withMessage("Invalid date of birth"),
+        check("emergencyContact")
+          .optional()
+          .isMobilePhone("any")
+          .withMessage("Invalid mobile number"),
+        check("address.street1").optional(),
+        check("address.city").optional(),
+        check("address.zipCode")
+          .optional()
+          .isPostalCode("any")
+          .withMessage("Invalid postal code"),
+        check("address.country").optional(),
+        check("leave.*.leaveType")
+          .optional()
+          .isIn(Object.values(LeaveType))
+          .withMessage("Invalid leave type"),
+        check("leave.*.days")
+          .optional()
+          .isInt({ min: 0 })
+          .withMessage("Invalid number of days for leave"),
+      ];
+    }
+
+    case "geofence:add": {
+    
+      function checkPointCoordinates(coordinates : any) {
+        console.log(coordinates)
+        return (
+          Array.isArray(coordinates) &&
+          coordinates.length === 2 &&
+          coordinates.every((coord) => typeof coord === "number")
+        );
+      }
+
+      function checkLineStringCoordinates(coordinates : any) {
+        return (
+          Array.isArray(coordinates) &&
+          coordinates.every(
+            (coord) =>
+              Array.isArray(coord) &&
+              coord.length === 2 &&
+              coord.every((coordValue) => typeof coordValue === "number")
+          )
+        );
+      }
+
+      function checkPolygonCoordinates(coordinates : any) {
+        return (
+          Array.isArray(coordinates) &&
+          coordinates.every(
+            (coord) =>
+              Array.isArray(coord) &&
+              coord.every(
+                (subCoord) =>
+                  Array.isArray(subCoord) &&
+                  subCoord.length === 2 &&
+                  subCoord.every((coordValue) => typeof coordValue === "number")
+              )
+          )
+        );
+      }
+
+      function checkCircleCoordinates(coordinates : any) {
+        console.log(coordinates)
+        return (
+          Array.isArray(coordinates) &&
+          coordinates.length === 2 &&
+          coordinates.every((coord:any) => typeof coord === "number") 
+        );
+      }
+
+      return [
+        check("company")
+          .isMongoId()
+          .withMessage("Company ID must be a valid MongoDB ObjectId"),
+        check("name").notEmpty().withMessage("Name is required"),
+        check("category")
+          .isIn(Object.values(CATEGORY))
+          .withMessage("Invalid category"),
+        check("geofenceAccess")
+          .optional()
+          .isIn(Object.values(GEOFENCE_ACCESS))
+          .withMessage("Invalid geofence access type"),
+        check("address")
+          .optional()
+          .isString()
+          .withMessage("Address must be a string"),
+        check("tolerance")
+          .isNumeric()
+          .withMessage("Tolerance must be a number"),
+        check("description")
+          .optional()
+          .isString()
+          .withMessage("Description must be a string"),
+        check("location.type")
+          .isIn(Object.values(GEOFENCE_TYPE))
+          .withMessage("Invalid location type"),
+        check("location.coordinates")
+          .custom((coordinates, {req}) => {
+            const locationType = req.body.location.type;
+            if (locationType === GEOFENCE_TYPE.Point) {
+              return checkPointCoordinates(coordinates);
+            } else if (locationType === GEOFENCE_TYPE.Line) {
+              return checkLineStringCoordinates(coordinates);
+            } else if (locationType === GEOFENCE_TYPE.Polygon) {
+              return checkPolygonCoordinates(coordinates);
+            } else if (locationType === GEOFENCE_TYPE.Circle) {
+              return checkCircleCoordinates(coordinates);
+            }
+            return false;
+          })
+          .withMessage("Invalid coordinates for the specified location type"),
+      ];
+    }
+
+    case "geofence:update": {
+      function checkPointCoordinates(coordinates: any) {
+        console.log(coordinates);
+        return (
+          Array.isArray(coordinates) &&
+          coordinates.length === 2 &&
+          coordinates.every((coord) => typeof coord === "number")
+        );
+      }
+    
+      function checkLineStringCoordinates(coordinates: any) {
+        return (
+          Array.isArray(coordinates) &&
+          coordinates.every(
+            (coord) =>
+              Array.isArray(coord) &&
+              coord.length === 2 &&
+              coord.every((coordValue) => typeof coordValue === "number")
+          )
+        );
+      }
+    
+      function checkPolygonCoordinates(coordinates: any) {
+        return (
+          Array.isArray(coordinates) &&
+          coordinates.every(
+            (coord) =>
+              Array.isArray(coord) &&
+              coord.every(
+                (subCoord) =>
+                  Array.isArray(subCoord) &&
+                  subCoord.length === 2 &&
+                  subCoord.every((coordValue) => typeof coordValue === "number")
+              )
+          )
+        );
+      }
+    
+      function checkCircleCoordinates(coordinates: any) {
+        console.log(coordinates);
+        return (
+          Array.isArray(coordinates) &&
+          coordinates.length === 2 &&
+          coordinates.every((coord: any) => typeof coord === "number")
+        );
+      }
+    
+      return [
+        check("company")
+          .optional()
+          .isMongoId()
+          .withMessage("Company ID must be a valid MongoDB ObjectId"),
+        check("name").optional().notEmpty().withMessage("Name is required"),
+        check("category")
+          .optional()
+          .isIn(Object.values(CATEGORY))
+          .withMessage("Invalid category"),
+        check("geofenceAccess")
+          .optional()
+          .isIn(Object.values(GEOFENCE_ACCESS))
+          .withMessage("Invalid geofence access type"),
+        check("address")
+          .optional()
+          .isString()
+          .withMessage("Address must be a string"),
+        check("tolerance")
+          .optional()
+          .isNumeric()
+          .withMessage("Tolerance must be a number"),
+        check("description")
+          .optional()
+          .isString()
+          .withMessage("Description must be a string"),
+        check("location.type")
+          .optional()
+          .isIn(Object.values(GEOFENCE_TYPE))
+          .withMessage("Invalid location type"),
+        check("location.coordinates")
+          .optional()
+          .custom((coordinates, { req }) => {
+            if (!req.body.location || !req.body.location.type) {
+              return true; // Location is optional, no need to validate coordinates
+            }
+            const locationType = req.body.location.type;
+            if (locationType === GEOFENCE_TYPE.Point) {
+              return checkPointCoordinates(coordinates);
+            } else if (locationType === GEOFENCE_TYPE.Line) {
+              return checkLineStringCoordinates(coordinates);
+            } else if (locationType === GEOFENCE_TYPE.Polygon) {
+              return checkPolygonCoordinates(coordinates);
+            } else if (locationType === GEOFENCE_TYPE.Circle) {
+              return checkCircleCoordinates(coordinates);
+            }
+            return false;
+          })
+          .withMessage("Invalid coordinates for the specified location type"),
+      ];
+    }
+    
     default:
       return [];
   }

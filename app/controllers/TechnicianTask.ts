@@ -13,8 +13,6 @@ export const createTechnicianTask = async (
   // @ts-ignore
   const id = req.user._id;
 
-
-
   const createdTrip = await Task.create({...payload, createdBy : id});
 
   if (!createdTrip) {

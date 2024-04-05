@@ -10,7 +10,6 @@ export const addAlert = async (
 ) => {
   try {
     const payload = req.body;
-    console.log(payload);
 
     const checkIfExist = await Alert.findOne({ alertName: payload.alertName });
     console.log(payload);
