@@ -878,6 +878,11 @@ commander@11.0.0:
   resolved "https://registry.npmjs.org/commander/-/commander-11.0.0.tgz"
   integrity sha512-9HMlXtt/BNoYr8ooyjjNRdIilOTkVJXB+GhxMTtOKwk0R4j4lS4NpjuqmRxroBfnfTSHQIHQB7wryHhXarNjmQ==
 
+complete-teltonika-parser@^0.3.6:
+  version "0.3.6"
+  resolved "https://registry.npmjs.org/complete-teltonika-parser/-/complete-teltonika-parser-0.3.6.tgz"
+  integrity sha512-R+4BAoJSRj+fE4hvfJtH1fzQKzrRBqW7uhvHuD3kdTsjMnbNQ1T3uHI/2bKmdhQy6ymzogkLL9fI7cSvuJIAqA==
+
 concat-map@0.0.1:
   version "0.0.1"
   resolved "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz"

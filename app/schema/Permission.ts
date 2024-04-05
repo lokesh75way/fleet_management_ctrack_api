@@ -18,7 +18,8 @@ export interface IPermission extends BaseSchema {
 const PermissionSchema = new Schema<IPermission>(
   {
     name: { 
-      type: String
+      type: String,
+      unique : true
     },
     permission: [{
       moduleId: { 

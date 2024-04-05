@@ -19,6 +19,7 @@ import profileRoutes from "./app/routes/profileRoutes";
 import vehicleRoutes from "./app/routes/vehicle";
 import driverRoutes from "./app/routes/driver";
 import tripRoutes from "./app/routes/trip";
+import alertRoutes from "./app/routes/alert";
 import fileRoutes from './app/routes/file-upload'
 import technicianTaskRoutes from './app/routes/technicianTask';
 
@@ -30,6 +31,7 @@ import { checkPermission } from "./app/middleware/permissions";
 import cors from "cors";
 import { createAdmin } from "./app/helper/createAdmin";
 import path from "path";
+import { initTeltonikaServer } from "./app/services/Teltonika";
 
 const envFilePath = path.resolve(`./.env.${process.env.NODE_ENV}`);
 dotenv.config({ path: envFilePath });
@@ -87,6 +89,9 @@ const initApp = async (): Promise<void> => {
   router.use("/trips", companyAccess, tripRoutes);
   router.use("/technician-tasks",companyAccess,technicianTaskRoutes);
   router.use("/file-upload", fileRoutes)
+  router.use("/alerts", companyAccess, alertRoutes);
+
+  await initTeltonikaServer();
 
   // error handler
   app.use(errorHandler);
