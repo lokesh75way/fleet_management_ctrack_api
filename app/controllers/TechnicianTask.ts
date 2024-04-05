@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { createResponse } from "../helper/response";
 import createHttpError from "http-errors";
 import Task from "../schema/Task";
+import Technician from "../schema/Technician";
 
 export const createTechnicianTask = async (
   req: Request,
@@ -13,10 +14,15 @@ export const createTechnicianTask = async (
   // @ts-ignore
   const id = req.user._id;
 
+  const technicianExists = await Technician.findOne({_id : payload.technicianId})
+  if(!technicianExists){
+    throw createHttpError(400,createHttpError("Technician doesn't exists"))
+  }
+
   const createdTrip = await Task.create({...payload, createdBy : id});
 
   if (!createdTrip) {
-    res.send(createHttpError(400, "Trip is not created!"));
+    throw createHttpError(400, "Trip is not created!");
   }
 
   res.send(createResponse(createdTrip, "Trip created successfully!"));
