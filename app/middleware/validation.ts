@@ -15,7 +15,6 @@ import {
   VehicleCategory,
 } from "../schema/Vehicle";
 import { DocumentType as DriverDocumentType } from "../schema/Driver";
-import { TripStatus } from "../schema/Trip";
 
 export const validate = (validationName: string): any[] => {
   switch (validationName) {
@@ -935,10 +934,8 @@ export const validate = (validationName: string): any[] => {
           .isMongoId()
           .withMessage("Company ID must be a valid MongoDB ObjectId"),
         check("branchId")
-          .optional()
-          .bail()
-          .isMongoId()
-          .withMessage("Branch ID must be a valid MongoDB ObjectId"),
+          .optional({ checkFalsy: false }),
+         
         check("vehicleName").notEmpty().withMessage("Vehicle name is required"),
         check("deviceType").optional(),
         check("imeiNumber")
@@ -1115,6 +1112,193 @@ export const validate = (validationName: string): any[] => {
         check("documents.*.issueDate")
           .notEmpty()
           .withMessage("Issue date is required"),
+      ];
+    }
+
+    case "vehicle:update": {
+      return [
+        check("businessGroupId")
+          .optional({values : "falsy"})
+          .isMongoId()
+          .withMessage("Business group ID must be a valid MongoDB ObjectId"),
+        check("companyId")
+          .optional({values : "falsy"})
+          .isMongoId()
+          .withMessage("Company ID must be a valid MongoDB ObjectId"),
+        check("branchId")
+          .optional({ values: "falsy" })
+          .bail()
+          .isMongoId()
+          .withMessage("Branch ID must be a valid MongoDB ObjectId"),
+        check("vehicleName").optional({values : "falsy"}),
+        check("deviceType").optional(),
+        check("imeiNumber")
+          .optional({values : "falsy"})
+          .isString()
+          .withMessage("IMEI number must be a string"),
+        check("copyFrom").optional(),
+        check("serverAddress")
+          .optional()
+          .isURL()
+          .withMessage("Server address must be a valid URL"),
+        check("simNumber")
+          .optional()
+          .isString()
+          .withMessage("SIM number must be a string"),
+        check("secondrySimNumber")
+          .optional()
+          .isString()
+          .withMessage("Secondary SIM number must be a string"),
+        check("distanceCounter")
+          .optional({values : "falsy"})
+          .isIn(Object.values(DistanceCounter))
+          .withMessage("Invalid distance counter value"),
+        check("unitOfDistance")
+          .optional({values : "falsy"})
+          .isIn(Object.values(UnitOFDistance))
+          .withMessage("Invalid unit of distance value"),
+        check("speedDetection")
+          .optional()
+          .isIn(Object.values(SpeedDetection))
+          .withMessage("Invalid speed detection value"),
+        check("deviceAccuracyTolerance")
+          .optional()
+          .isString()
+          .withMessage("Device accuracy tolerance must be a string"),
+        check("plateNumber").optional({values : "falsy"}),
+        check("vehicleCategory")
+          .optional({values : "falsy"})
+          .isIn(Object.values(VehicleCategory))
+          .withMessage("Invalid vehicle category value"),
+        check("dvirTemplate").optional(),
+        check("manufacturerDate")
+          .optional()
+          .isISO8601()
+          .withMessage("Manufacturer date must be a valid ISO 8601 date"),
+        check("purchaseDate")
+          .optional()
+          .isISO8601()
+          .withMessage("Purchase date must be a valid ISO 8601 date"),
+        check("purchaseAmount")
+          .optional()
+          .isNumeric()
+          .withMessage("Purchase amount must be a number"),
+        check("weightCapacity")
+          .optional()
+          .isNumeric()
+          .withMessage("Weight capacity must be a number"),
+        check("gpsInstallationDate")
+          .optional()
+          .isISO8601()
+          .withMessage("GPS installation date must be a valid ISO 8601 date"),
+        check("gpsWarranty")
+          .optional()
+          .isNumeric()
+          .withMessage("GPS warranty must be a number"),
+        check("companyAverage")
+          .optional()
+          .isString()
+          .withMessage("Company average must be a string"),
+        check("permit")
+          .optional()
+          .isIn(Object.values(Permit))
+          .withMessage("Invalid permit value"),
+        check("installationDate")
+          .optional()
+          .isISO8601()
+          .withMessage("Installation date must be a valid ISO 8601 date"),
+        check("registrationNumber")
+          .optional()
+          .isString()
+          .withMessage("Registration number must be a string"),
+        check("fuelType")
+          .optional()
+          .isIn(Object.values(FuelType))
+          .withMessage("Invalid fuel type value"),
+        check("distanceBaseFuelConsumption")
+          .optional()
+          .isNumeric()
+          .withMessage("Distance base fuel consumption must be a number"),
+        check("durationBaseFuelConsumption")
+          .optional()
+          .isNumeric()
+          .withMessage("Duration base fuel consumption must be a number"),
+        check("fuelIdlingConsumption").optional(),
+        check("consumptionTolerancePercent")
+          .optional()
+          .isNumeric()
+          .withMessage("Consumption tolerance percent must be a number"),
+        check("vinNumber")
+          .optional()
+          .isNumeric()
+          .withMessage("VIN number must be a number"),
+        check("engineNumber")
+          .optional()
+          .isString()
+          .withMessage("Engine number must be a string"),
+        check("odometer").optional(),
+        check("lsbDetectionRadius").optional(),
+        check("engineHour").optional(),
+        check("passengerSeat")
+          .optional()
+          .isNumeric()
+          .withMessage("Passenger seat must be a number"),
+        check("costType")
+          .optional()
+          .isIn(Object.values(CostType))
+          .withMessage("Invalid cost type value"),
+        check("distance")
+          .optional()
+          .isNumeric()
+          .withMessage("Distance must be a number"),
+        check("duration")
+          .optional()
+          .isNumeric()
+          .withMessage("Duration must be a number"),
+        check("rfidTimeoutDuration")
+          .optional()
+          .isNumeric()
+          .withMessage("RFID timeout duration must be a number"),
+        check("sleepModeDuration")
+          .optional()
+          .isNumeric()
+          .withMessage("Sleep mode duration must be a number"),
+        check("minimumWorkingHour")
+          .optional()
+          .isNumeric()
+          .withMessage("Minimum working hour must be a number"),
+        check("weightSensor")
+          .optional()
+          .isBoolean()
+          .withMessage("Weight sensor must be a boolean"),
+        check("underweightTolerance")
+          .optional()
+          .isNumeric()
+          .withMessage("Underweight tolerance must be a number"),
+        check("overweightTolerance")
+          .optional()
+          .isNumeric()
+          .withMessage("Overweight tolerance must be a number"),
+        check("loadingUnloadingTolerance")
+          .optional()
+          .isNumeric()
+          .withMessage("Loading/unloading tolerance must be a number"),
+        check("fuelSensor")
+          .optional()
+          .isIn(Object.values(FuelSensor))
+          .withMessage("Invalid fuel sensor value"),
+        check("gSensor")
+          .optional()
+          .isBoolean()
+          .withMessage("G-sensor must be a boolean"),
+        check("documents.*.documentType")
+          .optional({values : "falsy"})
+          .isIn(Object.values(DocumentType))
+          .withMessage("Invalid document type value"),
+        check("documents.*.file")
+          .optional({values : "falsy"}),
+        check("documents.*.issueDate")
+          .optional({values : "falsy"})
       ];
     }
 
@@ -1438,95 +1622,6 @@ export const validate = (validationName: string): any[] => {
           .isDate()
           .bail()
           .withMessage("Enter vaild issue date"),
-      ];
-    }
-
-    case "trip:add": {
-      return [
-        check("driverId")
-          .exists()
-          .isMongoId()
-          .bail()
-          .notEmpty()
-          .withMessage("Driver ID is required"),
-
-        check("tripStatus")
-          .exists()
-          .notEmpty()
-          .bail()
-          .isString()
-          .isIn(Object.values(TripStatus))
-          .withMessage("Invalid trip status"),
-
-        check("startLocation")
-          .exists()
-          .notEmpty()
-          .isString()
-          .bail()
-          .withMessage("Start location is required"),
-
-        check("reachLocation")
-          .exists()
-          .notEmpty()
-          .isString()
-          .bail()
-          .withMessage("Reach location is required"),
-
-        check("distance")
-          .exists()
-          .isNumeric()
-          .notEmpty()
-          .bail()
-          .withMessage("Distance must be a number"),
-
-        check("fuelConsumption")
-          .exists()
-          .isNumeric()
-          .notEmpty()
-          .bail()
-          .withMessage("Fuel consumption must be a number"),
-
-        check("reachTime")
-          .exists()
-          .notEmpty()
-          .bail()
-          .isISO8601()
-
-          .withMessage("Reach time must be a date"),
-
-        check("startTime")
-          .exists()
-          .notEmpty()
-          .bail()
-          .isISO8601()
-
-          .withMessage("Start time must be a date"),
-      ];
-    }
-
-    case "trip:update": {
-      return [
-        check("driverId").optional({values : "falsy"}).isMongoId(),
-
-        check("tripStatus")
-          .optional({ values: "falsy" })
-          .isString()
-          .isIn(Object.values(TripStatus)),
-
-        check("startLocation").optional({ values: "falsy" }).isString(),
-
-        check("reachLocation").optional({ values: "falsy" }).isString(),
-
-        check("distance").optional({ values: "falsy" }).isNumeric(),
-
-        check("fuelConsumption")
-          .exists()
-          .optional({ values: "falsy" })
-          .isNumeric(),
-
-        check("reachTime").optional({ values: "falsy" }).isISO8601(),
-
-        check("startTime").optional({ values: "falsy" }).isISO8601(),
       ];
     }
 
