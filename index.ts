@@ -29,6 +29,7 @@ import cors from "cors";
 import { createAdmin } from "./app/helper/createAdmin";
 import path from "path";
 import { initTeltonikaServer } from "./app/services/Teltonika";
+import {initJT701Server} from "./app/services/JT701";
 
 const envFilePath = path.resolve(`./.env.${process.env.NODE_ENV}`);
 dotenv.config({ path: envFilePath });
@@ -86,6 +87,7 @@ const initApp = async (): Promise<void> => {
   router.use("/file-upload", fileRoutes)
 
   await initTeltonikaServer();
+  await initJT701Server();
 
   // error handler
   app.use(errorHandler);
