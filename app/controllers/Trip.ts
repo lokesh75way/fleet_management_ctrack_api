@@ -118,7 +118,6 @@ export const updateTrip = async (
   try {
     const tripId = req.params.id;
     const payload = req.body;
-    console.log(payload);
     const condition = {
       isDeleted: false,
       _id: tripId,

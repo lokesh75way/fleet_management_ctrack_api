@@ -2,14 +2,16 @@ import mongoose, { Schema, Types } from 'mongoose';
 import { BaseSchema } from '.';
 import { ITechnician } from './Technician';
 
+import  MongooseDelete , { SoftDeleteModel }  from 'mongoose-delete';
+
 // Define enums
-enum TaskPriority {
+export enum TaskPriority {
   LOW = 'LOW',
   MEDIUM = 'MEDIUM',
   HIGH = 'HIGH',
 }
 
-enum TaskCategory {
+export enum TaskCategory {
   INSTALLATION = 'INSTALLATION',
   MAINTAINANCE = 'MAINTAINANCE'
 }
@@ -37,12 +39,14 @@ const TaskSchema = new Schema<ITask>(
     description: { type: String },
     contactPersonName: { type: String },
     contactPersonNumber: { type: String },
-    serviceLocation: { type: String },
-    plannedReportingDate: { type: String },
-    reportingTime: { type: String },
+    serviceLocation: { type: String , required : true },
+    plannedReportingDate: { type: String , required : true },
+    reportingTime: { type: String , required : true },
     createdBy: { type: Schema.Types.ObjectId, ref : 'user' },
   },
   { timestamps: true }
 );
+
+TaskSchema.plugin(MongooseDelete, {deletedBy : true , deletedByType : String})
 
 export default mongoose.model<ITask>('Task', TaskSchema);

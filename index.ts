@@ -21,6 +21,7 @@ import driverRoutes from "./app/routes/driver";
 import tripRoutes from "./app/routes/trip";
 import alertRoutes from "./app/routes/alert";
 import fileRoutes from './app/routes/file-upload'
+import technicianTaskRoutes from './app/routes/technicianTask';
 
 import { initPassport } from "./app/services/passport-jwt";
 import passport from "passport";
@@ -86,6 +87,7 @@ const initApp = async (): Promise<void> => {
   router.use("/users", companyAccess, userRoutes);
   router.use("/drivers", companyAccess, driverRoutes);
   router.use("/trips", companyAccess, tripRoutes);
+  router.use("/technician-tasks",companyAccess,technicianTaskRoutes);
   router.use("/file-upload", fileRoutes)
   router.use("/alerts", companyAccess, alertRoutes);
 
