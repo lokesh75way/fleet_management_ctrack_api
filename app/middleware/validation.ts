@@ -15,6 +15,7 @@ import {
   VehicleCategory,
 } from "../schema/Vehicle";
 import { DocumentType as DriverDocumentType } from "../schema/Driver";
+import { BasedOn, AlertValue, ValidDays, Severity, AlertTypes } from "../schema/Alerts";
 
 export const validate = (validationName: string): any[] => {
   switch (validationName) {
@@ -1628,6 +1629,206 @@ export const validate = (validationName: string): any[] => {
           .bail()
           .withMessage("Enter vaild issue date"),
       ];
+    }
+
+    case "alert:add": {
+      return [
+        check('branchId')
+        .exists()
+        .notEmpty()
+        .isMongoId()
+        .bail()
+        .withMessage('Branch ID is required'),
+
+        check('basedOn')
+        .exists()
+        .notEmpty()
+        .bail()
+        .isIn(Object.values(BasedOn)).withMessage('Invalid basedOn value'),
+        
+        check('object')
+        .exists()
+        .notEmpty()
+        .isString()
+        .bail()
+        .withMessage('Object is required'),
+        
+        check('objectGroup').exists()
+        .notEmpty()
+        .isString()
+        .bail()
+        .withMessage('Object Group is required'),
+
+        check('alertName')
+        .exists()
+        .isString()
+        .notEmpty()
+        .bail()
+        .withMessage('Alert Name is required'),
+
+        check('alertType')
+        .exists()
+        .notEmpty()
+        .bail()
+        .isIn(Object.values(AlertTypes)).withMessage('Invalid alert type value')
+        .withMessage('Alert Type is required'),
+
+        check('value')
+        .exists()
+        .notEmpty()
+        .bail()
+        .isString()
+        .isIn(Object.values(AlertValue))
+        .withMessage('Invalid value'),
+
+        check('validDays')
+        .exists()
+        .notEmpty()
+        .bail()
+        .isIn(Object.values(ValidDays))
+        .withMessage('Invalid validDays value'),
+
+        check('validFrom')
+        .exists()
+        .notEmpty()
+        .bail()
+        .isDate()
+        .withMessage('Valid From must be a date'),
+
+        check('validTo')
+        .exists()
+        .notEmpty()
+        .bail()
+        .isDate()
+        .withMessage('Valid To must be a date'),
+
+        check('action.SMS')
+        .exists()
+        .notEmpty()
+        .bail()
+        .isBoolean()
+        .withMessage('SMS action must be a boolean'),
+        
+        check('action.Email').exists()
+        .notEmpty()
+        .bail()
+        .isBoolean()
+        .withMessage('Email action must be a boolean'),
+
+        check('action.Notification')
+        .exists()
+        .notEmpty()
+        .bail()
+        .isBoolean()
+        .withMessage('Notification action must be a boolean'),
+        
+        check('severity')
+        .exists()
+        .notEmpty()
+        .bail()
+        .isIn(Object.values(Severity)).withMessage('Invalid severity value'),
+        ]
+    }
+
+    case 'alert:update': {
+      return [
+        check('branchId')
+        .optional()
+        .notEmpty()
+        .isMongoId()
+        .bail()
+        .withMessage('Branch ID is required'),
+
+        check('basedOn')
+        .optional()
+        .notEmpty()
+        .bail()
+        .isIn(Object.values(BasedOn)).withMessage('Invalid basedOn value'),
+        
+        check('object')
+        .optional()
+        .notEmpty()
+        .isString()
+        .bail()
+        .withMessage('Object is required'),
+        
+        check('objectGroup')
+        .optional()
+        .notEmpty()
+        .isString()
+        .bail()
+        .withMessage('Object Group is required'),
+
+        check('alertName')
+        .optional()
+        .isString()
+        .notEmpty()
+        .bail()
+        .withMessage('Alert Name is required'),
+
+        check('alertType')
+        .optional()
+        .notEmpty()
+        .bail()
+        .isIn(Object.values(AlertTypes)).withMessage('Invalid alert type value')
+        .withMessage('Alert Type is required'),
+
+        check('value')
+        .optional()
+        .notEmpty()
+        .bail()
+        .isString()
+        .isIn(Object.values(AlertValue))
+        .withMessage('Invalid value'),
+
+        check('validDays')
+        .optional()
+        .notEmpty()
+        .bail()
+        .isIn(Object.values(ValidDays))
+        .withMessage('Invalid validDays value'),
+
+        check('validFrom')
+        .optional()
+        .notEmpty()
+        .bail()
+        .isDate()
+        .withMessage('Valid From must be a date'),
+
+        check('validTo')
+        .optional()
+        .notEmpty()
+        .bail()
+        .isDate()
+        .withMessage('Valid To must be a date'),
+
+        check('action.SMS')
+        .optional()
+        .notEmpty()
+        .bail()
+        .isBoolean()
+        .withMessage('SMS action must be a boolean'),
+        
+        check('action.Email')
+        .optional()
+        .notEmpty()
+        .bail()
+        .isBoolean()
+        .withMessage('Email action must be a boolean'),
+
+        check('action.Notification')
+        .optional()
+        .notEmpty()
+        .bail()
+        .isBoolean()
+        .withMessage('Notification action must be a boolean'),
+        
+        check('severity')
+        .optional()
+        .notEmpty()
+        .bail()
+        .isIn(Object.values(Severity)).withMessage('Invalid severity value'),
+      ]
     }
 
     default:

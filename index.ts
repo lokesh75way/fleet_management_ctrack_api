@@ -18,6 +18,7 @@ import branchRoutes from "./app/routes/branch";
 import profileRoutes from "./app/routes/profileRoutes";
 import vehicleRoutes from "./app/routes/vehicle";
 import driverRoutes from "./app/routes/driver";
+import alertRoutes from "./app/routes/alert";
 import fileRoutes from './app/routes/file-upload'
 
 import { initPassport } from "./app/services/passport-jwt";
@@ -84,6 +85,7 @@ const initApp = async (): Promise<void> => {
   router.use("/users", companyAccess, userRoutes);
   router.use("/drivers", companyAccess, driverRoutes);
   router.use("/file-upload", fileRoutes)
+  router.use("/alerts", companyAccess, alertRoutes);
 
   await initTeltonikaServer();
 
