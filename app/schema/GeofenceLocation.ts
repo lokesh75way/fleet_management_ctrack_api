@@ -2,7 +2,7 @@ import { Model, Schema, model } from "mongoose";
 
 export enum GEOFENCE_TYPE {
   Point = "Point",
-  Line = "Line",
+  Line = "LineString",
   Polygon = "Polygon",
   Circle = "Circle",
 }

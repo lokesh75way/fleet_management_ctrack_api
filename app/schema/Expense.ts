@@ -3,21 +3,26 @@ import { type BaseSchema } from "./index";
 import { IBranch } from "./CompanyBranch";
 import { IUser } from "./User";
 import MongooseDelete from "mongoose-delete";
+import { IDriver } from "./Driver";
 
 const Schema = mongoose.Schema;
 
-enum ExpenseType {
+export enum ExpenseType {
   ACCIDENT = "ACCIDENT",
   BONUS = "BONUS",
+  BREAKDOWN = "BREAKDOWN",
+  FINE = "FINE",
+  MAINTAINENSE = "MAINTAINENSE",
+  FUEL = "FUEL",
 }
 
-enum Category {
+export enum Category {
   VARIABLE = "VARIABLE",
   FIX = "FIX",
 }
 
 export interface IExpense extends BaseSchema {
-  branchId: Types.ObjectId | IBranch;
+  driver: Types.ObjectId | IDriver;
   category: Category;
   type: ExpenseType;
   amount: number;
@@ -26,14 +31,17 @@ export interface IExpense extends BaseSchema {
   description: string;
   billUpload: string;
   odometer: string;
+  workHour : Date;
+  fromDate : Date;
+  toDate : Date;
   createdBy: Types.ObjectId | IUser;
 }
 
 const ExpenseSchema = new Schema<IExpense>(
   {
-    branchId: {
+    driver: {
       type: mongoose.Types.ObjectId,
-      ref: "company-branch",
+      ref: "driver",
     },
     category: { type: String, enum: Object.values(Category), required: true },
     type: { type: String, enum: Object.values(ExpenseType), required: true },
@@ -50,6 +58,18 @@ const ExpenseSchema = new Schema<IExpense>(
     },
     description: {
       type: String,
+    },
+    workHour : {
+      type : Date
+    },
+    fromDate : {
+      type :Date 
+    }, 
+    toDate : {
+      type : Date
+    },
+    odometer : {
+      type : String
     },
     createdBy: {
       type: Schema.Types.ObjectId,

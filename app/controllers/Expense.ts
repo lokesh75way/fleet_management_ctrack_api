@@ -5,6 +5,7 @@ import Task from "../schema/Task";
 import Technician from "../schema/Technician";
 import Expense from "../schema/Expense";
 import CompanyBranch from "../schema/CompanyBranch";
+import Driver from "../schema/Driver";
 
 export const createExpense = async (
   req: Request,
@@ -16,9 +17,9 @@ export const createExpense = async (
   // @ts-ignore
   const id = req.user._id;
 
-  const expense = await CompanyBranch.findOne({ _id: payload.branchId });
+  const expense = await Driver.findOne({ _id: payload.driverId });
   if (!expense) {
-    throw createHttpError(400, createHttpError("Branch doesn't exists"));
+    throw createHttpError(400, createHttpError("Driver doesn't exists"));
   }
 
   const createdExpense = await Expense.create({ ...payload, createdBy: id });

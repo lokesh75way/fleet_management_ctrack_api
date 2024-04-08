@@ -95,7 +95,7 @@ const initApp = async (): Promise<void> => {
   router.use("/alerts", companyAccess, alertRoutes);
   router.use("/technicians",companyAccess , technicianRoutes)
   router.use('/geofences', companyAccess , geoFenceRoutes)
-  router.use("/Expense",companyAccess , expenseRoutes)
+  router.use("/expenses",companyAccess , expenseRoutes)
 
   await initTeltonikaServer();
 

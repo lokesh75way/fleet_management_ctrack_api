@@ -74,6 +74,8 @@ export const getGeofence = async (
     .limit(limit)
     .skip(startIndex);
 
+    console.log(geofences.length)
+
   const count = await Geofence.countDocuments(query);
 
   res.send(createResponse({ geofences, count }));
