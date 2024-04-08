@@ -17,7 +17,7 @@ export const createExpense = async (
   // @ts-ignore
   const id = req.user._id;
 
-  const expense = await Driver.findOne({ _id: payload.driverId });
+  const expense = await CompanyBranch.findOne({ _id: payload.branchId });
   if (!expense) {
     throw createHttpError(400, createHttpError("Driver doesn't exists"));
   }

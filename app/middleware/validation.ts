@@ -1953,11 +1953,11 @@ export const validate = (validationName: string): any[] => {
 
     case "expense:add": {
       return [
-        check("driverId")
+        check("branchId")
           .exists()
-          .withMessage("Driver ID is required")
+          .withMessage("Branch ID is required")
           .isMongoId()
-          .withMessage("Driver ID must be a valid MongoDB ObjectId"),
+          .withMessage("Branch ID must be a valid MongoDB ObjectId"),
 
         check("category")
           .notEmpty()

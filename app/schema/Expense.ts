@@ -22,7 +22,7 @@ export enum Category {
 }
 
 export interface IExpense extends BaseSchema {
-  driver: Types.ObjectId | IDriver;
+  branch: Types.ObjectId | IBranch;
   category: Category;
   type: ExpenseType;
   amount: number;
@@ -39,9 +39,9 @@ export interface IExpense extends BaseSchema {
 
 const ExpenseSchema = new Schema<IExpense>(
   {
-    driver: {
+    branch: {
       type: mongoose.Types.ObjectId,
-      ref: "driver",
+      ref: "company-branch",
     },
     category: { type: String, enum: Object.values(Category), required: true },
     type: { type: String, enum: Object.values(ExpenseType), required: true },
