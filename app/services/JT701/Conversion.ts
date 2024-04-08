@@ -36,7 +36,7 @@ export class JT701 {
       return null;
     }
     console.log(JSON.stringify(decoded), "=-=--=");
-    let data = await this.formatJT701Data(decoded);
+    await this.formatJT701Data(decoded);
     return JSON.stringify(decoded);
   }
 

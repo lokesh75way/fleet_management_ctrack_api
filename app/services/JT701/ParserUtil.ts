@@ -244,10 +244,6 @@ export class ParserUtil {
     const slaveMachineId = Buffer.from(slaveMachineIdArr)
       .toString("hex")
       .toUpperCase();
-    console.log(
-      Buffer.from(slaveMachineIdArr).toString("hex").toUpperCase(),
-      "=-=-=Buffer.from(slaveMachineIdArr).toString('hex').toUpperCase();=-=-="
-    );
     byteBuf = byteBuf.subarray(5); // Move buffer position
 
     // Slave data serial number
@@ -345,7 +341,7 @@ export class ParserUtil {
       byteBuf = byteBuf.subarray(1); // Move buffer position
     }
 
-    sensorData.gpsTime = gpsZonedDateTime.toString();
+    sensorData.gpsTime = gpsZonedDateTime.toString() == "Invalid date" ? "" : gpsZonedDateTime.toString();
     sensorData.latitude = lat;
     sensorData.longitude = lng;
     sensorData.locationType = locationType;
@@ -359,7 +355,7 @@ export class ParserUtil {
     sensorData.voltage = voltage;
     sensorData.power = power;
     sensorData.RSSI = rssi;
-    sensorData.dateTime = slaveMachineZonedDateTime.toString();
+    sensorData.dateTime = slaveMachineZonedDateTime.toString() == "Invalid date" ? "" : slaveMachineZonedDateTime.toString();
     sensorData.SensorType = sensorType;
     sensorData.Temperature = temperature;
     sensorData.Humidity = humidity;
