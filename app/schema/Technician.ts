@@ -2,34 +2,37 @@ import mongoose, { Schema, Types } from "mongoose";
 import { type BaseSchema } from "./index";
 import { ICompany } from "./Company";
 
-enum Gender {
+
+import  MongooseDelete , { SoftDeleteModel }  from 'mongoose-delete';
+
+export enum Gender {
   MALE = "MALE",
   FEMALE = "FEMALE",
 }
 
-enum VerificationMethod {
+export enum VerificationMethod {
   OTP = "OTP",
   PASSWORD = "PASSWORD",
 }
 
-enum OtpDeliveryMethod {
+export enum OtpDeliveryMethod {
   SMS = "SMS",
   EMAIL = "EMAIL",
 }
 
-enum LeaveType {
+export enum LeaveType {
   CASUAL = "CASUAL",
   SICK = "SICK",
   PRIVILEGE = "PRIVILEGE",
 }
 
 export interface ITechnician extends BaseSchema {
-  companyId: Types.ObjectId | ICompany,
+  company: Types.ObjectId | ICompany,
+
   firstName: string;
   middleName?: string;
   lastName: string;
   isActive: boolean;
-  isDeleted: boolean;
   technicianNo: string;
   email: string;
   password: string;
@@ -51,30 +54,30 @@ export interface ITechnician extends BaseSchema {
     leaveType: LeaveType;
     days: Number;
   }[];
+  createdBy : Types.ObjectId
 }
 
 const TechnicianSchema = new Schema<ITechnician>(
   {
-    companyId: { type: Schema.Types.ObjectId, required: true },
+    company: { type: Schema.Types.ObjectId, ref : "company",required: true },
     firstName: { type: String, required: true },
     middleName: { type: String },
     lastName: { type: String, required: true },
-    isActive: { type: Boolean },
-    isDeleted: { type: Boolean },
-    technicianNo: { type: String },
+    isActive: { type: Boolean , default : true },
+    technicianNo: { type: String, required : true , unique : true},
     email: { type: String, required: true, unique: true },
     password: { type: String },
-    mobileNumber: { type: Number, required: true },
+    mobileNumber: { type: Number, required: true , unique: true},
     gender: { type: String, enum: Object.values(Gender), required: true },
-    emergencyContact: { type: Number },
-    dateOfJoin: { type: Date },
-    dateOfBirth: { type: Date },
+    emergencyContact: { type: Number , required : true},
+    dateOfJoin: { type: Date , required : true},
+    dateOfBirth: { type: Date, required : true },
     address: {
       street1: { type: String },
       street2: { type: String },
-      city: { type: String },
-      zipCode: { type: String },
-      country: { type: String },
+      city: { type: String  , required: true},
+      zipCode: { type: String , required: true },
+      country: { type: String , required: true},
       mediclaimNumber: { type: String },
       mediclaimExpiryDate: { type: String },
     },
@@ -84,10 +87,14 @@ const TechnicianSchema = new Schema<ITechnician>(
         days: { type: Number },
       },
     ],
+    createdBy : {type : Schema.Types.ObjectId ,ref : "user" }
   },
   {
     timestamps: true,
   }
 );
+
+
+TechnicianSchema.plugin(MongooseDelete, {deletedBy : true , deletedByType : String})
 
 export default mongoose.model("technician", TechnicianSchema);

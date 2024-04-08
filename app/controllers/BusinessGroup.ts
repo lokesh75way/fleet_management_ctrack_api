@@ -37,7 +37,13 @@ export const createBusinessUser = async (
 
   if (alreadyExists) {
     res.send(
-      createResponse({success : false , message :"Business group with this email already exists" },"Business group with this email already exists" )
+      createResponse(
+        {
+          success: false,
+          message: "Business group with this email already exists",
+        },
+        "Business group with this email already exists"
+      )
     );
     return;
   }
@@ -49,7 +55,13 @@ export const createBusinessUser = async (
 
   if (alreadyExists) {
     res.send(
-      createResponse({success : false , message : "Business group with this username already exists"}, "Business group with this username already exists")
+      createResponse(
+        {
+          success: false,
+          message: "Business group with this username already exists",
+        },
+        "Business group with this username already exists"
+      )
     );
     return;
   }
@@ -59,7 +71,12 @@ export const createBusinessUser = async (
   });
 
   if (alreadyExists) {
-    res.send(createResponse({success : false , message :  "Group Name with this name already exists"}, "Group Name with this name already exists"));
+    res.send(
+      createResponse(
+        { success: false, message: "Group Name with this name already exists" },
+        "Group Name with this name already exists"
+      )
+    );
     return;
   }
 
@@ -69,14 +86,25 @@ export const createBusinessUser = async (
 
   if (alreadyExists) {
     res.send(
-      createResponse({success : false , message :"Business group with this phone number already exists" }, "Business group with this phone number already exists")
+      createResponse(
+        {
+          success: false,
+          message: "Business group with this phone number already exists",
+        },
+        "Business group with this phone number already exists"
+      )
     );
     return;
   }
 
   const newBusinessGroup = await BusinessGroup.create(payloadGroup);
   if (!newBusinessGroup) {
-    res.send(createResponse({success : false , message : "Business group is not created"}, "Business group is not created"));
+    res.send(
+      createResponse(
+        { success: false, message: "Business group is not created" },
+        "Business group is not created"
+      )
+    );
     return;
   }
   const newUser = await User.create({
@@ -85,11 +113,24 @@ export const createBusinessUser = async (
   });
 
   if (!newUser) {
-    res.send(createResponse({success : false , message : "Business group is not created"}, "Business group is not created"));
+    res.send(
+      createResponse(
+        { success: false, message: "Business group is not created" },
+        "Business group is not created"
+      )
+    );
     return;
   }
 
-  res.send(createResponse({success : true ,message : "Business group has been created successfully!"}, "Business group has been created successfully!"));
+  res.send(
+    createResponse(
+      {
+        success: true,
+        message: "Business group has been created successfully!",
+      },
+      "Business group has been created successfully!"
+    )
+  );
   return;
 };
 
@@ -98,8 +139,9 @@ export const updateBusinessUser = async (
   res: Response,
   next: NextFunction
 ) => {
+  // @ts-ignore
+  const id = req.user._id;
   const payload = req.body;
-  console.log(payload);
   const payloadUser = {
     userName: payload.userName,
     email: payload.email,
@@ -121,9 +163,10 @@ export const updateBusinessUser = async (
     $or: [{ email: payload.email }],
   });
 
+  const businessId = alreadyExists?.businessGroupId;
+
   if (!alreadyExists) {
-    res.send(createResponse({success : false , message : "Business group with this email is not exists"}, "Business group with this email is not exists"));
-    return;
+    throw createHttpError(409, "Business group with this email is not exists");
   }
 
   const updatedFields: any = {};
@@ -141,15 +184,67 @@ export const updateBusinessUser = async (
     updatedFields.state = payloadUser.state;
   }
 
+  if (payloadUser.userName) {
+    const alreadyExists = await User.findOne({
+      _id: { $ne: id },
+      userName: payload.userName,
+    });
+    if (alreadyExists) {
+      throw createHttpError(409, "Business Group with username already exists");
+    }
+  }
+
+  if (payloadUser.email) {
+    const alreadyExists = await User.findOne({
+      _id: { $ne: id },
+      userName: payload.email,
+    });
+    if (alreadyExists) {
+      throw createHttpError(409, "Business Group with email already exists");
+    }
+  }
+
+  if (payloadUser.mobileNumber) {
+    const alreadyExists = await User.findOne({
+      _id: { $ne: id },
+      userName: payload.mobileNumber,
+    });
+    if (alreadyExists) {
+      throw createHttpError(
+        409,
+        "Business Group with mobileNumber already exists"
+      );
+    }
+  }
+
+  if (payloadGroup.groupName) {
+    const alreadyExists = await BusinessGroup.findOne({
+      _id: { $ne: businessId },
+      userName: payload.mobileNumber,
+    });
+    if (alreadyExists) {
+      throw createHttpError(
+        409,
+        "Business Group with group name already exists"
+      );
+    }
+  }
+
   await User.updateOne({ email: payload.email }, updatedFields);
 
-  const businessId = alreadyExists?.businessGroupId;
-  console.log(payloadGroup);
   await BusinessGroup.findOneAndUpdate(businessId, payloadGroup, {
     new: true,
   });
 
-  res.send(createResponse({success : true , message : "Business group has been updated successfully!"}, "Business group has been updated successfully!"));
+  res.send(
+    createResponse(
+      {
+        success: true,
+        message: "Business group has been updated successfully!",
+      },
+      "Business group has been updated successfully!"
+    )
+  );
 };
 
 export const deleteBusinessGroup = async (
@@ -215,7 +310,9 @@ export const getAllGroups = async (
       .limit(limit1)
       .skip(startIndex);
 
-    res.send(createResponse({ data: groups,totalCount , totalPage: totalPages }));
+    res.send(
+      createResponse({ data: groups, totalCount, totalPage: totalPages })
+    );
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
