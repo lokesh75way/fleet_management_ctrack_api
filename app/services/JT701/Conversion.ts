@@ -1,6 +1,6 @@
 import { IJT701Data, ISensorData, ParserUtil } from "./ParserUtil";
 import { hexStr2Byte } from "./CommonUtil";
-import TrakingHistory, { GpsDeviceType } from "../../schema/TrakingHistory";
+import TrakingHistory, { GpsDeviceType } from "../../schema/TrakingHistoryOld";
 
 export class JT701 {
   // call to start converting data

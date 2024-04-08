@@ -4,131 +4,84 @@ import { IVehicle } from "./Vehicle";
 
 const Schema = mongoose.Schema;
 
-export enum GpsDeviceType {
-    TELTONIKA = "TELTONIKA",
-    JT701 = "JT701",
-}
-
 export interface ITrakingHistory extends BaseSchema {
-  deviceType: GpsDeviceType;
   vehicleId: Types.ObjectId | IVehicle;
+  Vehicle_Name: string;
+  Company: string;
+  Temperature: string;
+  Latitude: string;
+  GPS: string;
+  Vehicle_No: string;
+  Door1: string;
+  Door4: string;
+  Branch: string;
+  Vehicletype: string;
+  Door2: string;
+  Door3: string;
+  GPSActualTime: string;
+  Datetime: string;
+  Status: string;
+  DeviceModel: string;
+  Speed: string;
+  AC: string;
   imeiNumber: string;
-  dateTime: Date;
-  lattitude: number;
-  longitude: number;
-  priority: number;
-  altitude: number;
-  angle: number;
-  satellites: number;
-  speed: number;
-  ioElement: {
-    eventID: number;
-    elementCount: number;
-    elements: object;
-  };
-  tag: string;
-  positionFixIndicator: string;
-  direction : number;
-  slNo : number;
-  other : {
-    gpsTime: string,
-    locationType: number,
-    sensorID: string,
-    lockStatus: number,
-    lockRope: number,
-    lockTimes: number,
-    index: string,
-    voltage: number,
-    power: string,
-    RSSI: string,
-    SensorType: number,
-    Temperature: number,
-    Humidity: string,
-    event: string,
-    vehicleID:number,
-    protocolType:number,
-    deviceType: number,
-    dataType: number,
-    dataLength: number,
-    mileage: number,
-    gpsSignal: number,
-    gsmSignal: number,
-    alarmArea: number,
-    battery: number,
-    backCover: number,
-    mcc: number,
-    mnc: number,
-    lac: number,
-    cellID: number,
-    alarm:  number,
-    rfidNo: string,
-    status: number,
-    psdErrorTimes: number,
-    unlockFenceID: number,
-  }
+  Odometer: string;
+  POI: string;
+  Driver_Middle_Name: string;
+  Longitude: string;
+  Immobilize_State: string;
+  IGN: string;
+  Driver_First_Name: string;
+  Angle: string;
+  SOS: string;
+  Fuel: number[];
+  battery_percentage: string;
+  ExternalVolt: string;
+  Driver_Last_Name: string;
+  Power: string;
+  Location: string;
 }
 
 const TrakingHistorySchema = new Schema<ITrakingHistory>(
   {
-    deviceType: { type: String, enum: GpsDeviceType },
     vehicleId: {
       type: mongoose.Types.ObjectId,
       ref: "vehicle",
     },
-    imeiNumber: { type: String, required: true },
-    dateTime: { type: Date },
-    lattitude: { type: Number },
-    longitude: { type: Number },
-    priority: { type: Number },
-    altitude: { type: Number },
-    angle: { type: Number },
-    satellites: { type: Number },
-    speed: { type: Number },
-    ioElement: {
-        eventID: { type: Number },
-        elementCount: { type: Number },
-        elements: { type: Object },
-    },
-    tag: { type: String},
-    positionFixIndicator: { type: String},
-    direction: { type: Number },
-    slNo: { type: Number },
-    other: {
-      gpsTime: { type: String },
-      locationType: { type: Number },
-      sensorID: { type: String },
-      lockStatus: { type: Number },
-      lockRope: { type: Number },
-      lockTimes: { type: Number },
-      index: { type: String },
-      voltage: { type: Number },
-      power: { type: String },
-      RSSI: { type: String },
-      SensorType: { type: Number },
-      Temperature: { type: Number },
-      Humidity: { type: String },
-      event: { type: String },
-      vehicleID: { type: Number },
-      protocolType: { type: Number },
-      deviceType: { type: Number },
-      dataType: { type: Number },
-      dataLength: { type: Number },
-      mileage: { type: Number },
-      gpsSignal: { type: Number },
-      gsmSignal: { type: Number },
-      alarmArea: { type: Number },
-      battery: { type: Number },
-      backCover: { type: Number },
-      mcc: { type: Number },
-      mnc: { type: Number },
-      lac: { type: Number },
-      cellID: { type: Number },
-      alarm: { type: Number },
-      rfidNo: { type: String },
-      status: { type: Number },
-      psdErrorTimes: { type: Number },
-      unlockFenceID: { type: Number },
-    },
+    Vehicle_Name: {type : String},
+    Company: {type : String},
+    Temperature: {type : String},
+    Latitude: {type : String},
+    GPS: {type : String},
+    Vehicle_No: {type : String},
+    Door1: {type : String},
+    Door4: {type : String},
+    Branch: {type : String},
+    Vehicletype: {type : String},
+    Door2: {type : String},
+    Door3: {type : String},
+    GPSActualTime: {type : String},
+    Datetime: {type : String},
+    Status: {type : String},
+    DeviceModel: {type : String},
+    Speed: {type : String},
+    AC: {type : String},
+    imeiNumber: {type : String},
+    Odometer: {type : String},
+    POI: {type : String},
+    Driver_Middle_Name: {type : String},
+    Longitude: {type : String},
+    Immobilize_State: {type : String},
+    IGN: {type : String},
+    Driver_First_Name: {type : String},
+    Angle: {type : String},
+    SOS: {type : String},
+    Fuel: {type: [Number]},
+    battery_percentage: {type : String},
+    ExternalVolt: {type : String},
+    Driver_Last_Name: {type : String},
+    Power: {type : String},
+    Location: {type : String},
   },
   { timestamps: true }
 );

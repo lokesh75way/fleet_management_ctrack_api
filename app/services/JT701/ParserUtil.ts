@@ -43,7 +43,7 @@ export interface ISensorData {
   imei:         string;
   alarm:        number;
   rfidNo: string | null;
-  status: number;
+  status: string;
   psdErrorTimes: number;
   unlockFenceID: number | null;
 }
@@ -178,7 +178,7 @@ export class ParserUtil {
       mileage:0,
       psdErrorTimes:0,
       rfidNo:"",
-      status:0,
+      status:"",
       unlockFenceID:0
     };
 
@@ -409,7 +409,7 @@ export class ParserUtil {
       psdErrorTimes: 0,
       rfidNo: null,
       speed: 0,
-      status: 0,
+      status: "",
       unlockFenceID: null,
       gpsTime: "",
       sensorID: "",
@@ -464,26 +464,26 @@ export class ParserUtil {
     if (model.event === 6) {
       if (status === 0) {
         // Incorrect unlock code
-        model.status = 0;
+        model.status = "0";
       } else if (status > 0 && status <= 10) {
         // Normal unlock
-        model.status = 1;
+        model.status = "1";
         // Fence ID when unlocking inside the fence
         model.unlockFenceID = status;
       } else if (status === 98) {
         // Normal unlock
-        model.status = 1;
+        model.status = "1";
       } else if (status === 99) {
         // The device has enabled unlocking within the fence, and the current unlocking is not within the fence, refusing to unlock
-        model.status = 3;
+        model.status = "3";
       }
     } else if (model.event === 4) {
       if (parseInt(itemList[14]) === 0) {
         // Incorrect unlock code
-        model.status = 0;
+        model.status = "0";
       } else {
         // Normal unlock
-        model.status = 1;
+        model.status = "1";
       }
     }
 
@@ -665,7 +665,7 @@ export class ParserUtil {
       voltage:0,
       psdErrorTimes:0,
       rfidNo:"",
-      status:0,
+      status:"0",
       unlockFenceID:0
     };
 
