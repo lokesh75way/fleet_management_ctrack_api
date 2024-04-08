@@ -80,7 +80,7 @@ export interface IVehicle extends BaseSchema {
   copyFrom: string;
   serverAddress: string;
   simNumber: string;
-  secondrySimNumber: string;
+  secondarySimNumber: number;
   distanceCounter: DistanceCounter;
   unitOfDistance: UnitOFDistance;
   speedDetection: SpeedDetection;
@@ -88,28 +88,28 @@ export interface IVehicle extends BaseSchema {
   // profile
   plateNumber: string;
   vehicleCategory: VehicleCategory;
-  dvirTemplate: string;
+  DVIRTemplate: string;
   purchaseAmount: number;
-  manufacturerDate: Date;
+  manufactureDate: Date;
   purchaseDate: Date;
   weightCapacity: number;
-  gpsInstallationDate: Date;
-  gpsWarranty: number;
+  GPSInstallationDate: Date;
+  GPSWarranty: number;
   companyAverage: string;
   permit: Permit;
   installationDate: Date;
   registrationNumber: string;
   fuelType: FuelType;
-  distanceBaseFuelConsumption: number;
-  durationBaseFuelConsumption: number;
+  distanceBasedFuelConsumption: number;
+  durationBasedFuelConsumption: number;
   fuelIdlingConsumption: string;
-  consumptionTolerancePercent: number;
+  consumptionTolerance: number;
   vinNumber: number;
   engineNumber: string;
   odometer: string;
   lsbDetectionRadius: string;
   engineHour: string;
-  passengerSeat: number;
+  passengerSeats: number;
   costType: CostType;
   distance: number;
   duration: number;
@@ -152,7 +152,7 @@ const Vehicle = new Schema<IVehicle>(
     copyFrom: { type: String },
     serverAddress: { type: String },
     simNumber: { type: String },
-    secondrySimNumber: { type: String },
+    secondarySimNumber: { type: Number },
     distanceCounter: { type: String, enum: Object.values(DistanceCounter) },
     unitOfDistance: { type: String, enum: Object.values(UnitOFDistance) },
     speedDetection: { type: String },
@@ -160,28 +160,28 @@ const Vehicle = new Schema<IVehicle>(
     // profile
     plateNumber: { type: String },
     vehicleCategory: { type: String, enum: Object.values(VehicleCategory) },
-    dvirTemplate: { type: String },
-    manufacturerDate: { type: Date },
+    DVIRTemplate: { type: String },
+    manufactureDate: { type: Date },
     purchaseDate: { type: Date },
     purchaseAmount: { type: Number },
     weightCapacity: { type: Number },
-    gpsInstallationDate: { type: Date },
-    gpsWarranty: { type: Number },
+    GPSInstallationDate: { type: Date },
+    GPSWarranty: { type: Number },
     companyAverage: { type: String },
     permit: { type: String, enum: Object.values(Permit) },
     installationDate: { type: Date },
     registrationNumber: { type: String },
     fuelType: { type: String, enum: Object.values(FuelType) },
-    distanceBaseFuelConsumption: { type: Number },
-    durationBaseFuelConsumption: { type: Number },
+    distanceBasedFuelConsumption: { type: Number },
+    durationBasedFuelConsumption: { type: Number },
     fuelIdlingConsumption: { type: String },
-    consumptionTolerancePercent: { type: Number },
+    consumptionTolerance: { type: Number },
     vinNumber: { type: Number },
     engineNumber: { type: String },
     odometer: { type: String },
     lsbDetectionRadius: { type: String },
     engineHour: { type: String },
-    passengerSeat: { type: Number },
+    passengerSeats: { type: Number },
     costType: { type: String, enum: Object.values(CostType) },
     distance: { type: Number },
     duration: { type: Number },

@@ -16,6 +16,9 @@ export const createVehicle = async (
   res: Response,
   next: NextFunction
 ) => {
+
+  console.log('this is vechicle data when creating',req.body);
+  
   try {
     // @ts-ignore
     const id = req.user._id;
@@ -85,6 +88,7 @@ export const getVehicles = async (
     const role = req.user.role;
     console.log(role);
     let query: any = { isDeleted: false };
+    
 
     let { page, limit } = req.query;
     let page1 = parseInt(page as string) || 1;
@@ -107,7 +111,7 @@ export const getVehicles = async (
       .skip(startIndex);
 
     const totalCount = await Vehicle.countDocuments(query);
-
+    
     res.send(createResponse({ data, totalCount }));
   } catch (error: any) {
     throw createHttpError(400, {
