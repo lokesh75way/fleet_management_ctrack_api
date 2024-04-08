@@ -69,13 +69,28 @@ export enum DocumentType {
   ROAD_TAX = "ROAD_TAX",
 }
 
+export enum DurationUnit {
+  DAY = "DAY",
+  HOUR = "HOUR",
+}
+
+export enum FuelUnit {
+  LITRE = "LITRE",
+  GALLON = "GALLON",
+}
+
+export enum DurationUnit {
+  HHMM = "HH:MM",
+  MM = "MM",
+}
+
 export interface IVehicle extends BaseSchema {
   businessGroupId: Types.ObjectId | IBusinessGroup;
   companyId: Types.ObjectId | ICompany;
   branchId: Types.ObjectId | IBranch;
   vehicleName: string;
   deviceType: string;
-  // deviceId: mongoose.Types.ObjectId;
+  deviceId: mongoose.Types.ObjectId;
   imeiNumber: string;
   copyFrom: string;
   serverAddress: string;
@@ -100,8 +115,6 @@ export interface IVehicle extends BaseSchema {
   installationDate: Date;
   registrationNumber: string;
   fuelType: FuelType;
-  distanceBaseFuelConsumption: number;
-  durationBaseFuelConsumption: number;
   fuelIdlingConsumption: string;
   consumptionTolerancePercent: number;
   vinNumber: number;
@@ -111,8 +124,8 @@ export interface IVehicle extends BaseSchema {
   engineHour: string;
   passengerSeat: number;
   costType: CostType;
-  distance: number;
-  duration: number;
+  distanceCostQuantity: number;
+  durationCostQuantity: number;
   rfidTimeoutDuration: number;
   sleepModeDuration: number;
   minimumWorkingHour: number;
@@ -122,6 +135,20 @@ export interface IVehicle extends BaseSchema {
   loadingUnloadingTolerance: number;
   fuelSensor: FuelSensor;
   gSensor: boolean;
+  distanceBasedDistanceQuantity: number
+  distanceBaseFuelConsumption: number;
+  distanceBaseFuelConsumptionUnit: FuelUnit;
+  durationBaseFuelConsumptionDurationQuanitty: number;
+  durationBaseFuelConsumptionDurationUnit: DurationUnit;
+  durationBaseDistanceQuantity: number;
+  durationBaseFuelConsumptionUnit: FuelUnit;
+  LBSDetectionRadius: number;
+  noOfTanks: number;
+  axisX: number;
+  axisY: number;
+  axisZ: number;
+  durationUnit: DurationUnit;
+  fuelIdlingConsumptionUnit: FuelUnit;
   documents: {
     documentType: DocumentType;
     file: string;
@@ -172,8 +199,6 @@ const Vehicle = new Schema<IVehicle>(
     installationDate: { type: Date },
     registrationNumber: { type: String },
     fuelType: { type: String, enum: Object.values(FuelType) },
-    distanceBaseFuelConsumption: { type: Number },
-    durationBaseFuelConsumption: { type: Number },
     fuelIdlingConsumption: { type: String },
     consumptionTolerancePercent: { type: Number },
     vinNumber: { type: Number },
@@ -183,8 +208,8 @@ const Vehicle = new Schema<IVehicle>(
     engineHour: { type: String },
     passengerSeat: { type: Number },
     costType: { type: String, enum: Object.values(CostType) },
-    distance: { type: Number },
-    duration: { type: Number },
+    distanceCostQuantity: { type: Number },
+    durationCostQuantity: { type: Number },
     rfidTimeoutDuration: { type: Number },
     sleepModeDuration: { type: Number },
     minimumWorkingHour: { type: Number },
@@ -194,6 +219,20 @@ const Vehicle = new Schema<IVehicle>(
     loadingUnloadingTolerance: { type: Number },
     fuelSensor: { type: String, enum: Object.values(FuelSensor) },
     gSensor: { type: Boolean },
+    noOfTanks: { type: Number },
+    LBSDetectionRadius: { type: Number },
+    durationUnit: { type: String, enum: Object.values(DurationUnit) },
+    axisX: { type: Number },
+    axisY: { type: Number },
+    axisZ: { type: Number },
+    fuelIdlingConsumptionUnit: { type: String, enum: Object.values(FuelUnit) },
+    distanceBasedDistanceQuantity: { type: Number },
+    distanceBaseFuelConsumption: { type: Number },
+    distanceBaseFuelConsumptionUnit: { type: String, enum: Object.values(FuelUnit) },
+    durationBaseFuelConsumptionDurationQuanitty: { type: Number },
+    durationBaseFuelConsumptionDurationUnit: { type: String, enum: Object.values(DurationUnit) },
+    durationBaseDistanceQuantity: { type: Number },
+    durationBaseFuelConsumptionUnit: { type: String, enum: Object.values(FuelUnit) },
     documents: [
       {
         documentType: { type: String, enum: Object.values(DocumentType) },
