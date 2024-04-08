@@ -25,10 +25,10 @@ export const createExpense = async (
   const createdExpense = await Expense.create({ ...payload, createdBy: id });
 
   if (!createdExpense) {
-    throw createHttpError(400, "Trip is not created!");
+    throw createHttpError(400, "Expense is not created!");
   }
 
-  res.send(createResponse(createExpense, "Trip created successfully!"));
+  res.send(createResponse(createExpense, "Expense created successfully!"));
 };
 
 export const getExpense = async (
