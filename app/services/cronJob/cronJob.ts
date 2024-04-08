@@ -22,8 +22,8 @@ export const trackingData = async()=>{
       console.log("Limit Exceed call api after 120 seconds time interval");
       console.log(response)
     }else if(response?.data?.root?.VehicleData){
-      let veheclesImeiNumbers = response?.data?.root?.VehicleData?.map((e:any)=> e.Imeino);
-      let vehiclesData = await Vehicle.find({imeiNumber : {$in : veheclesImeiNumbers }});
+      let vehiclesImeiNumbers = response?.data?.root?.VehicleData?.map((e:any)=> e.Imeino);
+      let vehiclesData = await Vehicle.find({imeiNumber : {$in : vehiclesImeiNumbers }});
       let trackingData = await Promise.all(response?.data?.root?.VehicleData?.map(async(vehicle:any)=>{
         let vehicleData = vehiclesData.find((e:any)=> e.imeiNumber == vehicle.Imeino);
         if(vehicleData){
