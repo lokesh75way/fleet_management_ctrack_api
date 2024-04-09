@@ -22,6 +22,9 @@ import tripRoutes from "./app/routes/trip";
 import alertRoutes from "./app/routes/alert";
 import fileRoutes from './app/routes/file-upload'
 import technicianTaskRoutes from './app/routes/technicianTask';
+import technicianRoutes from './app/routes/technician'
+import geoFenceRoutes from './app/routes/geoFence';
+import expenseRoutes from './app/routes/expense'
 
 import { initPassport } from "./app/services/passport-jwt";
 import passport from "passport";
@@ -92,6 +95,9 @@ const initApp = async (): Promise<void> => {
   router.use("/technician-tasks",companyAccess,technicianTaskRoutes);
   router.use("/file-upload", fileRoutes)
   router.use("/alerts", companyAccess, alertRoutes);
+  router.use("/technicians",companyAccess , technicianRoutes)
+  router.use('/geofences', companyAccess , geoFenceRoutes)
+  router.use("/expenses",companyAccess , expenseRoutes)
 
   await initTeltonikaServer();
   await initJT701Server();
