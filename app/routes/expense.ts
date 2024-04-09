@@ -13,6 +13,6 @@ router.get("/:id",asyncHandler(getExpenseById))
 
 router.delete("/:id",asyncHandler(deleteExpense))
 
-router.patch("/:id",validate('expense:update'),asyncHandler(updateExpense))
+router.patch("/:id",validate('expense:update'),catchError,asyncHandler(updateExpense))
 
 export default router;
