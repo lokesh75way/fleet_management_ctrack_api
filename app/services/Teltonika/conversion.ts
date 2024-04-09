@@ -1,4 +1,4 @@
-import TrakingHistory, { GpsDeviceType } from "../../schema/TrakingHistory";
+import TrakingHistory, { GpsDeviceType } from "../../schema/TrakingHistoryOld";
 
 const { ProtocolParser, parseIMEI, Data, GPRS } = require('complete-teltonika-parser');
 

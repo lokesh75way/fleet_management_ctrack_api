@@ -35,6 +35,8 @@ import cors from "cors";
 import { createAdmin } from "./app/helper/createAdmin";
 import path from "path";
 import { initTeltonikaServer } from "./app/services/Teltonika";
+import {initJT701Server} from "./app/services/JT701";
+import { initCronJob} from "./app/services/cronJob"
 
 const envFilePath = path.resolve(`./.env.${process.env.NODE_ENV}`);
 dotenv.config({ path: envFilePath });
@@ -98,6 +100,8 @@ const initApp = async (): Promise<void> => {
   router.use("/expenses",companyAccess , expenseRoutes)
 
   await initTeltonikaServer();
+  await initJT701Server();
+  await initCronJob();
 
   // error handler
   app.use(errorHandler);

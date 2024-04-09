@@ -13,17 +13,18 @@ export const createDriver = async (req: Request, res: Response) => {
   const role = req.user.role;
   const user = await User.findById(id).select("companyId businessGroupId");
   if (role === UserRole.COMPANY && data.companyId != user?.companyId) {
-    throw createHttpError(400, { message: "Bad request" });
+    throw createHttpError(401, { message: "Unauthorize access!" });
   }
+
   if (
     role === UserRole.BUSINESS_GROUP &&
     data.businessGroupId != user?.businessGroupId
   ) {
-    throw createHttpError(400, { message: "Bad request" });
+    throw createHttpError(401, { message: "Unauthorize access!" });
   }
 
   const newDriver = await Driver.create(data);
-  res.send(createResponse(newDriver, "New driver added successfully!"));
+  res.send(createResponse(newDriver, "Driver added successfully!"));
 };
 
 export const updateDriver = async (req: Request, res: Response) => {

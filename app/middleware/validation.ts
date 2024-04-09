@@ -941,7 +941,7 @@ export const validate = (validationName: string): any[] => {
         check("branchId").optional({ checkFalsy: false }),
 
         check("vehicleName").notEmpty().withMessage("Vehicle name is required"),
-        check("deviceType").optional(),
+        check("deviceType").notEmpty().isString().withMessage("Device type is required"),
         check("imeiNumber")
           .notEmpty()
           .withMessage("IMEI number is required")
@@ -953,11 +953,11 @@ export const validate = (validationName: string): any[] => {
           .isURL()
           .withMessage("Server address must be a valid URL"),
         check("simNumber")
-          .optional()
+          .notEmpty()
           .isString()
           .withMessage("SIM number must be a string"),
         check("secondrySimNumber")
-          .optional()
+          .notEmpty()
           .isString()
           .withMessage("Secondary SIM number must be a string"),
         check("distanceCounter")
@@ -975,7 +975,7 @@ export const validate = (validationName: string): any[] => {
           .isIn(Object.values(SpeedDetection))
           .withMessage("Invalid speed detection value"),
         check("deviceAccuracyTolerance")
-          .optional()
+          .notEmpty()
           .isString()
           .withMessage("Device accuracy tolerance must be a string"),
         check("plateNumber").notEmpty().withMessage("Plate number is required"),
@@ -994,11 +994,11 @@ export const validate = (validationName: string): any[] => {
           .isISO8601()
           .withMessage("Purchase date must be a valid ISO 8601 date"),
         check("purchaseAmount")
-          .optional()
+          .notEmpty()
           .isNumeric()
           .withMessage("Purchase amount must be a number"),
         check("weightCapacity")
-          .optional()
+          .notEmpty()
           .isNumeric()
           .withMessage("Weight capacity must be a number"),
         check("gpsInstallationDate")
@@ -1006,7 +1006,7 @@ export const validate = (validationName: string): any[] => {
           .isISO8601()
           .withMessage("GPS installation date must be a valid ISO 8601 date"),
         check("gpsWarranty")
-          .optional()
+          .notEmpty()
           .isNumeric()
           .withMessage("GPS warranty must be a number"),
         check("companyAverage")
@@ -1014,7 +1014,7 @@ export const validate = (validationName: string): any[] => {
           .isString()
           .withMessage("Company average must be a string"),
         check("permit")
-          .optional()
+          .notEmpty()
           .isIn(Object.values(Permit))
           .withMessage("Invalid permit value"),
         check("installationDate")
@@ -1026,7 +1026,7 @@ export const validate = (validationName: string): any[] => {
           .isString()
           .withMessage("Registration number must be a string"),
         check("fuelType")
-          .optional()
+          .notEmpty()
           .isIn(Object.values(FuelType))
           .withMessage("Invalid fuel type value"),
         check("distanceBaseFuelConsumption")
@@ -1066,7 +1066,7 @@ export const validate = (validationName: string): any[] => {
           .isNumeric()
           .withMessage("Distance must be a number"),
         check("duration")
-          .optional()
+          .notEmpty()
           .isNumeric()
           .withMessage("Duration must be a number"),
         check("rfidTimeoutDuration")
@@ -1510,8 +1510,16 @@ export const validate = (validationName: string): any[] => {
           .isMongoId()
           .bail()
           .withMessage("Provide valid barnch"),
-        check("firstName").optional(),
-        check("lastName").optional(),
+        check("firstName")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("First name is required"),
+        check("lastName")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Last name is required"),
         check("employeeNumber")
           .optional()
           .isString()
@@ -1624,6 +1632,96 @@ export const validate = (validationName: string): any[] => {
           .isDate()
           .bail()
           .withMessage("Enter vaild issue date"),
+      ];
+    }
+
+    case "task:create": {
+      return [
+        check("technicianId")
+          .exists()
+          .notEmpty()
+          .trim()
+          .isMongoId()
+          .bail()
+          .withMessage("Enter valid technician id"),
+        check("taskCategory")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Task category is required!"),
+        check("taskName")
+          .exists()
+          .notEmpty()
+          .isString()
+          .bail()
+          .withMessage("Task name is required!"),
+        check("taskPriority")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Task priority is required!"),
+        check("serviceLocation")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Service location is required!"),
+        check("plannedReportingDate")
+          .exists()
+          .notEmpty()
+          .isDate()
+          .bail()
+          .withMessage("Planned reporting date is required!"),
+        check("reportingTime")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Reporting time is required!"),
+        
+      ];
+    }
+
+    case "task:update": {
+      return [
+        check("technicianId")
+          .exists()
+          .notEmpty()
+          .trim()
+          .isMongoId()
+          .bail()
+          .withMessage("Enter valid technician id"),
+        check("taskCategory")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Task category is required!"),
+        check("taskName")
+          .exists()
+          .notEmpty()
+          .isString()
+          .bail()
+          .withMessage("Task name is required!"),
+        check("taskPriority")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Task priority is required!"),
+        check("serviceLocation")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Service location is required!"),
+        check("plannedReportingDate")
+          .exists()
+          .notEmpty()
+          .isDate()
+          .bail()
+          .withMessage("Planned reporting date is required!"),
+        check("reportingTime")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Reporting time is required!"),
+        
       ];
     }
 
