@@ -79,7 +79,7 @@ export const getAllTrips = async (
     }
 
     if (req.query.driver) {
-      condition["driver"] = req.query.driver;
+      condition["driverId"] = req.query.driver;
     }
 
     if (req.query.start) {

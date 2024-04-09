@@ -1882,6 +1882,7 @@ export const validate = (validationName: string): any[] => {
       }
 
       function checkLineStringCoordinates(coordinates: any) {
+        console.log(coordinates)
         return (
           Array.isArray(coordinates) &&
           coordinates.every(
@@ -1910,7 +1911,6 @@ export const validate = (validationName: string): any[] => {
       }
 
       function checkCircleCoordinates(coordinates: any) {
-        console.log(coordinates);
         return (
           Array.isArray(coordinates) &&
           coordinates.length === 2 &&
@@ -1957,7 +1957,8 @@ export const validate = (validationName: string): any[] => {
         check("location.*.coordinates")
           .custom((coordinates, { req }) => {
             const locationType = req.body.location.find((loc: any) => loc.type);
-
+            console.log()
+            console.log("cpprdomate",coordinates , locationType.type)
             if (!locationType) {
               return false;
             }
@@ -1966,10 +1967,11 @@ export const validate = (validationName: string): any[] => {
             } else if (locationType.type === GEOFENCE_TYPE.Line) {
               return checkLineStringCoordinates(coordinates);
             } else if (locationType.type === GEOFENCE_TYPE.Polygon) {
-              return checkPolygonCoordinates(coordinates);
+              return checkLineStringCoordinates(coordinates);
             } else if (locationType.type === GEOFENCE_TYPE.Circle) {
               return checkCircleCoordinates(coordinates);
             }
+           
             return false;
           })
           .withMessage("Invalid coordinates for the specified location type"),
@@ -2114,7 +2116,7 @@ export const validate = (validationName: string): any[] => {
 
         check("workHour")
           .optional()
-          .isISO8601()
+          .isString()
           .withMessage("Invalid work hour format"),
 
         check("fromDate")
@@ -2132,11 +2134,6 @@ export const validate = (validationName: string): any[] => {
           .isNumeric()
           .withMessage("Odometer reading must be a number"),
 
-        check("createdBy")
-          .exists()
-          .withMessage("Created by user ID is required")
-          .isMongoId()
-          .withMessage("Created by user ID must be a valid MongoDB ObjectId"),
       ];
     }
 
