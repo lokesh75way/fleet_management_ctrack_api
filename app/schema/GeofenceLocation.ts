@@ -38,7 +38,7 @@ const LineStringSchema = new Schema<GeoFenceLocationBase>({
 });
 
 const PolygonSchema = new Schema<GeoFenceLocationBase>({
-  coordinates: { type: [[[Number]]], required: true },
+  coordinates: { type: [[Number]], required: true },
 });
 
 const CircleSchema = new Schema<GeoFenceLocationBase>({
