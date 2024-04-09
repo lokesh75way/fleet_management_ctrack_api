@@ -19,6 +19,7 @@ import { Gender, LeaveType } from "../schema/Technician";
 import { CATEGORY, GEOFENCE_ACCESS } from "../schema/Geofence";
 import { GEOFENCE_TYPE } from "../schema/Geofence";
 import GeoFenceLocation from "../schema/GeofenceLocation";
+import { Category, ExpenseType } from "../schema/Expense";
 
 export const validate = (validationName: string): any[] => {
   switch (validationName) {
@@ -1838,9 +1839,8 @@ export const validate = (validationName: string): any[] => {
     }
 
     case "geofence:add": {
-    
-      function checkPointCoordinates(coordinates : any) {
-        console.log(coordinates)
+      function checkPointCoordinates(coordinates: any) {
+        console.log(coordinates);
         return (
           Array.isArray(coordinates) &&
           coordinates.length === 2 &&
@@ -1848,7 +1848,7 @@ export const validate = (validationName: string): any[] => {
         );
       }
 
-      function checkLineStringCoordinates(coordinates : any) {
+      function checkLineStringCoordinates(coordinates: any) {
         return (
           Array.isArray(coordinates) &&
           coordinates.every(
@@ -1860,7 +1860,7 @@ export const validate = (validationName: string): any[] => {
         );
       }
 
-      function checkPolygonCoordinates(coordinates : any) {
+      function checkPolygonCoordinates(coordinates: any) {
         return (
           Array.isArray(coordinates) &&
           coordinates.every(
@@ -1876,12 +1876,12 @@ export const validate = (validationName: string): any[] => {
         );
       }
 
-      function checkCircleCoordinates(coordinates : any) {
-        console.log(coordinates)
+      function checkCircleCoordinates(coordinates: any) {
+        console.log(coordinates);
         return (
           Array.isArray(coordinates) &&
           coordinates.length === 2 &&
-          coordinates.every((coord:any) => typeof coord === "number") 
+          coordinates.every((coord: any) => typeof coord === "number")
         );
       }
 
@@ -1890,6 +1890,10 @@ export const validate = (validationName: string): any[] => {
           .isMongoId()
           .withMessage("Company ID must be a valid MongoDB ObjectId"),
         check("name").notEmpty().withMessage("Name is required"),
+        check("contactNumber")
+          .notEmpty()
+          .isMobilePhone("any")
+          .withMessage("Enter valid mobile number"),
         check("category")
           .isIn(Object.values(CATEGORY))
           .withMessage("Invalid category"),
@@ -1908,19 +1912,29 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Description must be a string"),
-        check("location.type")
+
+        check("location")
+          .isArray({ min: 1 })
+          .withMessage("Location array must contain at least one location"),
+
+        check("location.*.type")
           .isIn(Object.values(GEOFENCE_TYPE))
           .withMessage("Invalid location type"),
-        check("location.coordinates")
-          .custom((coordinates, {req}) => {
-            const locationType = req.body.location.type;
-            if (locationType === GEOFENCE_TYPE.Point) {
+
+        check("location.*.coordinates")
+          .custom((coordinates, { req }) => {
+            const locationType = req.body.location.find((loc: any) => loc.type);
+
+            if (!locationType) {
+              return false;
+            }
+            if (locationType.type === GEOFENCE_TYPE.Point) {
               return checkPointCoordinates(coordinates);
-            } else if (locationType === GEOFENCE_TYPE.Line) {
+            } else if (locationType.type === GEOFENCE_TYPE.Line) {
               return checkLineStringCoordinates(coordinates);
-            } else if (locationType === GEOFENCE_TYPE.Polygon) {
+            } else if (locationType.type === GEOFENCE_TYPE.Polygon) {
               return checkPolygonCoordinates(coordinates);
-            } else if (locationType === GEOFENCE_TYPE.Circle) {
+            } else if (locationType.type === GEOFENCE_TYPE.Circle) {
               return checkCircleCoordinates(coordinates);
             }
             return false;
@@ -1938,7 +1952,7 @@ export const validate = (validationName: string): any[] => {
           coordinates.every((coord) => typeof coord === "number")
         );
       }
-    
+
       function checkLineStringCoordinates(coordinates: any) {
         return (
           Array.isArray(coordinates) &&
@@ -1950,7 +1964,7 @@ export const validate = (validationName: string): any[] => {
           )
         );
       }
-    
+
       function checkPolygonCoordinates(coordinates: any) {
         return (
           Array.isArray(coordinates) &&
@@ -1966,7 +1980,7 @@ export const validate = (validationName: string): any[] => {
           )
         );
       }
-    
+
       function checkCircleCoordinates(coordinates: any) {
         console.log(coordinates);
         return (
@@ -1975,13 +1989,17 @@ export const validate = (validationName: string): any[] => {
           coordinates.every((coord: any) => typeof coord === "number")
         );
       }
-    
+
       return [
         check("company")
           .optional()
           .isMongoId()
           .withMessage("Company ID must be a valid MongoDB ObjectId"),
         check("name").optional().notEmpty().withMessage("Name is required"),
+        check("contactNumber")
+          .optional()
+          .isMobilePhone("any")
+          .withMessage("Enter valid mobile number"),
         check("category")
           .optional()
           .isIn(Object.values(CATEGORY))
@@ -2002,24 +2020,27 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Description must be a string"),
-        check("location.type")
+
+        check("location.*.type")
           .optional()
           .isIn(Object.values(GEOFENCE_TYPE))
           .withMessage("Invalid location type"),
-        check("location.coordinates")
+
+        check("location.*.coordinates")
           .optional()
           .custom((coordinates, { req }) => {
-            if (!req.body.location || !req.body.location.type) {
-              return true; // Location is optional, no need to validate coordinates
+            const locationType = req.body.location.find((loc: any) => loc.type);
+
+            if (!locationType) {
+              return false;
             }
-            const locationType = req.body.location.type;
-            if (locationType === GEOFENCE_TYPE.Point) {
+            if (locationType.type === GEOFENCE_TYPE.Point) {
               return checkPointCoordinates(coordinates);
-            } else if (locationType === GEOFENCE_TYPE.Line) {
+            } else if (locationType.type === GEOFENCE_TYPE.Line) {
               return checkLineStringCoordinates(coordinates);
-            } else if (locationType === GEOFENCE_TYPE.Polygon) {
+            } else if (locationType.type === GEOFENCE_TYPE.Polygon) {
               return checkPolygonCoordinates(coordinates);
-            } else if (locationType === GEOFENCE_TYPE.Circle) {
+            } else if (locationType.type === GEOFENCE_TYPE.Circle) {
               return checkCircleCoordinates(coordinates);
             }
             return false;
@@ -2027,7 +2048,116 @@ export const validate = (validationName: string): any[] => {
           .withMessage("Invalid coordinates for the specified location type"),
       ];
     }
-    
+
+    case "expense:add": {
+      return [
+        check("branchId")
+          .exists()
+          .withMessage("Branch ID is required")
+          .isMongoId()
+          .withMessage("Branch ID must be a valid MongoDB ObjectId"),
+
+        check("category")
+          .notEmpty()
+          .withMessage("Category is required")
+          .isIn(Object.values(Category))
+          .withMessage("Invalid category"),
+
+        check("type")
+          .notEmpty()
+          .withMessage("Type is required")
+          .isIn(Object.values(ExpenseType))
+          .withMessage("Invalid expense type"),
+
+        check("amount")
+          .notEmpty()
+          .withMessage("Amount is required")
+          .isNumeric()
+          .withMessage("Amount must be a number"),
+
+        check("referenceNumber")
+          .notEmpty()
+          .withMessage("Reference number is required"),
+
+        check("workHour")
+          .optional()
+          .isISO8601()
+          .withMessage("Invalid work hour format"),
+
+        check("fromDate")
+          .optional()
+          .isISO8601()
+          .withMessage("Invalid from date format"),
+
+        check("toDate")
+          .optional()
+          .isISO8601()
+          .withMessage("Invalid to date format"),
+
+        check("odometer")
+          .optional()
+          .isNumeric()
+          .withMessage("Odometer reading must be a number"),
+
+        check("createdBy")
+          .exists()
+          .withMessage("Created by user ID is required")
+          .isMongoId()
+          .withMessage("Created by user ID must be a valid MongoDB ObjectId"),
+      ];
+    }
+
+    case "expense:update": {
+      return [
+        check("branchId")
+          .optional()
+          .isMongoId()
+          .withMessage("Driver ID must be a valid MongoDB ObjectId"),
+
+        check("category")
+          .optional()
+          .isIn(Object.values(Category))
+          .withMessage("Invalid category"),
+
+        check("type")
+          .optional()
+          .isIn(Object.values(ExpenseType))
+          .withMessage("Invalid expense type"),
+
+        check("amount")
+          .optional()
+          .isNumeric()
+          .withMessage("Amount must be a number"),
+
+        check("referenceNumber").optional(),
+
+        check("workHour")
+          .optional()
+          .isISO8601()
+          .withMessage("Invalid work hour format"),
+
+        check("fromDate")
+          .optional()
+          .isISO8601()
+          .withMessage("Invalid from date format"),
+
+        check("toDate")
+          .optional()
+          .isISO8601()
+          .withMessage("Invalid to date format"),
+
+        check("odometer")
+          .optional()
+          .isNumeric()
+          .withMessage("Odometer reading must be a number"),
+
+        check("createdBy")
+          .optional()
+          .isMongoId()
+          .withMessage("Created by user ID must be a valid MongoDB ObjectId"),
+      ];
+    }
+
     default:
       return [];
   }

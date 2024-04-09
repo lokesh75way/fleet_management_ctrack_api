@@ -19,7 +19,7 @@ export enum GEOFENCE_ACCESS {
 
 export enum GEOFENCE_TYPE {
   Point = "Point",
-  Line = "Line",
+  Line = "LineString",
   Polygon = "Polygon",
   Circle = "Circle",
 }
@@ -48,6 +48,10 @@ const GeoFenceSchema = new Schema<IGeofence>(
       ref: "company",
       required: true,
     },
+    contactNumber :{
+      type : 'Number',
+      required : true
+    },
     name: {
       type: String,
       required: true,
@@ -71,7 +75,10 @@ const GeoFenceSchema = new Schema<IGeofence>(
     description: {
       type: String,
     },
-    location: GeoFenceLocation.schema,
+    location: [{
+      type: GeoFenceLocation.schema,
+      required: true
+    }],
     createdBy : {
         type : Schema.Types.ObjectId,
         ref : "user"

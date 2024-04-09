@@ -65,24 +65,40 @@ export const getAllTrips = async (
   next: NextFunction
 ) => {
   try {
-    const { page, limit } = req.query;
-    const page1 = parseInt(page as string) || 1;
-    const pageLimit = parseInt(limit as string) || 10;
-    const startIndex = (page1 - 1) * pageLimit;
-
-    const condition = {
+    const condition: any = {
       isDeleted: false,
+      tripStatus: "JUST_STARTED",
     };
-    const data = await Trip.find(condition).sort({
-      createdAt: -1,
-    })
-    .populate({ path: "driver", select: "_id firstName lastName" })
-    .limit(pageLimit)
-    .skip(startIndex);
+    const limit = parseInt((req.query.limit as string) || "10");
+    const page = parseInt((req.query.page as string) || "1");
 
-    const totalCount = await Trip.countDocuments(condition);
+    const status = req.query.status as string;
 
-    res.send(createResponse({ data, totalCount }, `Trip found successfully!`));
+    if (status) {
+      condition["tripStatus"] = status;
+    }
+
+    if (req.query.driver) {
+      condition["driverId"] = req.query.driver;
+    }
+
+    if (req.query.start) {
+      condition["startTime"] = { $lte: req.query.start };
+    }
+
+    if (req.query.end) {
+      condition["reachTime"] = { $gte: req.query.end };
+    }
+
+    const startIndex = (page - 1) * limit;
+
+    const data = await Trip.find(condition)
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(startIndex);
+
+    const count = await Trip.count(condition);
+    res.send(createResponse({ data, count }, `Trip found successfully!`));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
