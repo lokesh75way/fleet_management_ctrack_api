@@ -4,6 +4,7 @@ import createHttpError from "http-errors";
 import User, { UserRole, UserType } from "../schema/User";
 import Vehicle from "../schema/Vehicle";
 import { v2 as cloudinary } from "cloudinary";
+import TrakingHistory from "../schema/TrakingHistory";
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -24,10 +25,14 @@ export const createVehicle = async (
       res.send(createHttpError(404, "Company doesn't not exist"));
     }
 
-    const existingVehicle = await Vehicle.findOne({plateNumber : req.body.plateNumber});
+    const existingVehicle = await Vehicle.findOne({
+      plateNumber: req.body.plateNumber,
+    });
 
-    if(existingVehicle){
-      res.send(createHttpError(409,"Vehicle with this plate number already exists"));
+    if (existingVehicle) {
+      res.send(
+        createHttpError(409, "Vehicle with this plate number already exists")
+      );
       return;
     }
 
@@ -44,9 +49,14 @@ export const createVehicle = async (
       res.send(createHttpError(400, "User is not updated"));
     }
 
-    const populatedVehicle = await vehicle.populate([{path : "businessGroupId" , select : "groupName"},{path : "companyId" , select : "companyName"}])
+    const populatedVehicle = await vehicle.populate([
+      { path: "businessGroupId", select: "groupName" },
+      { path: "companyId", select: "companyName" },
+    ]);
 
-    res.send(createResponse(populatedVehicle, "Vehicle has been created successfully!"));
+    res.send(
+      createResponse(populatedVehicle, "Vehicle has been created successfully!")
+    );
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
@@ -170,6 +180,27 @@ export const fileUploader = async (
       return;
     }
     res.send(createResponse({}, "File is not uploaded"));
+  } catch (error: any) {
+    throw createHttpError(400, {
+      message: error?.message ?? "An error occurred.",
+      data: { user: null },
+    });
+  }
+};
+
+export const getVehicleTrackings = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+     const ids = req.query.id;
+     let query : any = {};
+     if (Array.isArray(ids) && ids.length > 0) {
+      query._id = { $in: ids };
+    }
+    const trackingVehicles = await TrakingHistory.find(query);
+    res.send(createResponse(trackingVehicles));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
