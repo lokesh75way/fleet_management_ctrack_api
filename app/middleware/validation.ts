@@ -1509,8 +1509,16 @@ export const validate = (validationName: string): any[] => {
           .isMongoId()
           .bail()
           .withMessage("Provide valid barnch"),
-        check("firstName").optional(),
-        check("lastName").optional(),
+        check("firstName")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("First name is required"),
+        check("lastName")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Last name is required"),
         check("employeeNumber")
           .optional()
           .isString()
@@ -1623,6 +1631,96 @@ export const validate = (validationName: string): any[] => {
           .isDate()
           .bail()
           .withMessage("Enter vaild issue date"),
+      ];
+    }
+
+    case "task:create": {
+      return [
+        check("technicianId")
+          .exists()
+          .notEmpty()
+          .trim()
+          .isMongoId()
+          .bail()
+          .withMessage("Enter valid technician id"),
+        check("taskCategory")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Task category is required!"),
+        check("taskName")
+          .exists()
+          .notEmpty()
+          .isString()
+          .bail()
+          .withMessage("Task name is required!"),
+        check("taskPriority")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Task priority is required!"),
+        check("serviceLocation")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Service location is required!"),
+        check("plannedReportingDate")
+          .exists()
+          .notEmpty()
+          .isDate()
+          .bail()
+          .withMessage("Planned reporting date is required!"),
+        check("reportingTime")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Reporting time is required!"),
+        
+      ];
+    }
+
+    case "task:update": {
+      return [
+        check("technicianId")
+          .exists()
+          .notEmpty()
+          .trim()
+          .isMongoId()
+          .bail()
+          .withMessage("Enter valid technician id"),
+        check("taskCategory")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Task category is required!"),
+        check("taskName")
+          .exists()
+          .notEmpty()
+          .isString()
+          .bail()
+          .withMessage("Task name is required!"),
+        check("taskPriority")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Task priority is required!"),
+        check("serviceLocation")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Service location is required!"),
+        check("plannedReportingDate")
+          .exists()
+          .notEmpty()
+          .isDate()
+          .bail()
+          .withMessage("Planned reporting date is required!"),
+        check("reportingTime")
+          .exists()
+          .notEmpty()
+          .bail()
+          .withMessage("Reporting time is required!"),
+        
       ];
     }
 

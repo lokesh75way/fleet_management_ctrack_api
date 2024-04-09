@@ -2,9 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import Trip, { TripStatus } from "../schema/Trip";
 import { createResponse } from "../helper/response";
 import createHttpError from "http-errors";
-import { sendEmail, subadminInvitationEmailTemplate } from "../services/email";
-import { generatePasswordToken } from "../services/passport-jwt";
-import Permission from "../schema/Permission";
+import Driver from "../schema/Driver";
 
 export const addTrip = async (
   req: Request,
@@ -17,9 +15,7 @@ export const addTrip = async (
     const id = req.user._id;
     payload.createdBy = id;
     payload.lastModifiedBy = id;
-    console.log(payload);
     const checkIfExist = await Trip.findOne({ payload });
-    console.log(payload);
     if (checkIfExist) {
       throw createHttpError(400, {
         message: `Trip already exist!`,
@@ -69,15 +65,24 @@ export const getAllTrips = async (
   next: NextFunction
 ) => {
   try {
+    const { page, limit } = req.query;
+    const page1 = parseInt(page as string) || 1;
+    const pageLimit = parseInt(limit as string) || 10;
+    const startIndex = (page1 - 1) * pageLimit;
+
     const condition = {
       isDeleted: false,
     };
     const data = await Trip.find(condition).sort({
       createdAt: -1,
-    });
-    const count = await Trip.count(condition);
+    })
+    .populate({ path: "driver", select: "_id firstName lastName" })
+    .limit(pageLimit)
+    .skip(startIndex);
 
-    res.send(createResponse({ data, count }, `Trip found successfully!`));
+    const totalCount = await Trip.countDocuments(condition);
+
+    res.send(createResponse({ data, totalCount }, `Trip found successfully!`));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
@@ -101,7 +106,11 @@ export const getTripById = async (
       createdAt: -1,
     });
 
-    res.send(createResponse({ data }, `Trip found successfully!`));
+    if(!data){
+      throw createHttpError(404, "Trip not found");
+    }
+
+    res.send(createResponse(data, `Trip found successfully!`));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
@@ -124,15 +133,19 @@ export const updateTrip = async (
     };
 
     const trip = await Trip.findById(tripId);
+    const driver = await Driver.findById({ _id: payload.driverId });
 
     if (!trip) {
-      res.send(createHttpError(404, "Not found"));
-      return;
+      throw createHttpError(404, "Trip not found");
+    }
+
+    if (!driver) {
+      throw createHttpError(400, "Invalid driver! Please select valid driver");
     }
 
     const data = await Trip.findOneAndUpdate(condition, payload);
 
-    res.send(createResponse({ data }, `Trip Updated successfully!`));
+    res.send(createResponse({ data }, `Trip updated successfully!`));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",

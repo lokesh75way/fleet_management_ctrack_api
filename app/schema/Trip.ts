@@ -11,7 +11,7 @@ export enum TripStatus {
 }
 
 interface ITrip extends BaseSchema {
-    driverId: Types.ObjectId | IDriver;
+    driver: Types.ObjectId | IDriver;
     tripStatus: TripStatus;
     startLocation: string;
     reachLocation: string;
@@ -27,7 +27,7 @@ interface ITrip extends BaseSchema {
 
 const TripSchema = new Schema<ITrip>(
     {
-        driverId: { type: Schema.Types.ObjectId, ref: 'driver', required: true },
+        driver: { type: Schema.Types.ObjectId, ref: 'driver', required: true },
         tripStatus: { type: String, enum: Object.values(TripStatus), required: true },
         startLocation: { type: String, required: true },
         reachLocation: { type: String, required: true },
