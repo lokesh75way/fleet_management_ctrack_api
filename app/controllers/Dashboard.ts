@@ -11,7 +11,7 @@ export const getFleetStatus = async (
         complete: 100,
         progress: 200,
         yetToStart: 50,
-        Cancelled: 10
+        cancelled: 10
     }
     res.send(createResponse(fleetStatus, "Fleet status fetched successfully!"));
 };
@@ -37,13 +37,13 @@ export const getFleetUsage = async (
             mobile: 50,
             web: 80
         },
-        activeUsers: {
-            "Abu Dhabi": 80,
-            "Dubai": 30,
-            "Sharjah": 50,
-            "Ajman": 40,
-            "Umm Al-Quwain": 14
-        }
+        activeUsers: [
+            { title: "Abu Dhabi", country: "Uae", value: 60, lat: 25.2233, lon: 55.2869},
+            { title: "India", country: "India", value: 20, lat: 28.652, lon: 77.212 },
+            { title: "Sharjah", country: "Uae", value: 3, lat: 25.3197, lon: 55.5463 },
+            { title: "Ajman", country: "Uae", value: 10, lat: 25.1821, lon: 55.6703 },
+            { title: "Umm Al-Quwain", country: "Uae", value: 7, lat: 25.5830, lon: 55.6263 }
+        ]
     }
     res.send(createResponse(fleetUsage, "Fleet usage fetched successfully!"));
 }
@@ -242,26 +242,40 @@ export const getTasks = async (
     next: NextFunction
 ) => {
     const tasks = {
-        "2022-01-01": {
-            upcoming: 2,
-            missed: 1,
-            completed: 3,
-            incomplete: 1
-        },
-        "2022-01-02": {
-            upcoming: 1,
-            missed: 0,
-            completed: 2,
-            incomplete: 2
-        },
-        "2022-01-03": {
-            upcoming: 3,
-            missed: 1,
-            completed: 1,
-            incomplete: 2
-        },
+        xAxis: [
+            "05-08-17",
+            "09-11-23",
+            "03-06-29",
+            "10-04-18",
+            "07-12-31",
+            "01-10-22",
+            "06-09-25",
+            "02-01-14",
+            "08-03-10",
+            "11-05-27",
+            "04-07-12",
+            "12-02-24",
+          ],
+        series: [
+            {
+                name: "Upcoming Taska",
+                data: [65, 65, 65, 120, 120, 80, 120, 100, 100, 120, 120, 120]
+            },
+            {
+                name: "Missed Tasks",
+                data: [50, 100, 35, 35, 0, 0, 80, 20, 40, 40, 40, 40]
+            },
+            {
+                name: "Incomplete Tasks",
+                data: [20, 40, 20, 80, 40, 40, 20, 60, 60, 20, 110, 60],
+            },
+            {
+                name: "Completed tasks",
+                data: [10, 20, 10, 40, 60, 30, 80, 20, 50, 90, 10, 110],
+            }
+        ]
 
-    };
+    }
     res.send(createResponse(tasks, "Tasks fetched successfully!"));
 }
 
