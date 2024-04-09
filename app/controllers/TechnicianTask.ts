@@ -42,7 +42,9 @@ export const getTechnicianTasks = async (
   let data = await Task.find({ deleted: false })
     .sort({ createdAt: -1 })
     .limit(limit1)
-    .skip(startIndex);
+    .skip(startIndex)
+    .populate("technician");
+    
 
   const totalCount = await Task.countDocuments({deleted : false});
 
