@@ -22,10 +22,10 @@ export const createTechnicianTask = async (
   const createdTrip = await Task.create({...payload, createdBy : id});
 
   if (!createdTrip) {
-    res.send(createHttpError(400, "Trip is not created!"));
+    res.send(createHttpError(400, "Task is not created!"));
   }
 
-  res.send(createResponse(createdTrip, "Trip created successfully!"));
+  res.send(createResponse(createdTrip, "Task created successfully!"));
 };
 
 export const getTechnicianTasks = async (
