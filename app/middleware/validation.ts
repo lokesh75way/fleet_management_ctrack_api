@@ -1027,14 +1027,14 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isIn(Object.values(FuelType))
           .withMessage("Invalid fuel type value"),
-        check("distanceBaseFuelConsumption")
-          .optional()
-          .isNumeric()
-          .withMessage("Distance base fuel consumption must be a number"),
-        check("durationBaseFuelConsumption")
-          .optional()
-          .isNumeric()
-          .withMessage("Duration base fuel consumption must be a number"),
+        // check("distanceBaseFuelConsumption")
+        //   .optional()
+        //   .isNumeric()
+        //   .withMessage("Distance base fuel consumption must be a number"),
+        // check("durationBaseFuelConsumption")
+        //   .optional()
+        //   .isNumeric()
+        //   .withMessage("Duration base fuel consumption must be a number"),
         check("fuelIdlingConsumption").optional(),
         check("consumptionTolerancePercent")
           .optional()
@@ -1231,14 +1231,14 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isIn(Object.values(FuelType))
           .withMessage("Invalid fuel type value"),
-        check("distanceBaseFuelConsumption")
-          .optional()
-          .isNumeric()
-          .withMessage("Distance base fuel consumption must be a number"),
-        check("durationBaseFuelConsumption")
-          .optional()
-          .isNumeric()
-          .withMessage("Duration base fuel consumption must be a number"),
+        // check("distanceBaseFuelConsumption")
+        //   .optional()
+        //   .isNumeric()
+        //   .withMessage("Distance base fuel consumption must be a number"),
+        // check("durationBaseFuelConsumption")
+        //   .optional()
+        //   .isNumeric()
+        //   .withMessage("Duration base fuel consumption must be a number"),
         check("fuelIdlingConsumption").optional(),
         check("consumptionTolerancePercent")
           .optional()
