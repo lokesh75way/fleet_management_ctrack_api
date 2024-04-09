@@ -193,12 +193,20 @@ export const getVehicleTrackings = async (
   next: NextFunction
 ) => {
   try {
+    const status = req.query.status;
      const ids = req.query.id;
-     let query : any = {};
+     console.log(ids)
+     const query : any = {};
      if (Array.isArray(ids) && ids.length > 0) {
-      query._id = { $in: ids };
+      query['_id'] = { $in: ids };
     }
-    const trackingVehicles = await TrakingHistory.find(query);
+    else if(ids){
+      query['_id'] = ids;
+    }
+    console.log(query)
+    const imeiIds = await Vehicle.find(query).select('imeiNumber');
+    console.log(imeiIds)
+    const trackingVehicles = await TrakingHistory.find(query) .sort({ updatedAt: -1 }).populate({path : 'vehicleId' , select : '_id vehicleName' })
     res.send(createResponse(trackingVehicles));
   } catch (error: any) {
     throw createHttpError(400, {

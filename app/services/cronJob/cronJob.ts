@@ -34,7 +34,7 @@ export const trackingData = async()=>{
       }));
       const bulkOps: AnyBulkWriteOperation<any>[] = trackingData.map(doc => ({
         updateMany: {
-          filter: { Datetime: doc.Datetime,imeiNumber : doc.imeiNumber,Vehicle_No : doc.Vehicle_No },
+          filter: { Datetime: doc.Datetime,imeiNumber : doc.imeiNumber,Vehicle_No : doc.Vehicle_No , vehicleId : doc.vehicleId },
           update: { $set: doc },
           upsert: true,
         },
