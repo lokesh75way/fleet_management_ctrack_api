@@ -197,7 +197,7 @@ export const getVehicleTrackings = async (
     const status = req.query.status;
 
     const ids = req.query.id;
-    console.log(ids);
+
     const query: any = {};
     if (Array.isArray(ids) && ids.length > 0) {
       query["_id"] = { $in: ids };
@@ -207,11 +207,12 @@ export const getVehicleTrackings = async (
     const imeiIds = await Vehicle.find(query).select("imeiNumber");
     const imeiIdsArray = imeiIds.map((imei) => imei.imeiNumber);
 
-    const query2  :  any= { imeiNumber: { $in: imeiIdsArray } };
+    const query2  :  any= { imeiNumber: { $in: imeiIdsArray } , vehicleId : {$in : ids}};
 
     if (status) {
       query2["Status"] = status;
     }
+    console.log(query2)
 
     const trackingVehicles = await TrakingHistory.find(query2)
       .sort({ updatedAt: -1 })

@@ -26,6 +26,7 @@ export interface IExpense extends BaseSchema {
   category: Category;
   type: ExpenseType;
   amount: number;
+  expenseDate : Date;
   referenceNumber: string;
   bill: string;
   description: string;
@@ -48,6 +49,10 @@ const ExpenseSchema = new Schema<IExpense>(
     amount: {
       type: Number,
       required: true,
+    },
+    expenseDate : {
+      type : Date , 
+      required : true
     },
     referenceNumber: {
       type: String,
