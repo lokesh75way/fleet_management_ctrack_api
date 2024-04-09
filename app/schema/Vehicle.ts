@@ -175,7 +175,7 @@ const Vehicle = new Schema<IVehicle>(
     vehicleName: { type: String, required: true },
     deviceType: { type: String , required : true },
     // deviceId: { type: Schema.Types.ObjectId, ref: "Device", required: true },
-    imeiNumber: { type: String, required: true },
+    imeiNumber: { type: String, required: true , unique :true },
     copyFrom: { type: String },
     serverAddress: { type: String },
     simNumber: { type: String , required : true },

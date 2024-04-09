@@ -79,16 +79,18 @@ export const getAllTrips = async (
     }
 
     if (req.query.driver) {
-      condition["driverId"] = req.query.driver;
+      condition["driver"] = req.query.driver;
     }
 
     if (req.query.start) {
-      condition["startTime"] = { $lte: req.query.start };
+      condition["startTime"] = { $gte: req.query.start };
     }
 
     if (req.query.end) {
-      condition["reachTime"] = { $gte: req.query.end };
+      condition["reachTime"] = { $lte: req.query.end };
     }
+
+    console.log(condition)
 
     const startIndex = (page - 1) * limit;
 
