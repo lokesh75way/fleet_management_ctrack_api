@@ -11,7 +11,7 @@ export const createGeofence = async (
   next: NextFunction
 ) => {
   const payload = req.body;
-
+console.log(payload)
   // @ts-ignore
   const id = req.user._id;
 
