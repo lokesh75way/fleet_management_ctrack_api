@@ -26,12 +26,13 @@ export interface IExpense extends BaseSchema {
   category: Category;
   type: ExpenseType;
   amount: number;
+  expenseDate : Date;
   referenceNumber: string;
   bill: string;
   description: string;
   billUpload: string;
   odometer: string;
-  workHour : Date;
+  workHour : string;
   fromDate : Date;
   toDate : Date;
   createdBy: Types.ObjectId | IUser;
@@ -49,6 +50,10 @@ const ExpenseSchema = new Schema<IExpense>(
       type: Number,
       required: true,
     },
+    expenseDate : {
+      type : Date , 
+      required : true
+    },
     referenceNumber: {
       type: String,
       required: true,
@@ -60,7 +65,7 @@ const ExpenseSchema = new Schema<IExpense>(
       type: String,
     },
     workHour : {
-      type : Date
+      type : String,
     },
     fromDate : {
       type :Date 

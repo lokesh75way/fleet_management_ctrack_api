@@ -17,9 +17,9 @@ export const createExpense = async (
   // @ts-ignore
   const id = req.user._id;
 
-  const expense = await CompanyBranch.findOne({ _id: payload.branchId });
+  const expense = await CompanyBranch.findOne({ _id: payload.branch });
   if (!expense) {
-    throw createHttpError(400, createHttpError("Driver doesn't exists"));
+    throw createHttpError(400, createHttpError("Branch doesn't exists"));
   }
 
   const createdExpense = await Expense.create({ ...payload, createdBy: id });
@@ -28,7 +28,7 @@ export const createExpense = async (
     throw createHttpError(400, "Expense is not created!");
   }
 
-  res.send(createResponse(createExpense, "Expense created successfully!"));
+  res.send(createResponse(createdExpense, "Expense created successfully!"));
 };
 
 export const getExpense = async (
@@ -42,12 +42,12 @@ export const getExpense = async (
 
   const startIndex = (page1 - 1) * limit1;
 
-  let data = await Task.find({ deleted: false })
+  let data = await Expense.find({ deleted: false })
     .sort({ createdAt: -1 })
     .limit(limit1)
-    .skip(startIndex);
+    .skip(startIndex)
 
-  const totalCount = await Task.countDocuments({ deleted: false });
+  const totalCount = await Expense.countDocuments({ deleted: false });
 
   res.send(createResponse({ data, totalCount }));
 };
@@ -82,7 +82,7 @@ export const deleteExpense = async (
     return;
   }
 
-  const deletedExpense = await Task.updateOne({ _id: id }, { deleted: true });
+  const deletedExpense = await Expense.updateOne({ _id: id }, { deleted: true });
 
   res.send(createResponse(deletedExpense, "Expense Deleted successfully!"));
 };

@@ -943,7 +943,10 @@ export const validate = (validationName: string): any[] => {
         check("branchId").optional({ checkFalsy: false }),
 
         check("vehicleName").notEmpty().withMessage("Vehicle name is required"),
-        check("deviceType").notEmpty().isString().withMessage("Device type is required"),
+        check("deviceType")
+          .notEmpty()
+          .isString()
+          .withMessage("Device type is required"),
         check("imeiNumber")
           .notEmpty()
           .withMessage("IMEI number is required")
@@ -1881,6 +1884,7 @@ export const validate = (validationName: string): any[] => {
       }
 
       function checkLineStringCoordinates(coordinates: any) {
+        console.log(coordinates);
         return (
           Array.isArray(coordinates) &&
           coordinates.every(
@@ -1909,7 +1913,6 @@ export const validate = (validationName: string): any[] => {
       }
 
       function checkCircleCoordinates(coordinates: any) {
-        console.log(coordinates);
         return (
           Array.isArray(coordinates) &&
           coordinates.length === 2 &&
@@ -1956,20 +1959,20 @@ export const validate = (validationName: string): any[] => {
         check("location.*.coordinates")
           .custom((coordinates, { req }) => {
             const locationType = req.body.location.find((loc: any) => loc.type);
-
             if (!locationType) {
               return false;
             }
-            if (locationType.type === GEOFENCE_TYPE.Point) {
-              return checkPointCoordinates(coordinates);
-            } else if (locationType.type === GEOFENCE_TYPE.Line) {
-              return checkLineStringCoordinates(coordinates);
-            } else if (locationType.type === GEOFENCE_TYPE.Polygon) {
-              return checkPolygonCoordinates(coordinates);
-            } else if (locationType.type === GEOFENCE_TYPE.Circle) {
-              return checkCircleCoordinates(coordinates);
-            }
-            return false;
+            // if (locationType.type === GEOFENCE_TYPE.Point) {
+            //   return checkPointCoordinates(coordinates);
+            // } else if (locationType.type === GEOFENCE_TYPE.Line) {
+            //   return checkLineStringCoordinates(coordinates);
+            // } else if (locationType.type === GEOFENCE_TYPE.Polygon) {
+            //   return checkLineStringCoordinates(coordinates);
+            // } else if (locationType.type === GEOFENCE_TYPE.Circle) {
+            //   return checkCircleCoordinates(coordinates);
+            // }
+
+            return true;
           })
           .withMessage("Invalid coordinates for the specified location type"),
       ];
@@ -2061,21 +2064,21 @@ export const validate = (validationName: string): any[] => {
         check("location.*.coordinates")
           .optional()
           .custom((coordinates, { req }) => {
-            const locationType = req.body.location.find((loc: any) => loc.type);
+            // const locationType = req.body.location.find((loc: any) => loc.type);
 
-            if (!locationType) {
-              return false;
-            }
-            if (locationType.type === GEOFENCE_TYPE.Point) {
-              return checkPointCoordinates(coordinates);
-            } else if (locationType.type === GEOFENCE_TYPE.Line) {
-              return checkLineStringCoordinates(coordinates);
-            } else if (locationType.type === GEOFENCE_TYPE.Polygon) {
-              return checkPolygonCoordinates(coordinates);
-            } else if (locationType.type === GEOFENCE_TYPE.Circle) {
-              return checkCircleCoordinates(coordinates);
-            }
-            return false;
+            // if (!locationType) {
+            //   return false;
+            // }
+            // if (locationType.type === GEOFENCE_TYPE.Point) {
+            //   return checkPointCoordinates(coordinates);
+            // } else if (locationType.type === GEOFENCE_TYPE.Line) {
+            //   return checkLineStringCoordinates(coordinates);
+            // } else if (locationType.type === GEOFENCE_TYPE.Polygon) {
+            //   return checkPolygonCoordinates(coordinates);
+            // } else if (locationType.type === GEOFENCE_TYPE.Circle) {
+            //   return checkCircleCoordinates(coordinates);
+            // }
+            return true;
           })
           .withMessage("Invalid coordinates for the specified location type"),
       ];
@@ -2083,7 +2086,7 @@ export const validate = (validationName: string): any[] => {
 
     case "expense:add": {
       return [
-        check("branchId")
+        check("branch")
           .exists()
           .withMessage("Branch ID is required")
           .isMongoId()
@@ -2101,6 +2104,12 @@ export const validate = (validationName: string): any[] => {
           .isIn(Object.values(ExpenseType))
           .withMessage("Invalid expense type"),
 
+        check("expenseDate")
+          .notEmpty()
+          .withMessage("Expense Date is required")
+          .isISO8601()
+          .withMessage("Enter valid date"),
+
         check("amount")
           .notEmpty()
           .withMessage("Amount is required")
@@ -2113,7 +2122,7 @@ export const validate = (validationName: string): any[] => {
 
         check("workHour")
           .optional()
-          .isISO8601()
+          .isString()
           .withMessage("Invalid work hour format"),
 
         check("fromDate")
@@ -2130,12 +2139,6 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isNumeric()
           .withMessage("Odometer reading must be a number"),
-
-        check("createdBy")
-          .exists()
-          .withMessage("Created by user ID is required")
-          .isMongoId()
-          .withMessage("Created by user ID must be a valid MongoDB ObjectId"),
       ];
     }
 
@@ -2155,6 +2158,11 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isIn(Object.values(ExpenseType))
           .withMessage("Invalid expense type"),
+
+          check("amount")
+          .optional()
+          .isNumeric()
+          .withMessage("Amount must be a number"),
 
         check("amount")
           .optional()
