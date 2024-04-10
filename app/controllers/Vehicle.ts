@@ -5,6 +5,7 @@ import User, { UserRole, UserType } from "../schema/User";
 import Vehicle from "../schema/Vehicle";
 import { v2 as cloudinary } from "cloudinary";
 import TrakingHistory from "../schema/TrakingHistory";
+import Company from "../schema/Company";
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -188,6 +189,12 @@ export const fileUploader = async (
   }
 };
 
+/**
+ * Api to get vahicle current(last) status
+ * @param { id, status } req.query
+ * @param { data[] } res 
+ * @param next 
+ */
 export const getVehicleTrackings = async (
   req: Request,
   res: Response,
@@ -207,17 +214,151 @@ export const getVehicleTrackings = async (
     const imeiIds = await Vehicle.find(query).select("imeiNumber");
     const imeiIdsArray = imeiIds.map((imei) => imei.imeiNumber);
 
-    const query2  :  any= { imeiNumber: { $in: imeiIdsArray } , vehicleId : {$in : ids}};
+    const query2  :  any= { imeiNumber: { $in: imeiIdsArray }};
 
     if (status) {
       query2["Status"] = status;
     }
-    console.log(query2)
 
-    const trackingVehicles = await TrakingHistory.find(query2)
-      .sort({ updatedAt: -1 })
-      .populate({ path: "vehicleId", select: "_id vehicleName" });
-    res.send(createResponse(trackingVehicles));
+    const trackData = await TrakingHistory.aggregate([
+      {
+        $match: query2
+      },
+      {
+        $match: {
+          vehicleId: { $ne: null } 
+        }
+      },
+      {
+        $sort: {
+          updatedAt: -1
+        }
+      },
+      {
+        $group: {
+          _id: {  vehicleId: "$vehicleId" },
+          allFields: { $addToSet: "$$ROOT" },
+        }
+      },
+      { $unwind: "$allFields" },
+      {
+        $sort: {
+          "allFields.updatedAt": -1
+        }
+      },
+      {
+        "$group" : {
+          "_id" : "$_id" ,
+          "allFields" : {
+            "$first" : "$allFields"
+          }
+        }
+      },
+      {
+        $addFields:{
+          vehicleId: "$allFields.vehicleId"
+        }
+      },
+      {
+        $lookup: {
+          from: 'vehicles', 
+          localField: "vehicleId", 
+          foreignField: '_id', 
+          as: 'vehicleId'
+        },
+      },
+      { $unwind: "$vehicleId" },
+      {
+        $project:{
+          _id: "$allFields._id",
+          Status: "$allFields.Status",
+          Vehicle_No: "$allFields.Vehicle_No",
+          imeiNumber: "$allFields.imeiNumber",
+          Vehicle_Name: "$allFields.Vehicle_Name",
+          Latitude: "$allFields.Latitude",
+          Longitude: "$allFields.Longitude",
+          Location: "$allFields.Location",
+          Datetime: "$allFields.Datetime",
+          updatedAt: "$allFields.updatedAt",
+          createdAt: "$allFields.createdAt",
+          vehicleId:{
+            _id: true,
+            vehicleName: true
+          }
+        }
+      },
+    ]);
+
+    res.send(createResponse(trackData));
+  } catch (error: any) {
+    throw createHttpError(400, {
+      message: error?.message ?? "An error occurred.",
+      data: { user: null },
+    });
+  }
+};
+
+export const getCompanyVehicles = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // @ts-ignore
+    const id = req.user._id;
+    // @ts-ignore
+    const role = req.user.role;
+    let query: any = { isDeleted: false };
+
+    const { page, limit } = req.query;
+    const pageNo = parseInt(page as string) || 1;
+    const pageLimit = parseInt(limit as string) || 10;
+    const startIndex = (pageNo - 1) * pageLimit;
+
+    const user_id = await User.findById(id)
+    .select("companyId businessGroupId");
+
+    if (role === UserRole.COMPANY) {
+      query = {
+        $match: { _id: user_id?.companyId }
+      }
+    }
+
+    if (role === UserRole.BUSINESS_GROUP) {
+      query = {
+        $match: { businessGroupId: user_id?.businessGroupId }
+      }
+    }
+
+    if (role === UserRole.SUPER_ADMIN) {
+      query = {
+        $match: { }
+      }
+    }
+
+    const data = await Company.aggregate([
+      query,
+      {
+        $lookup: {
+          from: 'vehicles', 
+          localField: '_id', 
+          foreignField: 'companyId', 
+          as: 'vehicles'
+        }
+      },
+      {
+        $project:{
+          _id: true,
+          companyName: true,
+          vehicles:{
+            _id: true,
+            vehicleName: true
+          }
+        }
+      }
+    ]);
+
+    res.send(createResponse( data, "Company vehicle found successfully" ));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
