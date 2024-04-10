@@ -1670,7 +1670,7 @@ export const validate = (validationName: string): any[] => {
 
     case "task:create": {
       return [
-        check("technicianId")
+        check("technician")
           .exists()
           .notEmpty()
           .trim()
@@ -1709,7 +1709,6 @@ export const validate = (validationName: string): any[] => {
           .notEmpty()
           .bail()
           .withMessage("Reporting time is required!"),
-        
       ];
     }
 
