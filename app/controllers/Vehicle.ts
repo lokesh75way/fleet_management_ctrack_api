@@ -202,7 +202,6 @@ export const getVehicleTrackings = async (
 ) => {
   try {
     const status = req.query.status;
-    const companyId = req.query.companyId;
     const ids = req.query.id;
 
     const query: any = {};
@@ -210,10 +209,6 @@ export const getVehicleTrackings = async (
       query["_id"] = { $in: ids };
     } else if (ids) {
       query["_id"] = ids;
-    }
-
-    if(companyId) {
-      query["companyId"] = { $eq: companyId }
     }
 
     const imeiIds = await Vehicle.find(query).select("imeiNumber");
@@ -229,69 +224,69 @@ export const getVehicleTrackings = async (
       {
         $match: query2
       },
-      // {
-      //   $match: {
-      //     vehicleId: { $ne: null } 
-      //   }
-      // },
-      // {
-      //   $sort: {
-      //     updatedAt: -1
-      //   }
-      // },
-      // {
-      //   $group: {
-      //     _id: {  vehicleId: "$vehicleId" },
-      //     allFields: { $addToSet: "$$ROOT" },
-      //   }
-      // },
-      // { $unwind: "$allFields" },
-      // {
-      //   $sort: {
-      //     "allFields.updatedAt": -1
-      //   }
-      // },
-      // {
-      //   "$group" : {
-      //     "_id" : "$_id" ,
-      //     "allFields" : {
-      //       "$first" : "$allFields"
-      //     }
-      //   }
-      // },
-      // {
-      //   $addFields:{
-      //     vehicleId: "$allFields.vehicleId"
-      //   }
-      // },
-      // {
-      //   $lookup: {
-      //     from: 'vehicles', 
-      //     localField: "vehicleId", 
-      //     foreignField: '_id', 
-      //     as: 'vehicleId'
-      //   },
-      // },
-      // { $unwind: "$vehicleId" },
-      // {
-      //   $project:{
-      //     _id: "$allFields._id",
-      //     Status: "$allFields.Status",
-      //     Vehicle_No: "$allFields.Vehicle_No",
-      //     imeiNumber: "$allFields.imeiNumber",
-      //     Vehicle_Name: "$allFields.Vehicle_Name",
-      //     Latitude: "$allFields.Latitude",
-      //     Longitude: "$allFields.Longitude",
-      //     Location: "$allFields.Location",
-      //     Datetime: "$allFields.Datetime",
-      //     updatedAt: "$allFields.updatedAt",
-      //     createdAt: "$allFields.createdAt",
-      //     vehicleId:{
-      //       _id: true,
-      //       vehicleName: true
-      //     }
-      //   }
-      // },
+      {
+        $match: {
+          vehicleId: { $ne: null } 
+        }
+      },
+      {
+        $sort: {
+          updatedAt: -1
+        }
+      },
+      {
+        $group: {
+          _id: {  vehicleId: "$vehicleId" },
+          allFields: { $addToSet: "$$ROOT" },
+        }
+      },
+      { $unwind: "$allFields" },
+      {
+        $sort: {
+          "allFields.updatedAt": -1
+        }
+      },
+      {
+        "$group" : {
+          "_id" : "$_id" ,
+          "allFields" : {
+            "$first" : "$allFields"
+          }
+        }
+      },
+      {
+        $addFields:{
+          vehicleId: "$allFields.vehicleId"
+        }
+      },
+      {
+        $lookup: {
+          from: 'vehicles', 
+          localField: "vehicleId", 
+          foreignField: '_id', 
+          as: 'vehicleId'
+        },
+      },
+      { $unwind: "$vehicleId" },
+      {
+        $project:{
+          _id: "$allFields._id",
+          Status: "$allFields.Status",
+          Vehicle_No: "$allFields.Vehicle_No",
+          imeiNumber: "$allFields.imeiNumber",
+          Vehicle_Name: "$allFields.Vehicle_Name",
+          Latitude: "$allFields.Latitude",
+          Longitude: "$allFields.Longitude",
+          Location: "$allFields.Location",
+          Datetime: "$allFields.Datetime",
+          updatedAt: "$allFields.updatedAt",
+          createdAt: "$allFields.createdAt",
+          vehicleId:{
+            _id: true,
+            vehicleName: true
+          }
+        }
+      },
     ]);
 
     res.send(createResponse(trackData));
