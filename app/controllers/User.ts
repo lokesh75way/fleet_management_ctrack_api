@@ -90,6 +90,13 @@ export const deleteSubAdmin = async (req: Request, res: Response, next: NextFunc
 
 export const getAllSubadmin = async (req: Request, res: Response, next: NextFunction) => {
     try {
+
+        const page = parseInt((req.query.page as string) || "1");
+        const limit = parseInt((req.query.limit as string) || "10");
+      
+        const startIndex = (page - 1) * limit;
+      
+
         const condition = {
             isDeleted: false,
             role: { $in: [UserRole.SUPER_ADMIN, UserRole.USER] },
@@ -97,7 +104,7 @@ export const getAllSubadmin = async (req: Request, res: Response, next: NextFunc
         };
         const data = await User.find(condition).select("-password").sort({
             createdAt: -1
-        });
+        }).skip(startIndex).limit(page);
         const count = await User.count(condition);
 
         res.send(
