@@ -25,6 +25,7 @@ import technicianTaskRoutes from './app/routes/technicianTask';
 import technicianRoutes from './app/routes/technician'
 import geoFenceRoutes from './app/routes/geoFence';
 import expenseRoutes from './app/routes/expense'
+import dashboardRoutes from './app/routes/dashboard'
 
 import { initPassport } from "./app/services/passport-jwt";
 import passport from "passport";
@@ -98,6 +99,8 @@ const initApp = async (): Promise<void> => {
   router.use("/technicians",companyAccess , technicianRoutes)
   router.use('/geofences', companyAccess , geoFenceRoutes)
   router.use("/expenses",companyAccess , expenseRoutes)
+  router.use("/dashboard", companyAccess, dashboardRoutes)
+
 
   await initTeltonikaServer();
   await initJT701Server();

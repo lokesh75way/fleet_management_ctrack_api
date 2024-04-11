@@ -7,13 +7,13 @@ import { IBranch } from "./CompanyBranch";
 export enum DistanceCounter {
   GPS = "GPS",
   OBD = "OBD",
-  RELATIVE_ODOMETER = "RELATIVE_ODOMETER",
+  RELATIVE_ODOMETER = "RELATIVEODOMETER",
   TACHOGRAPH = "TACHOGRAPH",
 }
 
 export enum UnitOFDistance {
   KILOMETERS = "KILOMETERS",
-  MILES = "MILE",
+  MILES = "MILES",
   NAUTICAL_MILES = "NAUTICAL_MILES",
 }
 
@@ -70,16 +70,16 @@ export enum DocumentType {
 }
 
 export enum DurationUnit {
-  DAY = "DAY",
-  HOUR = "HOUR",
+  DAY = "Day",
+  HOUR = "Hour",
 }
 
 export enum FuelUnit {
-  LITRE = "LITRE",
-  GALLON = "GALLON",
+  LITRE = "LITERS",
+  GALLON = "GALLONS",
 }
 
-export enum DurationUnit {
+export enum DurationBasedUnit {
   HHMM = "HH:MM",
   MM = "MM",
 }
@@ -139,7 +139,7 @@ export interface IVehicle extends BaseSchema {
   distanceBaseFuelConsumption: number;
   distanceBaseFuelConsumptionUnit: FuelUnit;
   durationBaseFuelConsumptionDurationQuanitty: number;
-  durationBaseFuelConsumptionDurationUnit: DurationUnit;
+  durationBaseFuelConsumptionDurationUnit: DurationBasedUnit;
   durationBaseDistanceQuantity: number;
   durationBaseFuelConsumptionUnit: FuelUnit;
   LBSDetectionRadius: number;
@@ -168,10 +168,10 @@ const Vehicle = new Schema<IVehicle>(
       required: true,
     },
     companyId: { type: Schema.Types.ObjectId, ref: "company", required: true },
-    branchId: {
-      type: Schema.Types.ObjectId,
-      ref: "company-branch",
-    },
+    branchId: [{
+      type: mongoose.Types.ObjectId,
+      ref: "company-branch"
+    }],
     vehicleName: { type: String, required: true },
     deviceType: { type: String , required : true },
     // deviceId: { type: Schema.Types.ObjectId, ref: "Device", required: true },
@@ -230,7 +230,7 @@ const Vehicle = new Schema<IVehicle>(
     distanceBaseFuelConsumption: { type: Number },
     distanceBaseFuelConsumptionUnit: { type: String, enum: Object.values(FuelUnit) },
     durationBaseFuelConsumptionDurationQuanitty: { type: Number },
-    durationBaseFuelConsumptionDurationUnit: { type: String, enum: Object.values(DurationUnit) },
+    durationBaseFuelConsumptionDurationUnit: { type: String, enum: Object.values(DurationBasedUnit) },
     durationBaseDistanceQuantity: { type: Number },
     durationBaseFuelConsumptionUnit: { type: String, enum: Object.values(FuelUnit) },
     documents: [
