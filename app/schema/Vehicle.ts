@@ -168,10 +168,10 @@ const Vehicle = new Schema<IVehicle>(
       required: true,
     },
     companyId: { type: Schema.Types.ObjectId, ref: "company", required: true },
-    branchId: {
-      type: Schema.Types.ObjectId,
-      ref: "company-branch",
-    },
+    branchId: [{
+      type: mongoose.Types.ObjectId,
+      ref: "company-branch"
+    }],
     vehicleName: { type: String, required: true },
     deviceType: { type: String , required : true },
     // deviceId: { type: Schema.Types.ObjectId, ref: "Device", required: true },
