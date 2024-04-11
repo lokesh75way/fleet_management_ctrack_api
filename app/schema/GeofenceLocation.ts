@@ -9,6 +9,7 @@ export enum GEOFENCE_TYPE {
 
 
 export interface GeoFenceLocationBase extends Document {
+  id : String,
   type: GEOFENCE_TYPE;
   coordinates: any;
   duration?: number
@@ -18,6 +19,7 @@ type GeoFenceLocationModel = Model<GeoFenceLocationBase>;
 
 const GeoFenceLocationSchema = new Schema<GeoFenceLocationBase>(
   {
+    id : {type : String},
     type: { type: String , enum : Object.values(GEOFENCE_TYPE), required: true },
     coordinates: { type: Schema.Types.Mixed, required: true },
   },
