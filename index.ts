@@ -30,10 +30,8 @@ import dashboardRoutes from './app/routes/dashboard'
 import { initPassport } from "./app/services/passport-jwt";
 import passport from "passport";
 import { roleAuth } from "./app/middleware/roleAuth";
-import User, { IUser, UserRole } from "./app/schema/User";
-import { checkPermission } from "./app/middleware/permissions";
+import { UserRole } from "./app/schema/User";
 import cors from "cors";
-import { createAdmin } from "./app/helper/createAdmin";
 import path from "path";
 import { initTeltonikaServer } from "./app/services/Teltonika";
 import {initJT701Server} from "./app/services/JT701";
@@ -57,11 +55,13 @@ app.use(
   })
 );
 
+
 const initApp = async (): Promise<void> => {
   // init mongodb
   await initDB();
   // passport init
   initPassport();
+
 
   // set base path to /api
   app.use("/api/fleet", router);

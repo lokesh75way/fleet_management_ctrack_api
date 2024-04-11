@@ -30,14 +30,14 @@ export const adminLogin = async (req: Request, res: Response) => {
       res.send(createResponse({}, "User not found!"));
       return;
     }
-    let permissions;
+    let permissions = [];
     if (
       data.role === UserRole.SUPER_ADMIN ||
       data.role === UserRole.BUSINESS_GROUP ||
       data.role === UserRole.COMPANY
     ) {
-      permissions = await getTemplate(data.role);
-      console.log(permissions);
+      // permissions = await getTemplate(data.role);
+      // console.log(permissions);
     } else {
       permissions = await Permission.find({
         _id: data.featureTemplateId,
