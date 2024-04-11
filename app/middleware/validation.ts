@@ -8,6 +8,7 @@ import {
   DistanceCounter,
   DocumentType,
   DurationUnit,
+  DurationBasedUnit,
   FuelSensor,
   FuelType,
   FuelUnit,
@@ -1132,7 +1133,7 @@ export const validate = (validationName: string): any[] => {
           check('distanceBaseFuelConsumption').optional().isNumeric().withMessage('Distance base fuel consumption must be a number'),
           check('distanceBaseFuelConsumptionUnit').optional().isIn(Object.values(FuelUnit)).withMessage('Invalid distance base fuel consumption unit'),
           check('durationBaseFuelConsumptionDurationQuanitty').optional().isNumeric().withMessage('Duration base fuel consumption duration quantity must be a number'),
-          check('durationBaseFuelConsumptionDurationUnit').optional().isIn(Object.values(DurationUnit)).withMessage('Invalid duration base fuel consumption duration unit'),
+          check('durationBaseFuelConsumptionDurationUnit').optional().isIn(Object.values(DurationBasedUnit)).withMessage('Invalid duration base fuel consumption duration unit'),
           check('durationBaseDistanceQuantity').optional().isNumeric().withMessage('Duration base distance quantity must be a number'),
           check('durationBaseFuelConsumptionUnit').optional().isIn(Object.values(FuelUnit)).withMessage('Invalid duration base fuel consumption unit'),
       ];
@@ -1270,11 +1271,11 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isIn(Object.values(CostType))
           .withMessage("Invalid cost type value"),
-        check("distance")
+        check("distanceCostQuantity")
           .optional()
           .isNumeric()
           .withMessage("Distance must be a number"),
-        check("duration")
+        check("durationCostQuantity")
           .optional()
           .isNumeric()
           .withMessage("Duration must be a number"),
@@ -1334,7 +1335,7 @@ export const validate = (validationName: string): any[] => {
         check('distanceBaseFuelConsumption').optional().isNumeric().withMessage('Distance base fuel consumption must be a number'),
         check('distanceBaseFuelConsumptionUnit').optional().isIn(Object.values(FuelUnit)).withMessage('Invalid distance base fuel consumption unit'),
         check('durationBaseFuelConsumptionDurationQuanitty').optional().isNumeric().withMessage('Duration base fuel consumption duration quantity must be a number'),
-        check('durationBaseFuelConsumptionDurationUnit').optional().isIn(Object.values(DurationUnit)).withMessage('Invalid duration base fuel consumption duration unit'),
+        check('durationBaseFuelConsumptionDurationUnit').optional().isIn(Object.values(DurationBasedUnit)).withMessage('Invalid duration base fuel consumption duration unit'),
         check('durationBaseDistanceQuantity').optional().isNumeric().withMessage('Duration base distance quantity must be a number'),
         check('durationBaseFuelConsumptionUnit').optional().isIn(Object.values(FuelUnit)).withMessage('Invalid duration base fuel consumption unit'),
       ];
