@@ -201,13 +201,14 @@ export const updateCompanyUser = async (
     delete payloadCompany.password;
     delete payloadCompany.mobileNumber;
 
-    let alreadyExists = await User.findOne({
+    let alreadyExist = await User.findOne({
       $or: [{ email: payload.email }],
     });
-    if (!alreadyExists) {
+    if (!alreadyExist) {
       res.send(createHttpError(404, "Company with this email is not exists"));
       return;
     }
+    const companyId = alreadyExist?.companyId;
 
     const updatedFields: any = {};
 
@@ -224,9 +225,53 @@ export const updateCompanyUser = async (
       updatedFields.state = payloadUser.state;
     }
 
-    await User.updateOne({ email: payload.email }, updatedFields);
+    if (payloadUser.userName) {
+      const alreadyExists = await User.findOne({
+        _id: { $ne: alreadyExist._id },
+        userName: payload.userName,
+      });
+      if (alreadyExists) {
+        throw createHttpError(409, "Company with username already exists");
+      }
+    }
+  
+    if (payloadUser.email) {
+      const alreadyExists = await User.findOne({
+        _id: { $ne:  alreadyExist._id },
+        email: payload.email,
+      });
+      if (alreadyExists) {
+        throw createHttpError(409, "Company with email already exists");
+      }
+    }
+  
+    if (payloadUser.mobileNumber) {
+      const alreadyExists = await User.findOne({
+        _id: { $ne:  alreadyExist._id },
+        mobileNumber: payload.mobileNumber,
+      });
+      if (alreadyExists) {
+        throw createHttpError(
+          409,
+          "Company with mobileNumber already exists"
+        );
+      }
+    }
+  
+    if (payloadCompany.companyName) {
+      const alreadyExists = await Company.findOne({
+        _id: { $ne: companyId },
+        companyName: payload.companyName,
+      });
+      if (alreadyExists) {
+        throw createHttpError(
+          409,
+          "Company with this name already exists"
+        );
+      }
+    }
 
-    const companyId = alreadyExists?.companyId;
+    await User.updateOne({ email: payload.email }, updatedFields);
 
     await Company.findOneAndUpdate(companyId, payloadCompany, {
       new: true,
