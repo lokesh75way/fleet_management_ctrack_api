@@ -6,6 +6,7 @@ import Vehicle from "../schema/Vehicle";
 import { v2 as cloudinary } from "cloudinary";
 import TrakingHistory from "../schema/TrakingHistory";
 import Company from "../schema/Company";
+import mongoose from "mongoose";
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -35,6 +36,30 @@ export const createVehicle = async (
         createHttpError(409, "Vehicle with this plate number already exists")
       );
       return;
+    }
+
+    
+    // Temproary check take imei only from traking table
+    const existingImeiExist = await TrakingHistory.findOne({
+      imeiNumber: req.body.imeiNumber,
+    });
+
+    if(!existingImeiExist){
+      throw createHttpError(400, {
+        message: `Invalid imei number! Please enter valid imei number!`,
+        data: { user: null },
+      });
+    }
+
+    const existingVehicleImei = await Vehicle.findOne({
+      imeiNumber: req.body.imeiNumber,
+    });
+
+    if(existingVehicleImei){
+      throw createHttpError(400, {
+        message: `Device with this imei already exist!`,
+        data: { user: null },
+      });
     }
 
     const vehicle = await Vehicle.create(req.body);
@@ -202,9 +227,9 @@ export const getVehicleTrackings = async (
 ) => {
   try {
     const status = req.query.status;
-    const ids = req.query.id;
+    const ids = req.query.id as string[];
 
-    const query: any = {};
+    let query: any = {};
     if (Array.isArray(ids) && ids.length > 0) {
       query["_id"] = { $in: ids };
     } else if (ids) {
@@ -213,8 +238,9 @@ export const getVehicleTrackings = async (
 
     const imeiIds = await Vehicle.find(query).select("imeiNumber");
     const imeiIdsArray = imeiIds.map((imei) => imei.imeiNumber);
+    // const query2  :  any= { imeiNumber: { $in: imeiIdsArray }};
 
-    const query2  :  any= { imeiNumber: { $in: imeiIdsArray }};
+    const query2 : any = { vehicleId: Array.isArray(ids) ? { $in:  ids.map((id: string) => new mongoose.Types.ObjectId(id)) } : { $eq: new mongoose.Types.ObjectId(ids) } };
 
     if (status) {
       query2["Status"] = status;
@@ -307,7 +333,7 @@ export const getCompanyVehicles = async (
     // @ts-ignore
     const id = req.user._id;
     // @ts-ignore
-    const role = req.user.role;
+    const { role, type } = req.user;
     let query: any = { isDeleted: false };
 
     const { page, limit } = req.query;
@@ -316,7 +342,7 @@ export const getCompanyVehicles = async (
     const startIndex = (pageNo - 1) * pageLimit;
 
     const user_id = await User.findById(id)
-    .select("companyId businessGroupId");
+    .select("companyId businessGroupId branchIds");
 
     if (role === UserRole.COMPANY) {
       query = {
@@ -336,14 +362,41 @@ export const getCompanyVehicles = async (
       }
     }
 
+    let branchFilter: any = {};
+
+    if (role === UserRole.USER) {
+      query = {
+        $match: { _id: user_id?.companyId }
+      };
+      branchFilter = {
+        branchId: {
+          $in: user_id?.branchIds
+        }
+      };
+    };
+
     const data = await Company.aggregate([
       query,
       {
         $lookup: {
-          from: 'vehicles', 
-          localField: '_id', 
-          foreignField: 'companyId', 
-          as: 'vehicles'
+          from: "vehicles",
+          let: { id: "$_id", ids: "$user_id.branchIds" },
+          pipeline: [
+            {
+              $match: {
+                $expr: { $eq: ["$companyId", "$$id"] }
+              }
+            },
+            {
+              $match: branchFilter
+            }
+          ],
+          as: "vehicles"
+        }
+      },
+      {
+        $sort:{
+          createdAt: -1
         }
       },
       {
