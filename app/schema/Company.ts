@@ -37,6 +37,7 @@ export interface ICompany extends BaseSchema {
   helpDeskEmail: string;
   helpDeskTelephoneNumber: string;
   whatsappNumber: string;
+  storageCapacity: string;
   // address
   country: string;
   state: string;
@@ -73,6 +74,7 @@ const CompanySchema = new Schema<ICompany>(
     helpDeskEmail: { type: String },
     helpDeskTelephoneNumber: { type: String , required : true },
     whatsappNumber: { type: String },
+    storageCapacity: { type: String },
     country: { type: String },
     state: { type: String },
     city: { type: String },

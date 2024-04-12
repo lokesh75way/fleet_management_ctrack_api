@@ -19,7 +19,7 @@ type GeoFenceLocationModel = Model<GeoFenceLocationBase>;
 
 const GeoFenceLocationSchema = new Schema<GeoFenceLocationBase>(
   {
-    id : String,
+    id : {type : String},
     type: { type: String , enum : Object.values(GEOFENCE_TYPE), required: true },
     coordinates: { type: Schema.Types.Mixed, required: true },
   },
