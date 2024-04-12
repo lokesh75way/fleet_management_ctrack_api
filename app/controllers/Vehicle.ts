@@ -214,6 +214,16 @@ export const fileUploader = async (
   }
 };
 
+type LatLongStringType = {
+  Latitude: string,
+  Longitude: string
+}
+
+type LatLongNumberType = {
+  latitude: number,
+  longitude: number
+}
+
 /**
  * Api to get vahicle current(last) status
  * @param { id, status } req.query
@@ -242,8 +252,9 @@ export const getVehicleTrackings = async (
 
     const query2 : any = { vehicleId: Array.isArray(ids) ? { $in:  ids.map((id: string) => new mongoose.Types.ObjectId(id)) } : { $eq: new mongoose.Types.ObjectId(ids) } };
 
-    if (status) {
-      query2["Status"] = status;
+    let statusFilter = {};
+    if (status && status != "") {
+      statusFilter = { Status: { $eq: status } };
     }
 
     const trackData = await TrakingHistory.aggregate([
@@ -313,9 +324,59 @@ export const getVehicleTrackings = async (
           }
         }
       },
+      {
+        $facet: {
+          data: [
+            { $match: statusFilter }
+          ],
+          running: [
+            { $match: { Status: "RUNNING" } },
+            { $count: "count" },
+          ],
+          stopped: [
+            { $match: { Status: "STOP" } },
+            { $count: "count" },
+          ],
+          inactive: [
+            { $match: { Status: "INACTIVE" } },
+            { $count: "count" },
+          ],
+          idle: [
+            { $match: { Status: "IDLE" } },
+            { $count: "count" },
+          ],
+          total: [
+            { $count: "count" },
+          ],
+        }
+      }
     ]);
 
-    res.send(createResponse(trackData));
+    function calculateCenterCoordinate(coordinates: LatLongNumberType[]) {
+      const avgLat = coordinates?.reduce((acc, coord) => acc + coord.latitude, 0) / coordinates.length;
+      const avgLng = coordinates?.reduce((acc, coord) => acc + coord.longitude, 0) / coordinates.length;
+      return { latitude: parseFloat(avgLat.toFixed(5)), longitude: parseFloat(avgLng.toFixed(5)) };
+    }
+
+    const coordinates = trackData[0].data?.map((item: LatLongStringType) => ({
+      latitude: parseFloat(item.Latitude),
+      longitude: parseFloat(item.Longitude)
+    }));
+
+    const result = {
+      data: trackData[0].data ?? [],
+      count: {
+        running: trackData[0]?.running[0]?.count ?? 0,
+        stopped: trackData[0]?.stopped[0]?.count ?? 0,
+        inactive: trackData[0]?.inactive[0]?.count ?? 0,
+        idle: trackData[0]?.idle[0]?.count ?? 0,
+        nodata: 0,
+        total: trackData[0]?.total[0]?.count ?? 0,
+      },
+      centerCoordinate: calculateCenterCoordinate(coordinates)
+    }
+
+    res.send(createResponse(result));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
@@ -340,6 +401,7 @@ export const getCompanyVehicles = async (
     const pageNo = parseInt(page as string) || 1;
     const pageLimit = parseInt(limit as string) || 10;
     const startIndex = (pageNo - 1) * pageLimit;
+    const search = req.query.search as string;
 
     const user_id = await User.findById(id)
     .select("companyId businessGroupId branchIds");
@@ -387,11 +449,20 @@ export const getCompanyVehicles = async (
                 $expr: { $eq: ["$companyId", "$$id"] }
               }
             },
+            { $match: { isDeleted: false } },
             {
               $match: branchFilter
             }
           ],
           as: "vehicles"
+        }
+      },
+      {
+        $match: {
+          $or: [
+            { companyName: { $regex: new RegExp(search, "i") } },
+            { "vehicles.vehicleName": { $regex: new RegExp(search, "i") } },
+          ]
         }
       },
       {
