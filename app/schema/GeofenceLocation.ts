@@ -9,7 +9,7 @@ export enum GEOFENCE_TYPE {
 
 
 export interface GeoFenceLocationBase extends Document {
-  id : String,
+  id : string;
   type: GEOFENCE_TYPE;
   coordinates: any;
   duration?: number

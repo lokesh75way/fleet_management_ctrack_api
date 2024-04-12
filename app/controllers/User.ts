@@ -104,7 +104,7 @@ export const getAllSubadmin = async (req: Request, res: Response, next: NextFunc
         };
         const data = await User.find(condition).select("-password").sort({
             createdAt: -1
-        }).skip(startIndex).limit(page);
+        }).skip(startIndex).limit(limit);
         const count = await User.count(condition);
 
         res.send(
