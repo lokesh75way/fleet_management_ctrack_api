@@ -4,7 +4,6 @@ import createHttpError from "http-errors";
 import Company from "../schema/Company";
 import User, { UserRole, UserType } from "../schema/User";
 import bcrypt from "bcrypt";
-import { Query } from "accesscontrol";
 
 export const createCompany = async (
   req: Request,
@@ -40,13 +39,7 @@ export const createCompany = async (
     });
 
     if (alreadyExists) {
-      res.send(
-        createResponse(
-          { success: false, message: "Company with this email already exists" },
-          "Company with this email already exists"
-        )
-      );
-      return;
+      throw createHttpError(409, "Company with this email already exists");
     }
 
     alreadyExists = await User.findOne({
@@ -54,16 +47,7 @@ export const createCompany = async (
     });
 
     if (alreadyExists) {
-      res.send(
-        createResponse(
-          {
-            success: false,
-            message: "Company with this username already exists",
-          },
-          "Company with this username already exists"
-        )
-      );
-      return;
+      throw createHttpError(409, "Company with this username already exists");
     }
 
     alreadyExists = await User.findOne({
@@ -71,23 +55,17 @@ export const createCompany = async (
     });
 
     if (alreadyExists) {
-      res.send(
-        createResponse(
-          {
-            success: false,
-            message: "Company with this phone number already exists",
-          },
-          "Company with this phone number already exists"
-        )
+      throw createHttpError(
+        409,
+        "Company with this phone number already exists"
       );
-      return;
     }
 
     const newCompany = await Company.create({
       ...payloadCompany,
     });
     if (!newCompany) {
-      res.send(createHttpError(400, "Company is not created"));
+      throw createHttpError(400, "Company is not created");
     }
     const newUser = await User.create({
       ...payloadUser,
@@ -95,15 +73,10 @@ export const createCompany = async (
     });
 
     if (!newUser) {
-      res.send(createHttpError(400, "User is not created"));
+      throw createHttpError(400, "User is not created");
     }
 
-    res.send(
-      createResponse(
-        { success: true, message: "Company has been created successfully!" },
-        "Company has been created successfully!"
-      )
-    );
+    res.send(createResponse({}, "Company has been created successfully!"));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
@@ -234,40 +207,34 @@ export const updateCompanyUser = async (
         throw createHttpError(409, "Company with username already exists");
       }
     }
-  
+
     if (payloadUser.email) {
       const alreadyExists = await User.findOne({
-        _id: { $ne:  alreadyExist._id },
+        _id: { $ne: alreadyExist._id },
         email: payload.email,
       });
       if (alreadyExists) {
         throw createHttpError(409, "Company with email already exists");
       }
     }
-  
+
     if (payloadUser.mobileNumber) {
       const alreadyExists = await User.findOne({
-        _id: { $ne:  alreadyExist._id },
+        _id: { $ne: alreadyExist._id },
         mobileNumber: payload.mobileNumber,
       });
       if (alreadyExists) {
-        throw createHttpError(
-          409,
-          "Company with mobileNumber already exists"
-        );
+        throw createHttpError(409, "Company with mobileNumber already exists");
       }
     }
-  
+
     if (payloadCompany.companyName) {
       const alreadyExists = await Company.findOne({
         _id: { $ne: companyId },
         companyName: payload.companyName,
       });
       if (alreadyExists) {
-        throw createHttpError(
-          409,
-          "Company with this name already exists"
-        );
+        throw createHttpError(409, "Company with this name already exists");
       }
     }
 

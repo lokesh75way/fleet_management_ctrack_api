@@ -1718,7 +1718,7 @@ export const validate = (validationName: string): any[] => {
 
     case "task:update": {
       return [
-        check("technicianId")
+        check("technician")
           .exists()
           .notEmpty()
           .trim()
