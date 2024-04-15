@@ -31,19 +31,38 @@ export const adminLogin = async (req: Request, res: Response) => {
       return;
     }
     let permissions = [];
-    if (
-      data.role === UserRole.SUPER_ADMIN ||
-      data.role === UserRole.BUSINESS_GROUP ||
-      data.role === UserRole.COMPANY
-    ) {
-      // permissions = await getTemplate(data.role);
-      // console.log(permissions);
-    } else {
+    if (data.role === UserRole.USER) {
       permissions = await Permission.find({
         _id: data.featureTemplateId,
       }).populate("permission.moduleId");
-
     }
+
+    // const data1 = await User.aggregate([
+    //   {
+    //     $match: {
+    //       _id: user._id,
+    //     },
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "companies",
+    //       localField: "companyId",
+    //       foreignField: "_id",
+    //       as: "companyLookup",
+    //     },
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "business-groups",
+    //       localField: "businessGroupId",
+    //       foreignField: "_id",
+    //       as: "businessGroupLookup",
+    //     },
+    //   },
+      
+    // ]);
+
+    // console.log(data1);
 
     res.send(
       createResponse({ user: data, token, permissions }, "Login successfully!")

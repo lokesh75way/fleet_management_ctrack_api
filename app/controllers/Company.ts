@@ -101,6 +101,7 @@ export const getAllCompanies = async (
     if (role === "BUSINESS_GROUP") {
       secondQuery["createdBy"] = id;
     }
+    console.log(id);
 
     let { page, limit, businessGroupId } = req.query;
     let page1 = parseInt(page as string) || 1;
@@ -108,19 +109,16 @@ export const getAllCompanies = async (
 
     const totalCount = await User.countDocuments(query);
 
-    const totalPages = Math.ceil(totalCount / limit1);
-
     const startIndex = (page1 - 1) * limit1;
 
     let companies: any[] = await User.find(query)
       .populate([
-        { path: "companyId" },
         {
           path: "companyId",
+          match: secondQuery,
           populate: {
             path: "businessGroupId",
             select: "groupName",
-            match: { _id: businessGroupId },
           },
         },
       ])
@@ -128,15 +126,45 @@ export const getAllCompanies = async (
       .skip(startIndex)
       .sort({ _id: -1 });
 
+    const Companies: any[] = await User.aggregate([
+      {
+        $match: {
+          role: "COMPANY",
+        },
+      },
+      {
+        $lookup: {
+          from: "companies",
+          localField: "companyId",
+          foreignField: "_id",
+          as: "companyId",
+        },
+      },
+      {
+        $unwind: {
+          path: "$companyId",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $match: {
+          $and: [
+            { "companyId": { $ne: null } },
+            { "companyId.createdBy": id }
+          ]
+        },
+      },
+    ]);
+    console.log(companies)
+
     if (businessGroupId) {
-      companies = companies.filter(
-        (company) => company.companyId.businessGroupId
-      );
+      console.log(companies);
+      companies = companies.filter((company) => company.businessGroupId);
     }
 
-    res.send(
-      createResponse({ data: companies, totalCount, totalPage: totalPages })
-    );
+    companies = companies.filter((item) => item.companyId);
+
+    res.send(createResponse({ data: companies, totalCount }));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
