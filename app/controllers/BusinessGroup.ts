@@ -50,20 +50,13 @@ export const createBusinessUser = async (
 
   alreadyExists = await User.findOne({
     userName: payload.userName,
-    //   { mobileNumber: payload.mobileNumber },
   });
 
   if (alreadyExists) {
-    res.send(
-      createResponse(
-        {
-          success: false,
-          message: "Business group with this username already exists",
-        },
-        "Business group with this username already exists"
-      )
+    throw createHttpError(
+      409,
+      "Business group with this username already exists"
     );
-    return;
   }
 
   alreadyExists = await BusinessGroup.findOne({
@@ -71,13 +64,7 @@ export const createBusinessUser = async (
   });
 
   if (alreadyExists) {
-    res.send(
-      createResponse(
-        { success: false, message: "Group Name with this name already exists" },
-        "Group Name with this name already exists"
-      )
-    );
-    return;
+    throw createHttpError(409, "Group Name with this name already exists");
   }
 
   alreadyExists = await User.findOne({
@@ -85,52 +72,19 @@ export const createBusinessUser = async (
   });
 
   if (alreadyExists) {
-    res.send(
-      createResponse(
-        {
-          success: false,
-          message: "Business group with this phone number already exists",
-        },
-        "Business group with this phone number already exists"
-      )
+    throw createHttpError(
+      409,
+      "Business group with this phone number already exists"
     );
-    return;
   }
 
   const newBusinessGroup = await BusinessGroup.create(payloadGroup);
-  if (!newBusinessGroup) {
-    res.send(
-      createResponse(
-        { success: false, message: "Business group is not created" },
-        "Business group is not created"
-      )
-    );
-    return;
-  }
   const newUser = await User.create({
     ...payloadUser,
     businessGroupId: newBusinessGroup._id,
   });
 
-  if (!newUser) {
-    res.send(
-      createResponse(
-        { success: false, message: "Business group is not created" },
-        "Business group is not created"
-      )
-    );
-    return;
-  }
-
-  res.send(
-    createResponse(
-      {
-        success: true,
-        message: "Business group has been created successfully!",
-      },
-      "Business group has been created successfully!"
-    )
-  );
+  res.send(createResponse({}, "Business group has been created successfully!"));
   return;
 };
 
@@ -196,7 +150,7 @@ export const updateBusinessUser = async (
 
   if (payloadUser.email) {
     const alreadyExists = await User.findOne({
-      _id: { $ne:  alreadyExist._id },
+      _id: { $ne: alreadyExist._id },
       email: payload.email,
     });
     if (alreadyExists) {
@@ -206,7 +160,7 @@ export const updateBusinessUser = async (
 
   if (payloadUser.mobileNumber) {
     const alreadyExists = await User.findOne({
-      _id: { $ne:  alreadyExist._id },
+      _id: { $ne: alreadyExist._id },
       mobileNumber: payload.mobileNumber,
     });
     if (alreadyExists) {

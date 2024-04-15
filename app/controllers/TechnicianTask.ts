@@ -14,7 +14,7 @@ export const createTechnicianTask = async (
   // @ts-ignore
   const id = req.user._id;
 
-  const technician = await Technician.findById({ _id: payload.technicianId });
+  const technician = await Technician.findById({ _id: payload.technician });
   if (!technician) {
     throw createHttpError(400, "Invalid technician! Please select valid technician");
   }
@@ -106,7 +106,7 @@ export const updateTechnicianTasks = async (
     const id = req.params.id;
     const payload = req.body;
 
-    const technician = await Technician.findById({ _id: payload.technicianId });
+    const technician = await Technician.findById({ _id: payload.technician });
     if (!technician) {
       throw createHttpError(400, "Invalid technician! Please select valid technician");
     }
