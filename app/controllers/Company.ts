@@ -99,15 +99,17 @@ export const getAllCompanies = async (
     let query: any = { isDeleted: false, role: UserRole.COMPANY };
     let secondQuery: any = {};
     if (role === "BUSINESS_GROUP") {
-      secondQuery["createdBy"] = id;
+      const businessGroupId = await User.findById(id);
+
+      secondQuery["$or"] = [
+        { businessGroupId: businessGroupId?.businessGroupId },
+        { createdBy: id }
+      ];
     }
-    console.log(id);
 
     let { page, limit, businessGroupId } = req.query;
     let page1 = parseInt(page as string) || 1;
     let limit1 = parseInt(limit as string) || 10;
-
-    const totalCount = await User.countDocuments(query);
 
     const startIndex = (page1 - 1) * limit1;
 
@@ -126,44 +128,13 @@ export const getAllCompanies = async (
       .skip(startIndex)
       .sort({ _id: -1 });
 
-    const Companies: any[] = await User.aggregate([
-      {
-        $match: {
-          role: "COMPANY",
-        },
-      },
-      {
-        $lookup: {
-          from: "companies",
-          localField: "companyId",
-          foreignField: "_id",
-          as: "companyId",
-        },
-      },
-      {
-        $unwind: {
-          path: "$companyId",
-          preserveNullAndEmptyArrays: true,
-        },
-      },
-      {
-        $match: {
-          $and: [
-            { "companyId": { $ne: null } },
-            { "companyId.createdBy": id }
-          ]
-        },
-      },
-    ]);
-    console.log(companies)
-
+ 
     if (businessGroupId) {
-      console.log(companies);
       companies = companies.filter((company) => company.businessGroupId);
     }
 
     companies = companies.filter((item) => item.companyId);
-
+    const totalCount = companies.length;
     res.send(createResponse({ data: companies, totalCount }));
   } catch (error: any) {
     throw createHttpError(400, {

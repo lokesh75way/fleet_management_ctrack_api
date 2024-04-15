@@ -56,6 +56,7 @@ export interface IBranch extends BaseSchema {
   currency: string;
   timezone: string;
   file: string;
+  createdBy : Types.ObjectId | IUser
 }
 
 const BranchSchema = new Schema<IBranch>(
@@ -85,6 +86,7 @@ const BranchSchema = new Schema<IBranch>(
     currency: { type: String },
     timezone: { type: String },
     file: { type: String },
+    createdBy :  { type: Schema.Types.ObjectId, ref: "user", required: true }
   },
   {
     timestamps: true,

@@ -18,10 +18,10 @@ export const createCompanyBranch = async (
 
     const payloadBranch = { ...payload };
 
-    console.log(payloadBranch);
 
     const newBranch = await CompanyBranch.create({
       ...payloadBranch,
+      createdBy : id
     });
 
     if (!newBranch) {
@@ -124,8 +124,9 @@ export const getAllBranch = async (
     // @ts-ignore
     const role = req.user.role;
     const { companyId, branchId } = req.query;
-    let query: any = { isDeleted: false };
-
+    let query : any= {
+         isDeleted: false ,
+    };
     let { page, limit } = req.query;
     let page1 = parseInt(page as string) || 1;
     let limit1 = parseInt(limit as string) || 10;
@@ -134,24 +135,30 @@ export const getAllBranch = async (
 
     const user_id = await User.findById(id).select("companyId businessGroupId");
 
+    if(role === UserRole.SUPER_ADMIN){
+      query['createdBy'] = id;
+    }
+
     if (role === UserRole.COMPANY) {
-      query.companyId = user_id?.companyId;
+      query["$or"] = 
+       [{ companyId  :user_id?.companyId}, {createdBy : id}]
+      
     }
 
     if (role === UserRole.BUSINESS_GROUP) {
-      query.businessGroupId = user_id?.businessGroupId;
+      query["$or"] = 
+      [{ businessGroupId  :user_id?.businessGroupId}, {createdBy : id}]
     }
 
     if (companyId) {
       query.companyId = companyId;
     }
+    
 
     if (branchId) {
-      if (branchId) {
         query.$or = [{ parentBranchId: branchId }, { _id: branchId }];
-      }
     }
-
+    
     let data = await CompanyBranch.find(query)
       .populate([
         { path: "businessGroupId", select: "groupName" },

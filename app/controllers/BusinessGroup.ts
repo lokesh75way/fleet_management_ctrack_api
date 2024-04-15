@@ -251,6 +251,7 @@ export const getAllGroups = async (
     const totalPages = Math.ceil(totalCount / limit);
 
     const startIndex = (page - 1) * limit;
+    
     const groups = await User.aggregate([
       {
         $match: query,
