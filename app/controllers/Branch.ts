@@ -135,9 +135,7 @@ export const getAllBranch = async (
 
     const user_id = await User.findById(id).select("companyId businessGroupId");
 
-    if(role === UserRole.SUPER_ADMIN){
-      query['createdBy'] = id;
-    }
+    
 
     if (role === UserRole.COMPANY) {
       query["$or"] = 

@@ -302,18 +302,18 @@ export const getAllGroups = async (
           }
         }
       },
-      
+      {
+        $sort: {
+          _id: -1,
+        },
+      },
       {
         $skip: startIndex,
       },
       {
-        $limit: limit,
+        $limit: 10,
       },
-      {
-        $sort: {
-          createdAt: -1,
-        },
-      },
+    
     ]);
 
     res.send(

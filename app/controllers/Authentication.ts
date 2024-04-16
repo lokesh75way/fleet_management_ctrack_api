@@ -22,7 +22,7 @@ export const adminLogin = async (req: Request, res: Response) => {
     const user = req.user as IUser;
     const { user: userData, token } = await generateToken(user);
     const options = { new: true };
-    const data : any= await User.aggregate([
+    let data: any = await User.aggregate([
       {
         $match: {
           _id: user._id,
@@ -33,17 +33,19 @@ export const adminLogin = async (req: Request, res: Response) => {
           from: "companies",
           localField: "companyId",
           foreignField: "_id",
-          as: "logo1",
+          as: "companyId",
         },
       },
+
       {
         $lookup: {
           from: "business-groups",
           localField: "businessGroupId",
           foreignField: "_id",
-          as: "logo2",
+          as: "businessGroupId",
         },
       },
+
       {
         $addFields: {
           logo: {
@@ -51,23 +53,44 @@ export const adminLogin = async (req: Request, res: Response) => {
               {
                 $cond: {
                   if: { $eq: ["$role", "COMPANY"] },
-                  then: "$logo1.logo",
-                  else: "$logo2.logo"
-                }
+                  then: "$companyId.logo",
+                  else: "$businessGroupId.logo",
+                },
               },
-              0
-            ]
-          }
-        }
+              0,
+            ],
+          },
+        },
       },
       {
-        $project :{
-          logo1 : 0,
-          logo2 : 0
-        }
-      }
+        $project: {
+          _id: 1,
+          userName: 1,
+          firstName: 1,
+          lastName: 1,
+          email: 1,
+          mobileNumber: 1,
+          isActive: 1,
+          isDeleted: 1,
+          role: 1,
+          type: 1,
+          branchIds: 1,
+          vehicleIds: 1,
+          createdAt: 1,
+          updatedAt: 1,
+          businessGroupId: {
+            _id: 1,
+            groupName: 1,
+          },
+          companyId: {
+            _id: 1,
+            companyName: 1,
+          },
+          logo: 1,
+        },
+      },
     ]);
-
+   
     if (!data) {
       res.send(createResponse({}, "User not found!"));
       return;
@@ -80,13 +103,15 @@ export const adminLogin = async (req: Request, res: Response) => {
       }).populate("permission.moduleId");
     }
 
-  
-    if(!data?.logo){
-      data['logo'] = '';
+    if (!data?.logo) {
+      data["logo"] = "";
     }
 
     res.send(
-      createResponse({ user: data[0], token, permissions }, "Login successfully!")
+      createResponse(
+        { user: data[0], token, permissions },
+        "Login successfully!"
+      )
     );
   } catch (error: any) {
     throw createHttpError(400, {
