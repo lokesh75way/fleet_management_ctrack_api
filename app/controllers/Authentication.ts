@@ -22,31 +22,71 @@ export const adminLogin = async (req: Request, res: Response) => {
     const user = req.user as IUser;
     const { user: userData, token } = await generateToken(user);
     const options = { new: true };
+    const data : any= await User.aggregate([
+      {
+        $match: {
+          _id: user._id,
+        },
+      },
+      {
+        $lookup: {
+          from: "companies",
+          localField: "companyId",
+          foreignField: "_id",
+          as: "logo1",
+        },
+      },
+      {
+        $lookup: {
+          from: "business-groups",
+          localField: "businessGroupId",
+          foreignField: "_id",
+          as: "logo2",
+        },
+      },
+      {
+        $addFields: {
+          logo: {
+            $arrayElemAt: [
+              {
+                $cond: {
+                  if: { $eq: ["$role", "COMPANY"] },
+                  then: "$logo1.logo",
+                  else: "$logo2.logo"
+                }
+              },
+              0
+            ]
+          }
+        }
+      },
+      {
+        $project :{
+          logo1 : 0,
+          logo2 : 0
+        }
+      }
+    ]);
 
-    const data = await User.findById(user._id).select(
-      "userName firstName lastName email mobileNumber role type featureTemplateId businessGroupId companyId branchIds vehicleIds"
-    );
     if (!data) {
       res.send(createResponse({}, "User not found!"));
       return;
     }
+
     let permissions = [];
-    if (
-      data.role === UserRole.SUPER_ADMIN ||
-      data.role === UserRole.BUSINESS_GROUP ||
-      data.role === UserRole.COMPANY
-    ) {
-      // permissions = await getTemplate(data.role);
-      // console.log(permissions);
-    } else {
+    if (data.role === UserRole.USER) {
       permissions = await Permission.find({
         _id: data.featureTemplateId,
       }).populate("permission.moduleId");
+    }
 
+  
+    if(!data?.logo){
+      data['logo'] = '';
     }
 
     res.send(
-      createResponse({ user: data, token, permissions }, "Login successfully!")
+      createResponse({ user: data[0], token, permissions }, "Login successfully!")
     );
   } catch (error: any) {
     throw createHttpError(400, {

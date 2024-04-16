@@ -99,28 +99,28 @@ export const getAllCompanies = async (
     let query: any = { isDeleted: false, role: UserRole.COMPANY };
     let secondQuery: any = {};
     if (role === "BUSINESS_GROUP") {
-      secondQuery["createdBy"] = id;
+      const businessGroupId = await User.findById(id);
+
+      secondQuery["$or"] = [
+        { businessGroupId: businessGroupId?.businessGroupId },
+        { createdBy: id }
+      ];
     }
 
     let { page, limit, businessGroupId } = req.query;
     let page1 = parseInt(page as string) || 1;
     let limit1 = parseInt(limit as string) || 10;
 
-    const totalCount = await User.countDocuments(query);
-
-    const totalPages = Math.ceil(totalCount / limit1);
-
     const startIndex = (page1 - 1) * limit1;
 
     let companies: any[] = await User.find(query)
       .populate([
-        { path: "companyId" },
         {
           path: "companyId",
+          match: secondQuery,
           populate: {
             path: "businessGroupId",
             select: "groupName",
-            match: { _id: businessGroupId },
           },
         },
       ])
@@ -128,15 +128,14 @@ export const getAllCompanies = async (
       .skip(startIndex)
       .sort({ _id: -1 });
 
+ 
     if (businessGroupId) {
-      companies = companies.filter(
-        (company) => company.companyId.businessGroupId
-      );
+      companies = companies.filter((company) => company.businessGroupId);
     }
 
-    res.send(
-      createResponse({ data: companies, totalCount, totalPage: totalPages })
-    );
+    companies = companies.filter((item) => item.companyId);
+    const totalCount = companies.length;
+    res.send(createResponse({ data: companies, totalCount }));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",

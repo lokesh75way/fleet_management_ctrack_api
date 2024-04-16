@@ -4,7 +4,6 @@ import { Strategy as LocalStrategy } from "passport-local";
 import createError from "http-errors";
 import User, { UserRole, IUser } from "../schema/User";
 import jwt from "jsonwebtoken";
-import { Request, Response, NextFunction } from "express";
 
 export const initPassport = (): void => {
   passport.use(

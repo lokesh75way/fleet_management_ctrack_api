@@ -243,26 +243,78 @@ export const getAllGroups = async (
 
     const query: any = { isDeleted: false, role: UserRole.BUSINESS_GROUP };
 
-    let { page, limit } = req.query;
-    let page1 = parseInt(page as string) || 1;
-    let limit1 = parseInt(limit as string) || 10;
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
 
     const totalCount = await User.countDocuments(query);
 
-    const totalPages = Math.ceil(totalCount / limit1);
+    const totalPages = Math.ceil(totalCount / limit);
 
-    const startIndex = (page1 - 1) * limit1;
-
-    const groups = await User.find(query)
-      .populate({
-        path: "businessGroupId",
-        // match: {
-        //   createdBy: id,
-        // },
-      })
-      .sort({ _id: -1 })
-      .limit(limit1)
-      .skip(startIndex);
+    const startIndex = (page - 1) * limit;
+    
+    const groups = await User.aggregate([
+      {
+        $match: query,
+      },
+      {
+        $lookup: {
+          from: "business-groups",
+          localField: "businessGroupId",
+          foreignField: "_id",
+          as: "businessGroup",
+        },
+      },
+      {
+        $unwind: {
+          path: "$businessGroup",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $addFields: {
+          businessGroupId: "$businessGroup",
+        },
+      },
+      {
+        $unset: "businessGroup",
+      },
+      {
+        $lookup: {
+          from: "companies",
+          localField: "businessGroupId._id",
+          foreignField: "businessGroupId",
+          as: "companyCount",
+        },
+      },
+      {
+        $addFields: {
+          companyCount: { $size: "$companyCount" },
+        },
+      },
+      {
+        $match: {
+          $expr: {
+            $cond: {
+              if: { $eq: [role, "SUPER_ADMIN"] }, 
+              then: {}, 
+              else: { $eq: ["$businessGroupId.createdBy", id] }
+            }
+          }
+        }
+      },
+      
+      {
+        $skip: startIndex,
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+    ]);
 
     res.send(
       createResponse({ data: groups, totalCount, totalPage: totalPages })
