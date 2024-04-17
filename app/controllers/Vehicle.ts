@@ -7,6 +7,7 @@ import { v2 as cloudinary } from "cloudinary";
 import TrakingHistory from "../schema/TrakingHistory";
 import Company from "../schema/Company";
 import mongoose from "mongoose";
+import UnassignedVehicle from "../schema/UnassignedVehicle";
 
 cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,
@@ -483,6 +484,54 @@ export const getCompanyVehicles = async (
     ]);
 
     res.send(createResponse( data, "Company vehicle found successfully" ));
+  } catch (error: any) {
+    throw createHttpError(400, {
+      message: error?.message ?? "An error occurred.",
+      data: { user: null },
+    });
+  }
+};
+
+/**
+ * GET UNASSINED VEHICLE'S
+ * @param { page, limit } req.query
+ * @param { data, totalCount} res 
+ */
+export const getUnAssinedVehicles = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    // @ts-ignore
+    const { id, role } = req.user;
+    let query: any = { };
+
+    const { page, limit } = req.query;
+    const pageNo = parseInt(page as string) || 1;
+    const pageLimit = parseInt(limit as string) || 10;
+    const startIndex = (pageNo - 1) * pageLimit;
+
+    if (role !== UserRole.SUPER_ADMIN) {
+      throw createHttpError(401, {
+        message: `Unauthorize access`,
+        data: { user: null },
+      });
+    }
+
+    const assignedVehicles = await Vehicle.find().select('-_id imeiNumber');
+    const assignedVehicleIds = assignedVehicles.map((e) => e.imeiNumber);
+
+    query = {
+      imeiNumber: { $nin: assignedVehicleIds }
+    }
+
+    const totalCount = await UnassignedVehicle.countDocuments(query);
+    const data = await UnassignedVehicle.find(query)
+      .sort({ imeiNumber: 1 })
+      .limit(pageLimit)
+      .skip(startIndex);
+
+    res.send(createResponse({ data, totalCount }, "Unassigned vehicle found succesfully!"));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",

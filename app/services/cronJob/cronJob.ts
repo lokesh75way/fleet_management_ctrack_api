@@ -2,6 +2,7 @@ import axios, { AxiosResponse, AxiosError } from 'axios';
 import TrakingHistory,{ ITrakingHistory } from '../../schema/TrakingHistory';
 import Vehicle from '../../schema/Vehicle';
 import { AnyBulkWriteOperation } from 'mongodb';
+import UnassignedVehicle from '../../schema/UnassignedVehicle';
 const TRACKING_URL:string = "http://157.175.107.239/webservice?token=getLiveData&user=API@aitracking.com&pass=Api@2024&company=NFPC&format=json";
 
 
@@ -40,6 +41,15 @@ export const trackingData = async()=>{
         },
       }));
       await TrakingHistory.bulkWrite(bulkOps);
+      // For Unassined Vehicle
+      const unassinedBulkOps: AnyBulkWriteOperation<any>[] = trackingData.map(vehicle => ({
+        updateMany: {
+          filter: { imeiNumber : vehicle.imeiNumber },
+          update: { $set: vehicle },
+          upsert: true,
+        },
+      }));
+      await UnassignedVehicle.bulkWrite(unassinedBulkOps);
     }
   } catch (error:any) {
     console.log("Got error while trying to retrieve data from server")
