@@ -1448,7 +1448,7 @@ export const validate = (validationName: string): any[] => {
           .bail()
           .withMessage("Enter vaild contact"),
         check("dateOfBirth")
-          .optional({ values: "falsy" })
+          .exists()
           .isDate()
           .bail()
           .withMessage("Enter vaild date of birth"),
@@ -1474,16 +1474,16 @@ export const validate = (validationName: string): any[] => {
           .isFloat({ min: 0 })
           .bail()
           .withMessage("Driving experience is required"),
-        check("licenceAvailable").optional().isBoolean(),
+        check("licenceAvailable").exists().isBoolean(),
         check("licenceNumber").optional({ values: "falsy" }).isString(),
         check("licenceToDriver").optional({ values: "falsy" }).isString(),
         check("licenceIssueDate")
-          .optional({ values: "falsy" })
+          .exists()
           .isDate()
           .bail()
           .withMessage("Enter valid issue date"),
         check("licenceExpiryDate")
-          .optional({ values: "falsy" })
+          .exists()
           .isDate()
           .bail()
           .withMessage("Enter vaild expiry date"),

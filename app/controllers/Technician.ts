@@ -73,14 +73,14 @@ export const getTechnician = async (
   if (role === UserRole.COMPANY) {
     const companyId = await User.findById(userId);
 
-    if(companyId){
+    if (companyId) {
       query["$or"] = [{ createdBy: userId }, { company: companyId.companyId }];
     }
-
   }
 
   let companies;
   if (role === UserRole.BUSINESS_GROUP) {
+    console.log(userId);
     const businessGroupId = await User.findOne({ _id: userId }).select(
       "businessGroupId"
     );
@@ -91,7 +91,14 @@ export const getTechnician = async (
     }
 
     const companyIds = companies?.map((company) => company._id);
-    query["company"] = { $in: [companyIds] };
+    query["$or"] = [
+      { createdBy: userId },
+      {
+        company: {
+          $in: companyIds,
+        },
+      },
+    ];
   }
 
   const page = parseInt((req.query.page as string) || "1");
@@ -152,7 +159,7 @@ export const updateTechnician = async (
   const id = req.params.id;
   const payload = req.body;
 
-  let technician = await Technician.findOne({ _id: id , deleted : false});
+  let technician = await Technician.findOne({ _id: id, deleted: false });
 
   if (!technician) {
     res.send(createHttpError(404, "Not found"));
@@ -206,7 +213,10 @@ export const updateTechnician = async (
     }
   }
 
-  const updatedTechnician = await Technician.updateOne({ _id: id ,deleted : false }, payload);
+  const updatedTechnician = await Technician.updateOne(
+    { _id: id, deleted: false },
+    payload
+  );
 
   if (updatedTechnician.modifiedCount === 0) {
     res.send(createHttpError(400, "Technician is not updated!"));
