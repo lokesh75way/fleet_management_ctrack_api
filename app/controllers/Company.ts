@@ -101,9 +101,9 @@ export const getAllCompanies = async (
     if (role === "BUSINESS_GROUP") {
       const businessGroupId = await User.findById(id);
 
-      secondQuery["$or"] = [
-        { businessGroupId: businessGroupId?.businessGroupId },
-        { createdBy: id },
+      query["$or"] = [
+        { 'businessGroupId': businessGroupId?.businessGroupId },
+        { 'companyId.createdBy._id': id },
       ];
     }
 
@@ -113,12 +113,10 @@ export const getAllCompanies = async (
 
     const startIndex = (page1 - 1) * limit1;
 
-   
     let companies: any[] = await User.find(query)
       .populate([
         {
           path: "companyId",
-          match: secondQuery,
           populate: [
             {
               path: "businessGroupId",
@@ -134,14 +132,13 @@ export const getAllCompanies = async (
       .limit(limit1)
       .skip(startIndex);
       
-      console.log(companies)
     if (businessGroupId) {
       companies = companies.filter((company) =>{
-        return  (company.businessGroupId == businessGroupId) || (company.companyId.createdBy == businessGroupId || (company.companyId.createdBy.businessGroupId == businessGroupId));
+        return  (company.businessGroupId == businessGroupId) || (company.companyId?.createdBy == businessGroupId || (company.companyId?.createdBy.businessGroupId == businessGroupId));
       });
     }
 
-    companies = companies.filter((item) => item.companyId);
+    // companies = companies.filter((item) => item.companyId);
     const totalCount = companies.length;
     res.send(createResponse({ data: companies, totalCount }));
   } catch (error: any) {

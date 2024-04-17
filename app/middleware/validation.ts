@@ -1122,6 +1122,7 @@ export const validate = (validationName: string): any[] => {
         check("documents.*.issueDate")
           .notEmpty()
           .withMessage("Issue date is required"),
+        
           check('noOfTanks').optional().isNumeric().withMessage('Number of tanks must be a number'),
           check('LBSDetectionRadius').optional().isNumeric().withMessage('LBS Detection Radius must be a number'),
           check('durationUnit').optional().isIn(Object.values(DurationUnit)).withMessage('Invalid duration unit'),
@@ -1517,16 +1518,12 @@ export const validate = (validationName: string): any[] => {
           .isURL()
           .bail()
           .withMessage("Provide valid document"),
-        check("documents.*.issueDate")
-          .optional({ values: "falsy" })
-          .isDate()
-          .bail()
-          .withMessage("Enter vaild issue date"),
+          check("documents.*.issueDate")
+          .notEmpty()
+          .withMessage("Issue date is required"),
         check("documents.*.expireDate")
-          .optional({ values: "falsy" })
-          .isDate()
-          .bail()
-          .withMessage("Enter vaild issue date"),
+        .notEmpty()
+        .withMessage("Expire date is required"),
       ];
     }
 
@@ -1660,15 +1657,11 @@ export const validate = (validationName: string): any[] => {
           .bail()
           .withMessage("Provide valid document"),
         check("documents.*.issueDate")
-          .optional()
-          .isDate()
-          .bail()
+          .notEmpty()
           .withMessage("Enter vaild issue date"),
         check("documents.*.expireDate")
-          .optional()
-          .isDate()
-          .bail()
-          .withMessage("Enter vaild issue date"),
+          .notEmpty()
+          .withMessage("Enter vaild expire date"),
       ];
     }
 
