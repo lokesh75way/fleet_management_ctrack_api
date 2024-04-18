@@ -78,6 +78,7 @@ export const adminLogin = async (req: Request, res: Response) => {
           vehicleIds: 1,
           createdAt: 1,
           updatedAt: 1,
+          featureTemplateId : 1,
           businessGroupId: {
             _id: 1,
             groupName: 1,
@@ -97,13 +98,14 @@ export const adminLogin = async (req: Request, res: Response) => {
     }
 
     let permissions = [];
-    if (data.role === UserRole.USER) {
+    if (data[0].role === UserRole.USER) {
       permissions = await Permission.find({
-        _id: data.featureTemplateId,
+        _id: data[0].featureTemplateId,
       }).populate("permission.moduleId");
     }
+    console.log(data, "template")
 
-    if (!data?.logo) {
+    if (!data[0]?.logo) {
       data["logo"] = "";
     }
 
