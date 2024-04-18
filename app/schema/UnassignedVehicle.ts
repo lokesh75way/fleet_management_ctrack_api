@@ -1,6 +1,5 @@
 import mongoose, { type Types } from "mongoose";
 import { type BaseSchema } from "./index";
-import { IVehicle } from "./Vehicle";
 
 const Schema = mongoose.Schema;
 
@@ -10,6 +9,7 @@ export interface IUnassignedVehicl extends BaseSchema {
   Vehicle_No: string;
   Vehicletype: string;
   DeviceModel: string;
+  isVehicleAssigned: boolean;
 }
 
 const UnassignedVehiclSchema = new Schema<IUnassignedVehicl>(
@@ -19,6 +19,10 @@ const UnassignedVehiclSchema = new Schema<IUnassignedVehicl>(
     Vehicle_No: {type : String},
     Vehicletype: {type : String},
     DeviceModel: {type : String},
+    isVehicleAssigned: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );
