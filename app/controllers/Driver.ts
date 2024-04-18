@@ -130,7 +130,7 @@ export const getAllDrivers = async (req: Request, res: Response) => {
   const data = await Driver.find(query)
     .populate("companyId")
     .populate("branchId")
-    .populate("businessGroupId")
+    .populate("businessGroupId").sort({createdAt : -1})
     .limit(limit1)
     .skip(startIndex);
 
