@@ -33,11 +33,11 @@ export interface IDriver extends BaseSchema {
   dateOfJoining: Date;
   dateOfLeaving: Date;
   drivingExperience: number;
-  licenceAvailable: boolean;
-  licenceNumber: string;
-  licenceToDriver: string;
-  licenceIssueDate: Date;
-  licenceExpiryDate: Date;
+  licenseAvailable: boolean;
+  licenseNumber: string;
+  licenseToDriver: string;
+  licenseIssueDate: Date;
+  licenseExpiryDate: Date;
   lifeInsuranceNumber: string;
   lifeInsuranceExpiry: Date;
   mediclaimNumber: string;
@@ -85,11 +85,11 @@ const DeviceSchema = new Schema<IDriver>(
     dateOfJoining: { type: Date },
     dateOfLeaving: { type: Date },
     drivingExperience: { type: Number },
-    licenceAvailable: { type: Boolean  , required : true},
-    licenceNumber: { type: String },
-    licenceToDriver: { type: String },
-    licenceIssueDate: { type: Date  , required : true },
-    licenceExpiryDate: { type: Date  , required : true },
+    licenseAvailable: { type: Boolean  , required : true},
+    licenseNumber: { type: String },
+    licenseToDriver: { type: String },
+    licenseIssueDate: { type: Date  , required : true },
+    licenseExpiryDate: { type: Date  , required : true },
     lifeInsuranceNumber: { type: String },
     lifeInsuranceExpiry: { type: Date },
     mediclaimNumber: { type: String },

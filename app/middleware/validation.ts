@@ -1559,15 +1559,15 @@ export const validate = (validationName: string): any[] => {
           .isFloat({ min: 0 })
           .bail()
           .withMessage("Driving experience is required"),
-        check("licenceAvailable").exists().isBoolean(),
-        check("licenceNumber").optional({ values: "falsy" }).isString(),
-        check("licenceToDriver").optional({ values: "falsy" }).isString(),
-        check("licenceIssueDate")
+        check("licenseAvailable").exists().isBoolean(),
+        check("licenseNumber").optional({ values: "falsy" }).isString(),
+        check("licenseToDriver").optional({ values: "falsy" }).isString(),
+        check("licenseIssueDate")
           .exists()
           .optional()
           .isISO8601()
           .withMessage("Enter valid issue date"),
-        check("licenceExpiryDate")
+        check("licenseExpiryDate")
           .exists()
           .optional()
           .isISO8601()
@@ -1580,7 +1580,7 @@ export const validate = (validationName: string): any[] => {
         check("mediclaimExpiry")
           .optional({ values: "falsy" })
           .isISO8601()
-          .withMessage("Enter vaild medicalaim expiry date"),
+          .withMessage("Enter vaild mediclaim expiry date"),
         check("mediclaimNumber").optional({ values: "falsy" }).isString(),
         check("active").optional().isBoolean(),
         check("documents")
@@ -1588,7 +1588,7 @@ export const validate = (validationName: string): any[] => {
           .notEmpty()
           .isArray({ min: 1 })
           .bail()
-          .withMessage("Atlease one document is required"),
+          .withMessage("Atleast one document is required"),
         check("documents.*.documentType")
           .notEmpty()
           .withMessage("Document type is required")
@@ -1625,7 +1625,7 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isMongoId()
           .bail()
-          .withMessage("Provide valid barnch"),
+          .withMessage("Provide valid branch"),
         check("firstName")
           .exists()
           .notEmpty()
@@ -1693,14 +1693,14 @@ export const validate = (validationName: string): any[] => {
           .isISO8601()
           .withMessage("Enter vaild date of leaving"),
         check("drivingExperience").optional().isFloat({ min: 0 }),
-        check("licenceAvailable").optional().isBoolean(),
-        check("licenceNumber").optional().isString(),
-        check("licenceToDriver").optional().isString(),
-        check("licenceIssueDate")
+        check("licenseAvailable").optional().isBoolean(),
+        check("licenseNumber").optional().isString(),
+        check("licenseToDriver").optional().isString(),
+        check("licenseIssueDate")
           .optional()
           .isISO8601()
           .withMessage("Enter valid issue date"),
-        check("licenceExpiryDate")
+        check("licenseExpiryDate")
           .optional()
           .isISO8601()
           .withMessage("Enter vaild expiry date"),
@@ -1721,22 +1721,15 @@ export const validate = (validationName: string): any[] => {
           .bail()
           .withMessage("Atlease one document is required"),
         check("documents.*.documentType")
-          .notEmpty()
-          .withMessage("Document type is required")
+          .optional({ values: "falsy" })
           .isIn(Object.values(DriverDocumentType))
-          .withMessage("Invalid document type value"),
+          .withMessage("Document type is required"),
         check("documents.*.file")
-          .exists()
-          .notEmpty()
-          .isURL()
-          .bail()
-          .withMessage("Provide valid document"),
+          .optional({ values: "falsy" }),
         check("documents.*.issueDate")
-          .notEmpty()
-          .withMessage("Enter vaild issue date"),
+          .optional({ values: "falsy" }),
         check("documents.*.expireDate")
-          .notEmpty()
-          .withMessage("Enter vaild expire date"),
+          .optional({ values: "falsy" }),
       ];
     }
 
