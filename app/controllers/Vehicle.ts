@@ -72,6 +72,11 @@ export const createVehicle = async (
       { $push: { vehicleIds: vehicle._id } }
     );
 
+    const updateVehicleAssigned = await UnassignedVehicle.updateOne(
+      { imeiNumber: req.body.imeiNumber }, 
+      { isVehicleAssigned: true },
+    );
+
     if (!newUser) {
       res.send(createHttpError(400, "User is not updated"));
     }
@@ -518,11 +523,8 @@ export const getUnAssinedVehicles = async (
       });
     }
 
-    const assignedVehicles = await Vehicle.find().select('-_id imeiNumber');
-    const assignedVehicleIds = assignedVehicles.map((e) => e.imeiNumber);
-
     query = {
-      imeiNumber: { $nin: assignedVehicleIds }
+      isVehicleAssigned: false
     }
 
     const totalCount = await UnassignedVehicle.countDocuments(query);

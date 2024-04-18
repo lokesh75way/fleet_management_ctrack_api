@@ -41,6 +41,23 @@ export const trackingData = async()=>{
         },
       }));
       await TrakingHistory.bulkWrite(bulkOps);
+    }
+  } catch (error:any) {
+    console.log("Got error while trying to retrieve data from server")
+    console.log(error);
+  }
+}
+
+export const UnassignedVehicleData = async()=>{
+  try {
+    let response = await getTrackingData();
+    if(response?.data?.root?.error){
+      console.log("Limit Exceed call api after 120 seconds time interval");
+    }else if(response?.data?.root?.VehicleData){
+      let trackingData = await Promise.all(response?.data?.root?.VehicleData?.map(async(vehicle:any)=>{
+        vehicle.imeiNumber = vehicle.Imeino;
+        return vehicle;
+      }));
       // For Unassined Vehicle
       const unassinedBulkOps: AnyBulkWriteOperation<any>[] = trackingData.map(vehicle => ({
         updateMany: {
