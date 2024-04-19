@@ -53,10 +53,10 @@ export interface IAlert extends BaseSchema {
 
 const AlertSchema = new Schema<IAlert>(
   {
-    branch: {
+    branch: [{
       type: mongoose.Types.ObjectId,
       ref: CompanyBranch.modelName,
-    },
+    }],
     basedOn: {
       type: String,
       enum: Object.values(BasedOn),
