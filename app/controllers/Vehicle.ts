@@ -521,12 +521,12 @@ export const getUnAssinedVehicles = async (req: Request, res: Response) => {
       });
     }
 
-    query = {
-      isVehicleAssigned: false,
-    };
+    // query = {
+    //   isVehicleAssigned: false,
+    // };
 
-    const totalCount = await UnassignedVehicle.countDocuments(query);
-    const data = await UnassignedVehicle.find(query)
+    const totalCount = await UnassignedVehicle.countDocuments();
+    const data = await UnassignedVehicle.find()
       .sort({ imeiNumber: 1 })
       .limit(pageLimit)
       .skip(startIndex);
