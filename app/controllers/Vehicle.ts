@@ -30,6 +30,7 @@ export const createVehicle = async (
 
     const existingVehicle = await Vehicle.findOne({
       plateNumber: req.body.plateNumber,
+      isDeleted : false,
     });
 
     if (existingVehicle) {
@@ -53,6 +54,7 @@ export const createVehicle = async (
 
     const existingVehicleImei = await Vehicle.findOne({
       imeiNumber: req.body.imeiNumber,
+      isDeleted : false,
     });
 
     if (existingVehicleImei) {
