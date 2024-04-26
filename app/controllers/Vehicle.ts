@@ -185,7 +185,7 @@ export const deleteVehicle = async (
     if (vehicle?.isDeleted) {
       res.send(createHttpError(404, "vehicle is already deleted"));
     }
-    await Vehicle.updateOne({ _id: id }, { isDeleted: true });
+    await Vehicle.updateOne({ _id: id }, { isDeleted: true },{imeiNumber : ''});
 
     const updateVehicleAssigned = await UnassignedVehicle.updateOne(
       { imeiNumber: vehicle?.imeiNumber },
