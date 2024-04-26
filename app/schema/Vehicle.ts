@@ -174,7 +174,7 @@ const Vehicle = new Schema<IVehicle>(
     copyFrom: { type: String },
     serverAddress: { type: String },
     simNumber: { type: String , required : true },
-    secondrySimNumber: { type: String  , required : true },
+    secondrySimNumber: { type: String },
     distanceCounter: { type: String, enum: Object.values(DistanceCounter) },
     speedDetection: { type: String },
     deviceAccuracyTolerance: { type: String , required : true },
