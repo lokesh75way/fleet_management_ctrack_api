@@ -30,6 +30,7 @@ export const createVehicle = async (
 
     const existingVehicle = await Vehicle.findOne({
       plateNumber: req.body.plateNumber,
+      isDeleted : false,
     });
 
     if (existingVehicle) {
@@ -39,13 +40,12 @@ export const createVehicle = async (
       return;
     }
 
-    
     // Temproary check take imei only from traking table
     const existingImeiExist = await TrakingHistory.findOne({
       imeiNumber: req.body.imeiNumber,
     });
 
-    if(!existingImeiExist){
+    if (!existingImeiExist) {
       throw createHttpError(400, {
         message: `Invalid imei number! Please enter valid imei number!`,
         data: { user: null },
@@ -54,9 +54,10 @@ export const createVehicle = async (
 
     const existingVehicleImei = await Vehicle.findOne({
       imeiNumber: req.body.imeiNumber,
+      isDeleted : false,
     });
 
-    if(existingVehicleImei){
+    if (existingVehicleImei) {
       throw createHttpError(400, {
         message: `Device with this imei already exist!`,
         data: { user: null },
@@ -73,8 +74,8 @@ export const createVehicle = async (
     );
 
     const updateVehicleAssigned = await UnassignedVehicle.updateOne(
-      { imeiNumber: req.body.imeiNumber }, 
-      { isVehicleAssigned: true },
+      { imeiNumber: req.body.imeiNumber },
+      { isVehicleAssigned: true }
     );
 
     if (!newUser) {
@@ -177,6 +178,7 @@ export const deleteVehicle = async (
   try {
     const { id } = req.params;
     const vehicle = await Vehicle.findById(id);
+    console.log(vehicle?.imeiNumber, "delted vehicle");
     if (!vehicle) {
       res.send(createHttpError(404, "vehicle is not exists"));
     }
@@ -184,6 +186,11 @@ export const deleteVehicle = async (
       res.send(createHttpError(404, "vehicle is already deleted"));
     }
     await Vehicle.updateOne({ _id: id }, { isDeleted: true });
+
+    const updateVehicleAssigned = await UnassignedVehicle.updateOne(
+      { imeiNumber: vehicle?.imeiNumber },
+      { isVehicleAssigned: false }
+    );
     res.send(createResponse({}, "Vehicle has been deleted successfully."));
   } catch (error: any) {
     throw createHttpError(400, {
@@ -221,20 +228,20 @@ export const fileUploader = async (
 };
 
 type LatLongStringType = {
-  Latitude: string,
-  Longitude: string
-}
+  Latitude: string;
+  Longitude: string;
+};
 
 type LatLongNumberType = {
-  latitude: number,
-  longitude: number
-}
+  latitude: number;
+  longitude: number;
+};
 
 /**
  * Api to get vahicle current(last) status
  * @param { id, status } req.query
- * @param { data[] } res 
- * @param next 
+ * @param { data[] } res
+ * @param next
  */
 export const getVehicleTrackings = async (
   req: Request,
@@ -256,7 +263,11 @@ export const getVehicleTrackings = async (
     const imeiIdsArray = imeiIds.map((imei) => imei.imeiNumber);
     // const query2  :  any= { imeiNumber: { $in: imeiIdsArray }};
 
-    const query2 : any = { vehicleId: Array.isArray(ids) ? { $in:  ids.map((id: string) => new mongoose.Types.ObjectId(id)) } : { $eq: new mongoose.Types.ObjectId(ids) } };
+    const query2: any = {
+      vehicleId: Array.isArray(ids)
+        ? { $in: ids.map((id: string) => new mongoose.Types.ObjectId(id)) }
+        : { $eq: new mongoose.Types.ObjectId(ids) },
+    };
 
     let statusFilter = {};
     if (status && status != "") {
@@ -265,54 +276,54 @@ export const getVehicleTrackings = async (
 
     const trackData = await TrakingHistory.aggregate([
       {
-        $match: query2
+        $match: query2,
       },
       {
         $match: {
-          vehicleId: { $ne: null } 
-        }
+          vehicleId: { $ne: null },
+        },
       },
       {
         $sort: {
-          updatedAt: -1
-        }
+          updatedAt: -1,
+        },
       },
       {
         $group: {
-          _id: {  vehicleId: "$vehicleId" },
+          _id: { vehicleId: "$vehicleId" },
           allFields: { $addToSet: "$$ROOT" },
-        }
+        },
       },
       { $unwind: "$allFields" },
       {
         $sort: {
-          "allFields.updatedAt": -1
-        }
+          "allFields.updatedAt": -1,
+        },
       },
       {
-        "$group" : {
-          "_id" : "$_id" ,
-          "allFields" : {
-            "$first" : "$allFields"
-          }
-        }
+        $group: {
+          _id: "$_id",
+          allFields: {
+            $first: "$allFields",
+          },
+        },
       },
       {
-        $addFields:{
-          vehicleId: "$allFields.vehicleId"
-        }
+        $addFields: {
+          vehicleId: "$allFields.vehicleId",
+        },
       },
       {
         $lookup: {
-          from: 'vehicles', 
-          localField: "vehicleId", 
-          foreignField: '_id', 
-          as: 'vehicleId'
+          from: "vehicles",
+          localField: "vehicleId",
+          foreignField: "_id",
+          as: "vehicleId",
         },
       },
       { $unwind: "$vehicleId" },
       {
-        $project:{
+        $project: {
           _id: "$allFields._id",
           Status: "$allFields.Status",
           Vehicle_No: "$allFields.Vehicle_No",
@@ -324,49 +335,40 @@ export const getVehicleTrackings = async (
           Datetime: "$allFields.Datetime",
           updatedAt: "$allFields.updatedAt",
           createdAt: "$allFields.createdAt",
-          vehicleId:{
+          vehicleId: {
             _id: true,
-            vehicleName: true
-          }
-        }
+            vehicleName: true,
+          },
+        },
       },
       {
         $facet: {
-          data: [
-            { $match: statusFilter }
-          ],
-          running: [
-            { $match: { Status: "RUNNING" } },
-            { $count: "count" },
-          ],
-          stopped: [
-            { $match: { Status: "STOP" } },
-            { $count: "count" },
-          ],
-          inactive: [
-            { $match: { Status: "INACTIVE" } },
-            { $count: "count" },
-          ],
-          idle: [
-            { $match: { Status: "IDLE" } },
-            { $count: "count" },
-          ],
-          total: [
-            { $count: "count" },
-          ],
-        }
-      }
+          data: [{ $match: statusFilter }],
+          running: [{ $match: { Status: "RUNNING" } }, { $count: "count" }],
+          stopped: [{ $match: { Status: "STOP" } }, { $count: "count" }],
+          inactive: [{ $match: { Status: "INACTIVE" } }, { $count: "count" }],
+          idle: [{ $match: { Status: "IDLE" } }, { $count: "count" }],
+          total: [{ $count: "count" }],
+        },
+      },
     ]);
 
     function calculateCenterCoordinate(coordinates: LatLongNumberType[]) {
-      const avgLat = coordinates?.reduce((acc, coord) => acc + coord.latitude, 0) / coordinates.length;
-      const avgLng = coordinates?.reduce((acc, coord) => acc + coord.longitude, 0) / coordinates.length;
-      return { latitude: parseFloat(avgLat.toFixed(5)), longitude: parseFloat(avgLng.toFixed(5)) };
+      const avgLat =
+        coordinates?.reduce((acc, coord) => acc + coord.latitude, 0) /
+        coordinates.length;
+      const avgLng =
+        coordinates?.reduce((acc, coord) => acc + coord.longitude, 0) /
+        coordinates.length;
+      return {
+        latitude: parseFloat(avgLat.toFixed(5)),
+        longitude: parseFloat(avgLng.toFixed(5)),
+      };
     }
 
     const coordinates = trackData[0].data?.map((item: LatLongStringType) => ({
       latitude: parseFloat(item.Latitude),
-      longitude: parseFloat(item.Longitude)
+      longitude: parseFloat(item.Longitude),
     }));
 
     const result = {
@@ -379,8 +381,8 @@ export const getVehicleTrackings = async (
         nodata: 0,
         total: trackData[0]?.total[0]?.count ?? 0,
       },
-      centerCoordinate: calculateCenterCoordinate(coordinates)
-    }
+      centerCoordinate: calculateCenterCoordinate(coordinates),
+    };
 
     res.send(createResponse(result));
   } catch (error: any) {
@@ -409,39 +411,40 @@ export const getCompanyVehicles = async (
     const startIndex = (pageNo - 1) * pageLimit;
     const search = req.query.search as string;
 
-    const user_id = await User.findById(id)
-    .select("companyId businessGroupId branchIds");
+    const user_id = await User.findById(id).select(
+      "companyId businessGroupId branchIds"
+    );
 
     if (role === UserRole.COMPANY) {
       query = {
-        $match: { _id: user_id?.companyId }
-      }
+        $match: { _id: user_id?.companyId },
+      };
     }
 
     if (role === UserRole.BUSINESS_GROUP) {
       query = {
-        $match: { businessGroupId: user_id?.businessGroupId }
-      }
+        $match: { businessGroupId: user_id?.businessGroupId },
+      };
     }
 
     if (role === UserRole.SUPER_ADMIN) {
       query = {
-        $match: { }
-      }
+        $match: {},
+      };
     }
 
     let branchFilter: any = {};
 
     if (role === UserRole.USER) {
       query = {
-        $match: { _id: user_id?.companyId }
+        $match: { _id: user_id?.companyId },
       };
       branchFilter = {
         branchId: {
-          $in: user_id?.branchIds
-        }
+          $in: user_id?.branchIds,
+        },
       };
-    };
+    }
 
     const data = await Company.aggregate([
       query,
@@ -452,43 +455,43 @@ export const getCompanyVehicles = async (
           pipeline: [
             {
               $match: {
-                $expr: { $eq: ["$companyId", "$$id"] }
-              }
+                $expr: { $eq: ["$companyId", "$$id"] },
+              },
             },
             { $match: { isDeleted: false } },
             {
-              $match: branchFilter
-            }
+              $match: branchFilter,
+            },
           ],
-          as: "vehicles"
-        }
+          as: "vehicles",
+        },
       },
       {
         $match: {
           $or: [
             { companyName: { $regex: new RegExp(search, "i") } },
             { "vehicles.vehicleName": { $regex: new RegExp(search, "i") } },
-          ]
-        }
+          ],
+        },
       },
       {
-        $sort:{
-          createdAt: -1
-        }
+        $sort: {
+          createdAt: -1,
+        },
       },
       {
-        $project:{
+        $project: {
           _id: true,
           companyName: true,
-          vehicles:{
+          vehicles: {
             _id: true,
-            vehicleName: true
-          }
-        }
-      }
+            vehicleName: true,
+          },
+        },
+      },
     ]);
 
-    res.send(createResponse( data, "Company vehicle found successfully" ));
+    res.send(createResponse(data, "Company vehicle found successfully"));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
@@ -500,16 +503,13 @@ export const getCompanyVehicles = async (
 /**
  * GET UNASSINED VEHICLE'S
  * @param { page, limit } req.query
- * @param { data, totalCount} res 
+ * @param { data, totalCount} res
  */
-export const getUnAssinedVehicles = async (
-  req: Request,
-  res: Response
-) => {
+export const getUnAssinedVehicles = async (req: Request, res: Response) => {
   try {
     // @ts-ignore
     const { id, role } = req.user;
-    let query: any = { };
+    let query: any = {};
 
     const { page, limit } = req.query;
     const pageNo = parseInt(page as string) || 1;
@@ -523,17 +523,22 @@ export const getUnAssinedVehicles = async (
       });
     }
 
-    query = {
-      isVehicleAssigned: false
-    }
+    // query = {
+    //   isVehicleAssigned: false,
+    // };
 
-    const totalCount = await UnassignedVehicle.countDocuments(query);
-    const data = await UnassignedVehicle.find(query)
+    const totalCount = await UnassignedVehicle.countDocuments();
+    const data = await UnassignedVehicle.find()
       .sort({ imeiNumber: 1 })
       .limit(pageLimit)
       .skip(startIndex);
 
-    res.send(createResponse({ data, totalCount }, "Unassigned vehicle found succesfully!"));
+    res.send(
+      createResponse(
+        { data, totalCount },
+        "Unassigned vehicle found succesfully!"
+      )
+    );
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
