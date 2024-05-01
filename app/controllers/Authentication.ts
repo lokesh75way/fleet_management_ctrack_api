@@ -223,7 +223,7 @@ export const forgetPassword = async (
     if (token) {
       const body = await forgetPasswordEmailTemplate(
         token,
-        user.firstName ? user.firstName : user.email
+        user.userName ? user.userName : user.email
       );
       const send = sendEmail({
         to: user.email,

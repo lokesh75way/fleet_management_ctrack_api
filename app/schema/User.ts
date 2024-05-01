@@ -25,10 +25,14 @@ const Schema = mongoose.Schema;
 
 export interface IUser extends BaseSchema {
   userName: string;
-  firstName: string;
-  lastName: string;
+  userInfo: {
+    name: string;
+    email: string;
+    designation: string;
+    mobileNumber: string;
+  }[];
   email: string;
-  mobileNumber: string;
+  city: string;
   country: string;
   state: string;
   role: UserRole;
@@ -47,12 +51,18 @@ export interface IUser extends BaseSchema {
 const UserSchema = new Schema<IUser>(
   {
     userName: { type: String, unique: true },
-    firstName: { type: String },
-    lastName: { type: String },
-    email: { type: String, required: true, unique: true },
-    mobileNumber: { type: String, required: true, unique: true },
+    userInfo: [
+      {
+        email: { type: String, required: true, unique: true },
+        name: { type: String, required: true },
+        designation: { type: String, required: false },
+        mobileNumber: { type: String, required: true, unique: true },
+      },
+    ],
+    email: { type: String },
     country: { type: String },
     state: { type: String },
+    city: { type: String },
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
     password: { type: String, select: false },
@@ -60,22 +70,22 @@ const UserSchema = new Schema<IUser>(
     type: { type: String, enum: UserType, default: UserType.STAFF },
     businessGroupId: { type: mongoose.Types.ObjectId, ref: "business-group" },
     companyId: { type: mongoose.Types.ObjectId, ref: "company" },
-    branchIds: [{
-      type: mongoose.Types.ObjectId,
-      ref: "company-branch"
-    }],
-    vehicleIds: [{
-      type: mongoose.Types.ObjectId,
-      ref: "vechicle"
-    }],
+    branchIds: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "company-branch",
+      },
+    ],
+    vehicleIds: [
+      {
+        type: mongoose.Types.ObjectId,
+        ref: "vehicle",
+      },
+    ],
     featureTemplateId: { type: mongoose.Types.ObjectId, ref: "permission" },
   },
   { timestamps: true }
 );
-
-
-// UserSchema.plugin(MongooseDelete, {deletedBy : true , deletedByType : String})
-
 
 // save hashed password
 UserSchema.pre("save", async function (next) {

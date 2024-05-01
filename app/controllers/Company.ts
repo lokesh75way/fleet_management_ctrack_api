@@ -20,10 +20,11 @@ export const createCompany = async (
       userName: payload.userName,
       email: payload.email,
       password: payload.password,
-      mobileNumber: payload.mobileNumber,
       businessGroupId: payload.businessGroupId,
       country: payload.country,
       state: payload.state,
+      city : payload.city,
+      userInfo : payload.userInfo,
       role: UserRole.COMPANY,
       type: UserType.ADMIN,
     };
@@ -33,9 +34,10 @@ export const createCompany = async (
     delete payloadCompany.userName;
     delete payloadCompany.password;
     delete payloadCompany.mobileNumber;
+    delete payloadCompany.userInfo
 
     let alreadyExists = await User.findOne({
-      email: payload.email,
+      email: payload.userInfo.email,
     });
 
     if (alreadyExists) {
@@ -49,24 +51,12 @@ export const createCompany = async (
     if (alreadyExists) {
       throw createHttpError(409, "Company with this username already exists");
     }
-
-    alreadyExists = await User.findOne({
-      mobileNumber: payload.mobileNumber,
-    });
-
-    if (alreadyExists) {
-      throw createHttpError(
-        409,
-        "Company with this phone number already exists"
-      );
-    }
-
-    const newCompany = await Company.create({
-      ...payloadCompany,
-    });
+    const newCompany = await Company.create(payloadCompany);
     if (!newCompany) {
       throw createHttpError(400, "Company is not created");
     }
+
+    console.log(payloadUser)
     const newUser = await User.create({
       ...payloadUser,
       companyId: newCompany._id,
@@ -168,6 +158,7 @@ export const updateCompanyUser = async (
       businessGroupId: payload.businessGroupId,
       country: payload.country,
       state: payload.state,
+      userInfo : payload.userInfo,
       role: UserRole.BUSINESS_GROUP,
       type: UserType.ADMIN,
     };
@@ -177,6 +168,7 @@ export const updateCompanyUser = async (
     delete payloadCompany.userName;
     delete payloadCompany.password;
     delete payloadCompany.mobileNumber;
+    delete payloadCompany.userInfo
 
     let alreadyExist = await User.findOne({
       $or: [{ email: payload.email }],
@@ -189,8 +181,8 @@ export const updateCompanyUser = async (
 
     const updatedFields: any = {};
 
-    if (payloadUser.mobileNumber) {
-      updatedFields.mobileNumber = payloadUser.mobileNumber;
+    if (payloadUser.userInfo) {
+      updatedFields.userInfo = payloadUser.userInfo;
     }
     if (payloadUser.country) {
       updatedFields.country = payloadUser.country;
@@ -222,15 +214,6 @@ export const updateCompanyUser = async (
       }
     }
 
-    if (payloadUser.mobileNumber) {
-      const alreadyExists = await User.findOne({
-        _id: { $ne: alreadyExist._id },
-        mobileNumber: payload.mobileNumber,
-      });
-      if (alreadyExists) {
-        throw createHttpError(409, "Company with mobileNumber already exists");
-      }
-    }
 
     if (payloadCompany.companyName) {
       const alreadyExists = await Company.findOne({
@@ -241,8 +224,9 @@ export const updateCompanyUser = async (
         throw createHttpError(409, "Company with this name already exists");
       }
     }
+    console.log(payloadCompany)
 
-    await User.updateOne({ email: payload.email }, updatedFields);
+    await User.updateOne({ email: payload.userInfo.email }, updatedFields);
 
     await Company.findOneAndUpdate(companyId, payloadCompany, {
       new: true,

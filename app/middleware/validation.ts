@@ -269,15 +269,38 @@ export const validate = (validationName: string): any[] => {
 
     case "group:add": {
       return [
+        check("userInfo").isArray().withMessage("userInfo must be an array"),
+
+        check("userInfo.*.email").isEmail().withMessage("Invalid email format"),
+
+        check("userInfo.*.name")
+          .isString()
+          .withMessage("name must be a string")
+          .notEmpty()
+          .withMessage("name is required"),
+
+        check("userInfo.*.designation")
+          .optional()
+          .isString()
+          .withMessage("designation must be a string"),
+
+        check("userInfo.*.mobileNumber")
+          .exists()
+          .notEmpty()
+          .isMobilePhone("any")
+          .withMessage("Enter a valid mobile number"),
+
         check("userName")
           .exists({ values: "falsy" })
           .bail()
           .withMessage("User name is required"),
+
         check("groupName")
           .exists({ values: "falsy" })
           .notEmpty()
           .bail()
           .withMessage("Business Group name is required"),
+
         check("email")
           .exists()
           .notEmpty()
@@ -286,6 +309,7 @@ export const validate = (validationName: string): any[] => {
           .isEmail()
           .bail()
           .withMessage("Enter valid email"),
+
         check("password")
           .exists()
           .notEmpty()
@@ -298,27 +322,6 @@ export const validate = (validationName: string): any[] => {
           .withMessage(
             "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character"
           ),
-        check("helpDeskEmail")
-          .exists()
-          .notEmpty()
-          .bail()
-          .withMessage("Email is required")
-          .isEmail()
-          .bail()
-          .withMessage("Enter valid email"),
-
-        check("helpDeskTelephoneNumber")
-          .exists()
-          .notEmpty()
-          .isMobilePhone("any"),
-
-        check("mobileNumber")
-          .exists()
-          .notEmpty()
-          .isMobilePhone("any")
-          .withMessage("Enter a valid mobile number"),
-
-        check("whatsappContactNumber").optional(),
 
         check("country").exists().notEmpty().withMessage("Country is required"),
 
@@ -326,61 +329,11 @@ export const validate = (validationName: string): any[] => {
 
         check("city").exists().notEmpty().withMessage("City is required"),
 
-        check("zipCode")
-          .optional()
-          .custom((value, { req }) => {
-            if (value) {
-              check("zipCode")
-                .isPostalCode("any")
-                .withMessage("Invalid postal code");
-            }
-            return true;
-          }),
-
-        check("storageCapacity").optional(),
-
         check("logo").optional().isURL(),
-
-        check("file").optional().isURL(),
-
-        check("street1").exists().notEmpty().withMessage("Street1 is required"),
-
-        check("street2").optional(),
-
-        check("contactPerson").optional(),
-
-        check("faxNumber").optional(),
 
         check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
 
         check("timeFormat").optional().isIn(["12 Hour", "24 Hour"]),
-
-        check("unitOfDistance")
-          .optional()
-          .bail()
-          .isIn(["MILES", "KILOMETERS", "NAUTICAL_MILES"]),
-
-        check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
-
-        check("language")
-          .optional()
-          .isIn(["ENGLISH", "FRENCH", "ARABIC", "PORTUGUESE"]),
-
-        check("status").optional().isIn(["ACTIVE", "INACTIVE"]),
-
-        check("workStartDay")
-          .optional()
-          .isIn([
-            "SUNDAY",
-            "MONDAY",
-            "TUESDAY",
-            "WEDNESDAY",
-            "THURSDAY",
-            "FRIDAY",
-            "SATURDAY",
-          ]),
-
-        check("currency").optional().isString(),
 
         check("timezone").optional().isString(),
       ];
@@ -389,6 +342,30 @@ export const validate = (validationName: string): any[] => {
     case "group:update": {
       return [
         check("userName").optional(),
+
+        check("userInfo")
+          .optional()
+          .isArray()
+          .withMessage("userInfo must be an array"),
+
+        check("userInfo.*.email")
+          .optional()
+          .isEmail()
+          .withMessage("Invalid email format"),
+        check("userInfo.*.name")
+          .optional()
+          .isString()
+          .withMessage("name must be a string")
+          .notEmpty()
+          .withMessage("name is required"),
+        check("userInfo.*.designation")
+          .optional()
+          .isString()
+          .withMessage("designation must be a string"),
+        check("userInfo.*.mobileNumber")
+          .optional()
+          .isMobilePhone("any")
+          .withMessage("Invalid mobile number format"),
 
         check("groupName").optional(),
 
@@ -401,77 +378,17 @@ export const validate = (validationName: string): any[] => {
           .bail()
           .withMessage("Enter valid email"),
 
-        check("helpDeskEmail")
-          .optional()
-          .isEmail()
-          .withMessage("Enter valid email"),
-
-        check("helpDeskTelephoneNumber").optional().isMobilePhone("any"),
-
-        check("mobileNumber").optional().isMobilePhone("any"),
-
-        check("whatsappContactNumber").optional(),
-
         check("country").optional().optional(),
 
         check("state").optional().optional(),
 
         check("city").optional().optional(),
 
-        check("zipCode")
-          .optional()
-          .custom((value, { req }) => {
-            if (value) {
-              check("zipCode")
-                .isPostalCode("any")
-                .withMessage("Invalid postal code");
-            }
-            return true;
-          }),
-
-        check("storageCapacity").optional(),
-
         check("logo").optional().isURL(),
-
-        check("file").optional().isURL(),
-
-        check("street1").optional(),
-
-        check("street2").optional(),
-
-        check("contactPerson").optional(),
-
-        check("faxNumber").optional(),
 
         check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
 
         check("timeFormat").optional().isIn(["12 Hour", "24 Hour"]),
-
-        check("unitOfDistance")
-          .optional()
-          .isIn(["MILES", "KILOMETERS", "NAUTICAL_MILES"]),
-
-        check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
-
-        check("language")
-          .optional()
-          .isIn(["ENGLISH", "FRENCH", "ARABIC", "PORTUGUESE"]),
-
-        check("status").optional().isIn(["ACTIVE", "INACTIVE"]),
-
-        check("workStartDay")
-          .optional()
-          .isIn([
-            "SUNDAY",
-            "MONDAY",
-            "TUESDAY",
-            "WEDNESDAY",
-            "THURSDAY",
-            "FRIDAY",
-            "SATURDAY",
-          ]),
-
-        check("currency").optional().isString(),
 
         check("timezone").optional().isString(),
       ];
@@ -479,8 +396,28 @@ export const validate = (validationName: string): any[] => {
 
     case "company:add": {
       return [
+        check("userInfo").isArray().withMessage("userInfo must be an array"),
+
+        check("userInfo.*.email").isEmail().withMessage("Invalid email format"),
+
+        check("userInfo.*.name")
+          .isString()
+          .withMessage("name must be a string")
+          .notEmpty()
+          .withMessage("name is required"),
+
+        check("userInfo.*.designation")
+          .optional()
+          .isString()
+          .withMessage("designation must be a string"),
+
+        check("userInfo.*.mobileNumber")
+          .exists()
+          .notEmpty()
+          .isMobilePhone("any")
+          .withMessage("Enter a valid mobile number"),
+
         check("businessGroupId").optional(),
-        // Temp
 
         check("userName")
           .exists({ values: "falsy" })
@@ -513,24 +450,6 @@ export const validate = (validationName: string): any[] => {
           .withMessage(
             "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character"
           ),
-        check("helpDeskEmail")
-          .exists()
-          .notEmpty()
-          .bail()
-          .withMessage("Email is required")
-          .isEmail()
-          .bail()
-          .withMessage("Enter valid email"),
-
-        check("helpDeskTelephoneNumber").optional().isMobilePhone("any"),
-
-        check("mobileNumber")
-          .exists()
-          .notEmpty()
-          .isMobilePhone("any")
-          .withMessage("Enter a valid mobile number"),
-
-        check("whatsappContactNumber").optional(),
 
         check("country").exists().notEmpty().withMessage("Country is required"),
 
@@ -538,60 +457,11 @@ export const validate = (validationName: string): any[] => {
 
         check("city").exists().notEmpty().withMessage("City is required"),
 
-        check("zipCode")
-          .optional()
-          .custom((value, { req }) => {
-            if (value) {
-              check("zipCode")
-                .isPostalCode("any")
-                .withMessage("Invalid postal code");
-            }
-            return true;
-          }),
-
-        check("storageCapacity").optional(),
-
         check("logo").optional().isURL(),
-
-        check("file").optional().isURL(),
-
-        check("street1").exists().notEmpty().withMessage("Street1 is required"),
-
-        check("street2").optional(),
-
-        check("contactPerson").optional(),
-
-        check("faxNumber").optional(),
 
         check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
 
         check("timeFormat").optional().isIn(["12 Hour", "24 Hour"]),
-
-        check("unitOfDistance")
-          .optional()
-          .isIn(["MILES", "KILOMETERS", "NAUTICAL_MILES"]),
-
-        check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
-
-        check("language")
-          .optional()
-          .isIn(["ENGLISH", "FRENCH", "ARABIC", "PORTUGUESE"]),
-
-        check("status").optional().isIn(["ACTIVE", "INACTIVE"]),
-
-        check("workStartDay")
-          .optional()
-          .isIn([
-            "SUNDAY",
-            "MONDAY",
-            "TUESDAY",
-            "WEDNESDAY",
-            "THURSDAY",
-            "FRIDAY",
-            "SATURDAY",
-          ]),
-
-        check("currency").optional().isString(),
 
         check("timezone").optional().isString(),
       ];
@@ -599,6 +469,30 @@ export const validate = (validationName: string): any[] => {
 
     case "company:update": {
       return [
+        check("userInfo")
+          .optional()
+          .isArray()
+          .withMessage("userInfo must be an array"),
+
+        check("userInfo.*.email")
+          .optional()
+          .isEmail()
+          .withMessage("Invalid email format"),
+        check("userInfo.*.name")
+          .optional()
+          .isString()
+          .withMessage("name must be a string")
+          .notEmpty()
+          .withMessage("name is required"),
+        check("userInfo.*.designation")
+          .optional()
+          .isString()
+          .withMessage("designation must be a string"),
+        check("userInfo.*.mobileNumber")
+          .optional()
+          .isMobilePhone("any")
+          .withMessage("Invalid mobile number format"),
+
         check("businessGroupId").optional(),
 
         check("userName").optional(),
@@ -614,77 +508,17 @@ export const validate = (validationName: string): any[] => {
           .bail()
           .withMessage("Enter valid email"),
 
-        check("helpDeskEmail")
-          .optional()
-          .isEmail()
-          .withMessage("Enter valid email"),
-
-        check("helpDeskTelephoneNumber").optional(),
-
-        check("mobileNumber").optional(),
-
-        check("whatsappContactNumber").optional(),
-
         check("country").optional().optional(),
 
         check("state").optional().optional(),
 
         check("city").optional().optional(),
 
-        check("zipCode")
-          .optional()
-          .custom((value, { req }) => {
-            if (value) {
-              check("zipCode")
-                .isPostalCode("any")
-                .withMessage("Invalid postal code");
-            }
-            return true;
-          }),
-
-        check("storageCapacity").optional(),
-
         check("logo").optional().isURL(),
-
-        check("file").optional().isURL(),
-
-        check("street1").optional(),
-
-        check("street2").optional(),
-
-        check("contactPerson").optional(),
-
-        check("faxNumber").optional(),
 
         check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
 
         check("timeFormat").optional().isIn(["12 Hour", "24 Hour"]),
-
-        check("unitOfDistance")
-          .optional()
-          .isIn(["MILES", "KILOMETERS", "NAUTICAL_MILES"]),
-
-        check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
-
-        check("language")
-          .optional()
-          .isIn(["ENGLISH", "FRENCH", "ARABIC", "PORTUGUESE"]),
-
-        check("status").optional().isIn(["ACTIVE", "INACTIVE"]),
-
-        check("workStartDay")
-          .optional()
-          .isIn([
-            "SUNDAY",
-            "MONDAY",
-            "TUESDAY",
-            "WEDNESDAY",
-            "THURSDAY",
-            "FRIDAY",
-            "SATURDAY",
-          ]),
-
-        check("currency").optional().isString(),
 
         check("timezone").optional().isString(),
       ];
@@ -716,50 +550,9 @@ export const validate = (validationName: string): any[] => {
 
         check("city").exists().notEmpty().withMessage("City is required"),
 
-        check("zipCode")
-          .optional()
-          .custom((value, { req }) => {
-            if (value) {
-              check("zipCode")
-                .isPostalCode("any")
-                .withMessage("Invalid postal code");
-            }
-            return true;
-          }),
-
-        check("file").optional().isURL(),
-
-        check("street1").exists().notEmpty().withMessage("Street1 is required"),
-
-        check("street2").optional(),
-
         check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
 
         check("timeFormat").optional().isIn(["12 Hour", "24 Hour"]),
-
-        check("unitOfDistance")
-          .optional()
-          .isIn(["MILES", "KILOMETERS", "NAUTICAL_MILES"]),
-
-        check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
-
-        check("language")
-          .optional()
-          .isIn(["ENGLISH", "FRENCH", "ARABIC", "PORTUGUESE"]),
-
-        check("status").optional().isIn(["ACTIVE", "INACTIVE"]),
-
-        check("workStartDay")
-          .optional()
-          .isIn([
-            "SUNDAY",
-            "MONDAY",
-            "TUESDAY",
-            "WEDNESDAY",
-            "THURSDAY",
-            "FRIDAY",
-            "SATURDAY",
-          ]),
 
         check("currency").optional().isString(),
 
@@ -788,51 +581,9 @@ export const validate = (validationName: string): any[] => {
 
         check("city").optional().optional(),
 
-        check("zipCode")
-          .optional()
-          .custom((value, { req }) => {
-            if (value) {
-              check("zipCode")
-                .isPostalCode("any")
-                .withMessage("Invalid postal code");
-            }
-            return true;
-          }),
-
-        check("file").optional().isURL(),
-
-        check("street1").optional(),
-
-        check("street2").optional(),
-
         check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
 
         check("timeFormat").optional().isIn(["12 Hour", "24 Hour"]),
-
-        check("unitOfDistance")
-          .optional()
-          .isIn(["MILES", "KILOMETERS", "NAUTICAL_MILES"]),
-        check("unitOfFuel").optional().isIn(["GALLONS", "LITERS"]),
-
-        check("language")
-          .optional()
-          .isIn(["ENGLISH", "FRENCH", "ARABIC", "PORTUGUESE"]),
-
-        check("status").optional().isIn(["ACTIVE", "INACTIVE"]),
-
-        check("workStartDay")
-          .optional()
-          .isIn([
-            "SUNDAY",
-            "MONDAY",
-            "TUESDAY",
-            "WEDNESDAY",
-            "THURSDAY",
-            "FRIDAY",
-            "SATURDAY",
-          ]),
-
-        check("currency").optional().isString(),
 
         check("timezone").optional().isString(),
       ];
@@ -1724,12 +1475,9 @@ export const validate = (validationName: string): any[] => {
           .optional({ values: "falsy" })
           .isIn(Object.values(DriverDocumentType))
           .withMessage("Document type is required"),
-        check("documents.*.file")
-          .optional({ values: "falsy" }),
-        check("documents.*.issueDate")
-          .optional({ values: "falsy" }),
-        check("documents.*.expireDate")
-          .optional({ values: "falsy" }),
+        check("documents.*.file").optional({ values: "falsy" }),
+        check("documents.*.issueDate").optional({ values: "falsy" }),
+        check("documents.*.expireDate").optional({ values: "falsy" }),
       ];
     }
 
