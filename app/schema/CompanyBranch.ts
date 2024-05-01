@@ -4,6 +4,12 @@ import { IBusinessGroup } from "./BusinessGroup";
 import { ICompany } from "./Company";
 import { IUser } from "./User";
 
+interface UserInfo {
+  email?: string;
+  name?: string;
+  designation?: string;
+  mobileNumber?: string;
+}
 
 export interface IBranch extends BaseSchema {
   businessGroupId: Types.ObjectId | IBusinessGroup,
@@ -14,6 +20,12 @@ export interface IBranch extends BaseSchema {
 
   tradeLicenseNumber : string;
   officeNumber  :string;
+
+  userInfo: UserInfo[];
+  email: string;
+  country: string;
+  state: string;
+  city: string;
 
  
   isDeleted : boolean;
@@ -37,6 +49,19 @@ const BranchSchema = new Schema<IBranch>(
 
     tradeLicenseNumber: { type: String },
     officeNumber: { type: String },
+
+    userInfo: [
+      {
+        email: { type: String, required: false, unique: false },
+        name: { type: String, required: false },
+        designation: { type: String, required: false },
+        mobileNumber: { type: String, required: false, unique: false },
+      },
+    ],
+    email: { type: String },
+    country: { type: String },
+    state: { type: String },
+    city: { type: String },
 
 
     dateFormat: { type: String, enum: ["MM-DD-YYYY", "DD-MM-YYYY"] },

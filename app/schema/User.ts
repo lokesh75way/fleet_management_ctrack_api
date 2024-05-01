@@ -31,6 +31,7 @@ export interface IUser extends BaseSchema {
     designation: string;
     mobileNumber: string;
   }[];
+  mobileNumber: string;
   email: string;
   city: string;
   country: string;
@@ -42,6 +43,7 @@ export interface IUser extends BaseSchema {
   password: string;
   isValidPassword: (password: string) => Promise<boolean>;
   businessGroupId: Types.ObjectId | IBusinessGroup;
+  branchId: Types.ObjectId | IBranch
   companyId?: Types.ObjectId | ICompany;
   branchIds?: Types.ObjectId[] | IBranch[];
   vehicleIds?: Types.ObjectId[] | IVehicle[];
@@ -53,12 +55,13 @@ const UserSchema = new Schema<IUser>(
     userName: { type: String, unique: true },
     userInfo: [
       {
-        email: { type: String, required: true, unique: true },
-        name: { type: String, required: true },
+        email: { type: String, required: false, unique: false },
+        name: { type: String, required: false },
         designation: { type: String, required: false },
-        mobileNumber: { type: String, required: true, unique: true },
+        mobileNumber: { type: String, required: false, unique: false },
       },
     ],
+    mobileNumber: { type: String, required: false, unique: false },
     email: { type: String },
     country: { type: String },
     state: { type: String },
@@ -70,6 +73,7 @@ const UserSchema = new Schema<IUser>(
     type: { type: String, enum: UserType, default: UserType.STAFF },
     businessGroupId: { type: mongoose.Types.ObjectId, ref: "business-group" },
     companyId: { type: mongoose.Types.ObjectId, ref: "company" },
+    branchId : {type : mongoose.Types.ObjectId , ref : 'company-branch'},
     branchIds: [
       {
         type: mongoose.Types.ObjectId,
