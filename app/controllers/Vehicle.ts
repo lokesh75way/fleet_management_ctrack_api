@@ -30,7 +30,7 @@ export const createVehicle = async (
 
     const existingVehicle = await Vehicle.findOne({
       plateNumber: req.body.plateNumber,
-      isDeleted : false,
+      isDeleted: false,
     });
 
     if (existingVehicle) {
@@ -54,7 +54,7 @@ export const createVehicle = async (
 
     const existingVehicleImei = await Vehicle.findOne({
       imeiNumber: req.body.imeiNumber,
-      isDeleted : false,
+      isDeleted: false,
     });
 
     if (existingVehicleImei) {
@@ -186,7 +186,7 @@ export const deleteVehicle = async (
     if (vehicle?.isDeleted) {
       res.send(createHttpError(404, "vehicle is already deleted"));
     }
-    await Vehicle.updateOne({ _id: id }, { isDeleted: true },{imeiNumber : ''});
+    await Vehicle.updateOne({ _id: id }, { isDeleted: true });
 
     const updateVehicleAssigned = await UnassignedVehicle.updateOne(
       { imeiNumber: vehicle?.imeiNumber },
@@ -536,7 +536,10 @@ export const getUnAssinedVehicles = async (req: Request, res: Response) => {
 
     res.send(
       createResponse(
-        { data, totalCount },
+        {
+          data,
+          totalCount,
+        },
         "Unassigned vehicle found succesfully!"
       )
     );

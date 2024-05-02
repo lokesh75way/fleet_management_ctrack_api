@@ -104,6 +104,7 @@ export const updateBusinessUser = async (
     role: UserRole.BUSINESS_GROUP,
     type: UserType.ADMIN,
   };
+  console.log(payload);
   const payloadGroup = { ...payload };
 
   delete payloadGroup.email;
@@ -138,6 +139,9 @@ export const updateBusinessUser = async (
   }
   if (payloadUser.state) {
     updatedFields.state = payloadUser.state;
+  }
+  if (payloadUser.city) {
+    updatedFields.city = payloadUser.city;
   }
 
   if (payloadUser.userName) {
