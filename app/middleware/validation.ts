@@ -14,7 +14,6 @@ import {
   FuelUnit,
   Permit,
   SpeedDetection,
-  UnitOFDistance,
   VehicleCategory,
 } from "../schema/Vehicle";
 import { DocumentType as DriverDocumentType } from "../schema/Driver";
@@ -714,7 +713,7 @@ export const validate = (validationName: string): any[] => {
           .isString()
           .withMessage("SIM number must be a string"),
         check("secondrySimNumber")
-          .notEmpty()
+          .optional()
           .isString()
           .withMessage("Secondary SIM number must be a string"),
         check("distanceCounter")
@@ -722,11 +721,6 @@ export const validate = (validationName: string): any[] => {
           .withMessage("Distance counter is required")
           .isIn(Object.values(DistanceCounter))
           .withMessage("Invalid distance counter value"),
-        check("unitOfDistance")
-          .notEmpty()
-          .withMessage("Unit of distance is required")
-          .isIn(Object.values(UnitOFDistance))
-          .withMessage("Invalid unit of distance value"),
         check("speedDetection")
           .optional()
           .isIn(Object.values(SpeedDetection))
@@ -973,10 +967,6 @@ export const validate = (validationName: string): any[] => {
           .optional({ values: "falsy" })
           .isIn(Object.values(DistanceCounter))
           .withMessage("Invalid distance counter value"),
-        check("unitOfDistance")
-          .optional({ values: "falsy" })
-          .isIn(Object.values(UnitOFDistance))
-          .withMessage("Invalid unit of distance value"),
         check("speedDetection")
           .optional()
           .isIn(Object.values(SpeedDetection))

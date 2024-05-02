@@ -11,11 +11,7 @@ export enum DistanceCounter {
   TACHOGRAPH = "TACHOGRAPH",
 }
 
-export enum UnitOFDistance {
-  KILOMETERS = "KILOMETERS",
-  MILES = "MILES",
-  NAUTICAL_MILES = "NAUTICAL_MILES",
-}
+
 
 export enum VehicleCategory {
   MOVABLE = "MOVABLE",
@@ -97,7 +93,6 @@ export interface IVehicle extends BaseSchema {
   simNumber: string;
   secondrySimNumber: string;
   distanceCounter: DistanceCounter;
-  unitOfDistance: UnitOFDistance;
   speedDetection: SpeedDetection;
   deviceAccuracyTolerance: string;
   // profile
@@ -179,9 +174,8 @@ const Vehicle = new Schema<IVehicle>(
     copyFrom: { type: String },
     serverAddress: { type: String },
     simNumber: { type: String , required : true },
-    secondrySimNumber: { type: String  , required : true },
+    secondrySimNumber: { type: String },
     distanceCounter: { type: String, enum: Object.values(DistanceCounter) },
-    unitOfDistance: { type: String, enum: Object.values(UnitOFDistance) },
     speedDetection: { type: String },
     deviceAccuracyTolerance: { type: String , required : true },
     // profile

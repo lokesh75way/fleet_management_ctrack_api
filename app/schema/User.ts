@@ -21,6 +21,12 @@ export enum UserType {
   STAFF = "STAFF",
 }
 
+export enum UnitOFDistance {
+  KILOMETERS = "KILOMETERS",
+  MILES = "MILES",
+  NAUTICAL_MILES = "NAUTICAL_MILES",
+}
+
 const Schema = mongoose.Schema;
 
 export interface IUser extends BaseSchema {
@@ -48,6 +54,7 @@ export interface IUser extends BaseSchema {
   branchIds?: Types.ObjectId[] | IBranch[];
   vehicleIds?: Types.ObjectId[] | IVehicle[];
   featureTemplateId?: Types.ObjectId | IPermission;
+  unitOfDistance: UnitOFDistance;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -87,6 +94,7 @@ const UserSchema = new Schema<IUser>(
       },
     ],
     featureTemplateId: { type: mongoose.Types.ObjectId, ref: "permission" },
+    unitOfDistance: { type: String, enum: Object.values(UnitOFDistance) },
   },
   { timestamps: true }
 );
@@ -105,3 +113,4 @@ UserSchema.methods.isValidPassword = async function (password: string) {
 };
 
 export default mongoose.model<IUser>("user", UserSchema);
+

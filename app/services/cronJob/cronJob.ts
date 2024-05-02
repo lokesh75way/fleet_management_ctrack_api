@@ -24,8 +24,7 @@ export const trackingData = async()=>{
       console.log(response)
     }else if(response?.data?.root?.VehicleData){
       let vehiclesImeiNumbers = response?.data?.root?.VehicleData?.map((e:any)=> e.Imeino);
-      let vehiclesData = await Vehicle.find({imeiNumber : {$in : vehiclesImeiNumbers }});
-      let trackingData = await Promise.all(response?.data?.root?.VehicleData?.map(async(vehicle:any)=>{
+      let vehiclesData = await Vehicle.find({imeiNumber : {$in : vehiclesImeiNumbers }, isDeleted: false});      let trackingData = await Promise.all(response?.data?.root?.VehicleData?.map(async(vehicle:any)=>{
         let vehicleData = vehiclesData.find((e:any)=> e.imeiNumber == vehicle.Imeino);
         if(vehicleData){
           vehicle.vehicleId = vehicleData._id;
