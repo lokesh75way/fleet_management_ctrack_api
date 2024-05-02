@@ -53,7 +53,7 @@ export const initPassport = (): void => {
       },
       async (request, email, password, done) => {
         try {
-          const { firstName } = request.body as IUser;
+          const { userName } = request.body as IUser;
           const existUser = await User.findOne({ email });
           if (existUser != null) {
             done(createError(403, "User already exist!"));
@@ -81,7 +81,7 @@ export const initPassport = (): void => {
           const user = await User.findOne({
             $or: [{ email: email }, { userName: email }],
           }).select(
-            "_id password isDeleted isActive email role type firstName lastName userName"
+            "_id password isDeleted isActive email role type userName"
           );
           if (user == null) {
             done(createError(401, "User not found"), false);

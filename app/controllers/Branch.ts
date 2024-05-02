@@ -15,7 +15,6 @@ export const createCompanyBranch = async (
 
     // @ts-ignore
     const id = req.user._id;
-
     const payloadBranch = { ...payload };
 
 
@@ -28,19 +27,18 @@ export const createCompanyBranch = async (
       res.send(createHttpError(400, "Branch is not created"));
     }
 
-    const newUser = await User.updateOne(
-      {
-        businessGroupId: payload.businessGroupId,
-      },
-      { $push: { branchIds: newBranch._id } }
-    );
-
-    const newUser2 = await User.updateOne(
-      {
-        companyId: payload.companyId,
-      },
-      { $push: { branchIds: newBranch._id } }
-    );
+    const updatePromises = [
+      User.updateOne(
+        { businessGroupId: payload.businessGroupId },
+        { $push: { branchIds: newBranch._id } }
+      ),
+      User.updateOne(
+        { companyId: payload.companyId },
+        { $push: { branchIds: newBranch._id } }
+      )
+    ];
+    
+    const [newUser, newUser2] = await Promise.all(updatePromises);
 
     if (!newUser && !newUser2) {
       res.send(createHttpError(400, "User is not updated"));

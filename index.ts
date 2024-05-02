@@ -36,6 +36,7 @@ import path from "path";
 import { initTeltonikaServer } from "./app/services/Teltonika";
 import {initJT701Server} from "./app/services/JT701";
 import { initCronJob} from "./app/services/cronJob"
+import { createAdmin } from "./app/helper/createAdmin";
 
 const envFilePath = path.resolve(`./.env.${process.env.NODE_ENV}`);
 dotenv.config({ path: envFilePath });
@@ -61,7 +62,6 @@ const initApp = async (): Promise<void> => {
   await initDB();
   // passport init
   initPassport();
-
 
   // set base path to /api
   app.use("/api/fleet", router);

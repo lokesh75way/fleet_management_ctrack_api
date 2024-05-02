@@ -137,30 +137,31 @@ export const getVehicles = async (
     const role = req.user.role;
     console.log(role);
     let query: any = { isDeleted: false };
-
-    let { page, limit } = req.query;
+    let { page, limit, branchIds, companyId } = req.query;
     let page1 = parseInt(page as string) || 1;
     let limit1 = parseInt(limit as string) || 10;
-
     const startIndex = (page1 - 1) * limit1;
-
     const user_id = await User.findById(id).select("companyId businessGroupId");
     if (role === UserRole.COMPANY) {
       query.companyId = user_id?.companyId;
     }
-
     if (role === UserRole.BUSINESS_GROUP) {
       query.businessGroupId = user_id?.businessGroupId;
     }
-
+    if (companyId) {
+      query.companyId = companyId;
+    }
+    // console.log(branchIds, "branchids")
+    if (branchIds) {
+      const branchIdsArray = Array.isArray(branchIds) ? branchIds : [branchIds];
+      query.branchId = { $in: branchIdsArray };
+    }
     const data = await Vehicle.find(query)
       .populate("branchId")
       .sort({ createdAt: -1 })
       .limit(limit1)
       .skip(startIndex);
-
     const totalCount = await Vehicle.countDocuments(query);
-
     res.send(createResponse({ data, totalCount }));
   } catch (error: any) {
     throw createHttpError(400, {
