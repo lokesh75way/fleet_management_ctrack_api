@@ -139,7 +139,7 @@ export const getAllCompanies = async (
     }
 
     // companies = companies.filter((item) => item.companyId);
-    const totalCount = companies.length;
+    const totalCount = await User.countDocuments(query);
     res.send(createResponse({ data: companies, totalCount }));
   } catch (error: any) {
     throw createHttpError(400, {
