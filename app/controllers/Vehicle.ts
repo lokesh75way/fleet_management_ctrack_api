@@ -208,8 +208,11 @@ export const fileUploader = async (
 ) => {
   try {
     const file: any = req.files?.file;
+    console.log(file, "Log 1");
     if (!file) return next(createHttpError(404, "File not found."));
     if (file?.tempFilePath) {
+      console.log(file.tempFilePath, "Log 2");
+
       const result = await cloudinary?.uploader.upload(file?.tempFilePath);
       res.send(
         createResponse(
@@ -219,6 +222,7 @@ export const fileUploader = async (
       );
       return;
     }
+    console.log("log 3");
     res.send(createResponse({}, "File is not uploaded"));
   } catch (error: any) {
     throw createHttpError(400, {
