@@ -214,7 +214,6 @@ export const updateCompanyUser = async (
       }
     }
 
-
     if (payloadCompany.companyName) {
       const alreadyExists = await Company.findOne({
         _id: { $ne: companyId },
@@ -224,9 +223,9 @@ export const updateCompanyUser = async (
         throw createHttpError(409, "Company with this name already exists");
       }
     }
-    console.log(payloadCompany)
+    console.log(updatedFields);
 
-    await User.updateOne({ email: payload.userInfo.email }, updatedFields);
+    await User.updateOne({ email: payload.email }, updatedFields);
 
     await Company.findOneAndUpdate(companyId, payloadCompany, {
       new: true,
