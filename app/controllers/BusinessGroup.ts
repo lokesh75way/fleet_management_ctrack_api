@@ -245,7 +245,7 @@ export const getAllGroups = async (
     const totalPages = Math.ceil(totalCount / limit);
 
     const startIndex = (page - 1) * limit;
-    
+
     const groups = await User.aggregate([
       {
         $match: query,
@@ -289,12 +289,17 @@ export const getAllGroups = async (
         $match: {
           $expr: {
             $cond: {
-              if: { $eq: [role, "SUPER_ADMIN"] }, 
-              then: {}, 
-              else: { $eq: ["$businessGroupId.createdBy", id] }
-            }
-          }
-        }
+              if: { $eq: [role, "SUPER_ADMIN"] },
+              then: {},
+              else: { $eq: ["$businessGroupId.createdBy", id] },
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          password: 0,
+        },
       },
       {
         $sort: {
@@ -307,7 +312,6 @@ export const getAllGroups = async (
       {
         $limit: 10,
       },
-    
     ]);
 
     res.send(
