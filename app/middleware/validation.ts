@@ -22,6 +22,7 @@ import { CATEGORY, GEOFENCE_ACCESS } from "../schema/Geofence";
 import { GEOFENCE_TYPE } from "../schema/Geofence";
 import GeoFenceLocation from "../schema/GeofenceLocation";
 import { Category, ExpenseType } from "../schema/Expense";
+import { Currency, WorkStartDay } from "../schema/BusinessGroup";
 
 export const validate = (validationName: string): any[] => {
   switch (validationName) {
@@ -330,6 +331,18 @@ export const validate = (validationName: string): any[] => {
 
         check("logo").optional().isURL(),
 
+        check("currency")
+          .notEmpty()
+          .withMessage("Currency is required")
+          .isIn(Object.values(Currency))
+          .withMessage("Invalid currency"),
+
+        check("workStartDay")
+          .notEmpty()
+          .withMessage("work start day is required")
+          .isIn(Object.values(WorkStartDay))
+          .withMessage("Invalid currency"),
+
         check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
 
         check("timeFormat").optional().isIn(["12 Hour", "24 Hour"]),
@@ -376,6 +389,20 @@ export const validate = (validationName: string): any[] => {
           .isEmail()
           .bail()
           .withMessage("Enter valid email"),
+
+        check("currency")
+          .optional()
+          .notEmpty()
+          .withMessage("Currency is required")
+          .isIn(Object.values(Currency))
+          .withMessage("Invalid currency"),
+
+        check("workStartDay")
+          .optional()
+          .notEmpty()
+          .withMessage("Work start day is required")
+          .isIn(Object.values(WorkStartDay))
+          .withMessage("Invalid work start day"),
 
         check("country").optional().optional(),
 
@@ -428,6 +455,18 @@ export const validate = (validationName: string): any[] => {
           .notEmpty()
           .bail()
           .withMessage("Company name is required"),
+
+        check("currency")
+          .notEmpty()
+          .withMessage("Currency is required")
+          .isIn(Object.values(Currency))
+          .withMessage("Invalid currency"),
+
+        check("workStartDay")
+          .notEmpty()
+          .withMessage("work start day is required")
+          .isIn(Object.values(WorkStartDay))
+          .withMessage("Invalid currency"),
 
         check("email")
           .exists()
@@ -507,6 +546,20 @@ export const validate = (validationName: string): any[] => {
           .bail()
           .withMessage("Enter valid email"),
 
+        check("currency")
+          .optional()
+          .notEmpty()
+          .withMessage("Currency is required")
+          .isIn(Object.values(Currency))
+          .withMessage("Invalid currency"),
+
+        check("workStartDay")
+          .optional()
+          .notEmpty()
+          .withMessage("Work start day is required")
+          .isIn(Object.values(WorkStartDay))
+          .withMessage("Invalid work start day"),
+
         check("country").optional().optional(),
 
         check("state").optional().optional(),
@@ -543,6 +596,18 @@ export const validate = (validationName: string): any[] => {
           .bail()
           .withMessage("Branch name is required"),
 
+        check("currency")
+          .notEmpty()
+          .withMessage("Currency is required")
+          .isIn(Object.values(Currency))
+          .withMessage("Invalid currency"),
+
+        check("workStartDay")
+          .notEmpty()
+          .withMessage("work start day is required")
+          .isIn(Object.values(WorkStartDay))
+          .withMessage("Invalid currency"),
+
         check("country").exists().notEmpty().withMessage("Country is required"),
 
         check("state").optional().notEmpty().withMessage("State is required"),
@@ -573,6 +638,20 @@ export const validate = (validationName: string): any[] => {
         check("parentBranchId").optional(),
 
         check("branchName").optional(),
+
+        check("currency")
+          .optional()
+          .notEmpty()
+          .withMessage("Currency is required")
+          .isIn(Object.values(Currency))
+          .withMessage("Invalid currency"),
+
+        check("workStartDay")
+          .optional()
+          .notEmpty()
+          .withMessage("Work start day is required")
+          .isIn(Object.values(WorkStartDay))
+          .withMessage("Invalid work start day"),
 
         check("country").optional().optional(),
 
