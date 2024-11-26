@@ -184,7 +184,7 @@ export const validate = (validationName: string): any[] => {
       ];
     }
 
-    case "user:update": {
+    case "subadmin:update": {
       return [
         check("email")
           .notEmpty()
@@ -193,14 +193,10 @@ export const validate = (validationName: string): any[] => {
           .isEmail()
           .bail()
           .withMessage("Enter valid email"),
-        check("firstName")
+        check("userName")
           .notEmpty()
           .bail()
           .withMessage("First name is required"),
-        check("lastName")
-          .notEmpty()
-          .bail()
-          .withMessage("Last name is required"),
       ];
     }
 
@@ -332,16 +328,14 @@ export const validate = (validationName: string): any[] => {
         check("logo").optional().isURL(),
 
         check("currency")
-          .notEmpty()
-          .withMessage("Currency is required")
+          .optional()
           .isIn(Object.values(Currency))
           .withMessage("Invalid currency"),
 
         check("workStartDay")
-          .notEmpty()
-          .withMessage("work start day is required")
+          .optional()
           .isIn(Object.values(WorkStartDay))
-          .withMessage("Invalid currency"),
+          .withMessage("Invalid Work Start Day"),
 
         check("dateFormat").optional().isIn(["MM-DD-YYYY", "DD-MM-YYYY"]),
 
@@ -457,14 +451,12 @@ export const validate = (validationName: string): any[] => {
           .withMessage("Company name is required"),
 
         check("currency")
-          .notEmpty()
-          .withMessage("Currency is required")
+          .optional()
           .isIn(Object.values(Currency))
           .withMessage("Invalid currency"),
 
         check("workStartDay")
-          .notEmpty()
-          .withMessage("work start day is required")
+          .optional()
           .isIn(Object.values(WorkStartDay))
           .withMessage("Invalid currency"),
 
@@ -597,12 +589,14 @@ export const validate = (validationName: string): any[] => {
           .withMessage("Branch name is required"),
 
         check("currency")
+          .optional()
           .notEmpty()
           .withMessage("Currency is required")
           .isIn(Object.values(Currency))
           .withMessage("Invalid currency"),
 
         check("workStartDay")
+          .optional()
           .notEmpty()
           .withMessage("work start day is required")
           .isIn(Object.values(WorkStartDay))

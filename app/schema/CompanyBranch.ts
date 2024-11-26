@@ -64,9 +64,8 @@ const BranchSchema = new Schema<IBranch>(
       type: String,
       enum: Object.values(WorkStartDay),
       default: WorkStartDay.MONDAY,
-      required: true,
     },
-    currency: { type: String, enum: Object.values(Currency), required: true },
+    currency: { type: String, enum: Object.values(Currency) },
 
     userInfo: [
       {
