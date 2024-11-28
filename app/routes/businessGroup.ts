@@ -22,8 +22,8 @@ router.post(
 );
 
 // update Business group
-router.patch(
-  "/",
+router.put(
+  "/:id",
   validate("group:update"),
   catchError,
   asyncHandler(updateBusinessUser)

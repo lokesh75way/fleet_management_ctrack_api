@@ -4,6 +4,9 @@ import createHttpError from "http-errors";
 import BusinessGroup from "../schema/BusinessGroup";
 import User, { UserRole, UserType } from "../schema/User";
 import bcrypt from "bcrypt";
+import Company from "../schema/Company";
+import CompanyBranch from "../schema/CompanyBranch";
+import mongoose from "mongoose";
 
 export const createBusinessUser = async (
   req: Request,
@@ -90,8 +93,9 @@ export const updateBusinessUser = async (
   res: Response,
   next: NextFunction
 ) => {
+  const { id } = req.params;
   // @ts-ignore
-  const id = req.user._id;
+  const userId = req.user._id;
   const payload = req.body;
   const payloadUser = {
     userName: payload.userName,
@@ -117,14 +121,14 @@ export const updateBusinessUser = async (
   delete payloadGroup.state 
   delete payloadGroup.userInfo
   let alreadyExist = await User.findOne({
-    $or: [{ email: payload.email }],
+    $or: [{ businessGroupId: new mongoose.Types.ObjectId(id) }],
   });
-
-  const businessId = alreadyExist?.businessGroupId;
 
   if (!alreadyExist) {
     throw createHttpError(409, "Business group with this email is not exists");
   }
+
+  const businessId = alreadyExist?.businessGroupId;
 
   const updatedFields: any = {};
 
@@ -202,25 +206,30 @@ export const deleteBusinessGroup = async (
 ) => {
   try {
     const { id } = req.params;
-    console.log(id);
-    const user = await User.findOne({ _id: id });
-    if (!user) {
-      res.send(createHttpError(404, "Business group is not exists"));
-      return;
+
+    // Check if the business group exists
+    const businessGroup = await BusinessGroup.findOne({ _id: id, isDeleted: false });
+    if (!businessGroup) {
+      throw createHttpError(400, "Business group not found.");
     }
-    if (user?.isDeleted) {
-      res.send(createHttpError(404, "Business group is already deleted"));
-      return;
-    }
-    await User.updateOne({ _id: id }, { isDeleted: true });
+
+    // Update related records with isDeleted: true
+    await BusinessGroup.findByIdAndUpdate(id, { isDeleted: true });
+    await Company.updateMany({ businessGroupId: id }, { isDeleted: true });
+    await CompanyBranch.updateMany({ businessGroupId: id }, { isDeleted: true });
+    await User.updateMany({ businessGroupId: id }, { isDeleted: true });
+
     res.send(
-      createResponse({}, "Business group has been deleted successfully.")
+      createResponse({}, "Business group and related data have been marked as deleted.")
     );
+    return;
   } catch (error: any) {
-    throw createHttpError(400, {
-      message: error?.message ?? "An error occurred.",
-      data: { user: null },
-    });
+    next(
+      createHttpError(400, {
+        message: error?.message ?? "An error occurred.",
+        data: { user: null },
+      })
+    );
   }
 };
 
@@ -275,8 +284,10 @@ export const getAllGroups = async (
       {
         $lookup: {
           from: "companies",
-          localField: "businessGroupId._id",
-          foreignField: "businessGroupId",
+          let: { businessGroupId: "$businessGroupId._id" },
+          pipeline: [
+            { $match: { $expr: { $and: [{ $eq: ["$businessGroupId", "$$businessGroupId"] }, { $eq: ["$isDeleted", false] }] } } },
+          ],
           as: "companyCount",
         },
       },

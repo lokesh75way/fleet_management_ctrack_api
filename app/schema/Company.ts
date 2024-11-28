@@ -19,6 +19,7 @@ export interface ICompany extends BaseSchema {
 
   timezone: string;
   createdBy: Types.ObjectId | IUser;
+  isDeleted: boolean;
 }
 
 const CompanySchema = new Schema<ICompany>(
@@ -46,6 +47,7 @@ const CompanySchema = new Schema<ICompany>(
 
     timezone: { type: String },
     createdBy: { type: mongoose.Types.ObjectId, ref: "user" },
+    isDeleted: {type: Boolean, default: false}
   },
   {
     timestamps: true,

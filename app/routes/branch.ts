@@ -13,7 +13,7 @@ router.post("/", validate("branch:add"), catchError, asyncHandler(createCompanyB
 router.get('/',catchError,asyncHandler(getAllBranch))
 
 // update company branch
-router.patch('/', validate("branch:update"), catchError , asyncHandler(updateBranch))
+router.put(':id', validate("branch:update"), catchError , asyncHandler(updateBranch))
 
 // delete company branch
 router.delete('/:id',catchError, asyncHandler(deleteBranch))

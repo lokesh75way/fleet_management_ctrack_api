@@ -61,10 +61,11 @@ export const updateBranch = async (
   next: NextFunction
 ) => {
   try {
+    const { id } = req.params;
     const payload = req.body;
 
     // @ts-ignore
-    const branchId = payload.branchId;
+    const branchId = id;
 
     const payloadBranch = { ...payload };
 
@@ -94,15 +95,14 @@ export const deleteBranch = async (
 ) => {
   try {
     const { id } = req.params;
-    const branch = await CompanyBranch.findById(id);
+    const branch = await CompanyBranch.findOne({ _id: id, isDeleted: false });
     if (!branch) {
-      res.send(createHttpError(404, "Branch is not exists"));
+      throw createHttpError(400, "Branch not found.");
     }
-    if (branch?.isDeleted) {
-      res.send(createHttpError(404, "Branch is already deleted"));
-    }
-    await CompanyBranch.updateOne({ _id: id }, { isDeleted: true });
-    res.send(createResponse({}, "User has been deleted successfully."));
+    // Update related records with isDeleted: true
+    await CompanyBranch.findByIdAndUpdate(id, { isDeleted: true });
+    await User.updateMany({ branchId: id }, { isDeleted: true });
+    res.send(createResponse({}, "Branch has been deleted successfully."));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",

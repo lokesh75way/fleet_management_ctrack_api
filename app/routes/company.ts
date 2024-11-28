@@ -26,8 +26,8 @@ router.post(
 router.get("/", catchError, asyncHandler(getAllCompanies));
 
 // update company
-router.patch(
-  "/",
+router.put(
+  "/:id",
   validate("company:update"),
   catchError,
   asyncHandler(updateCompanyUser)
