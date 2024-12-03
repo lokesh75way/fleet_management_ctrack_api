@@ -620,10 +620,10 @@ export const validate = (validationName: string): any[] => {
 
     case "branch:update": {
       return [
-        check("branchId")
-          .exists({ values: "falsy" })
-          .bail()
-          .withMessage("Branch ID is required"),
+        // check("branchId")
+        //   .exists({ values: "falsy" })
+        //   .bail()
+        //   .withMessage("Branch ID is required"),
 
         check("businessGroupId").optional(),
 

@@ -4,6 +4,7 @@ import createHttpError from "http-errors";
 import BusinessGroup, { IBusinessGroup } from "../schema/BusinessGroup";
 import User, { UserRole, UserType } from "../schema/User";
 import CompanyBranch from "../schema/CompanyBranch";
+import mongoose from "mongoose";
 
 export const createCompanyBranch = async (
   req: Request,
@@ -17,10 +18,9 @@ export const createCompanyBranch = async (
     const id = req.user._id;
     const payloadBranch = { ...payload };
 
-
     const newBranch = await CompanyBranch.create({
       ...payloadBranch,
-      createdBy : id
+      createdBy: id,
     });
 
     if (!newBranch) {
@@ -35,9 +35,9 @@ export const createCompanyBranch = async (
       User.updateOne(
         { companyId: payload.companyId },
         { $push: { branchIds: newBranch._id } }
-      )
+      ),
     ];
-    
+
     const [newUser, newUser2] = await Promise.all(updatePromises);
 
     if (!newUser && !newUser2) {
@@ -122,8 +122,8 @@ export const getAllBranch = async (
     // @ts-ignore
     const role = req.user.role;
     const { companyId, branchId } = req.query;
-    let query : any= {
-         isDeleted: false ,
+    let query: any = {
+      isDeleted: false,
     };
     let { page, limit } = req.query;
     let page1 = parseInt(page as string) || 1;
@@ -133,28 +133,25 @@ export const getAllBranch = async (
 
     const user_id = await User.findById(id).select("companyId businessGroupId");
 
-    
-
     if (role === UserRole.COMPANY) {
-      query["$or"] = 
-       [{ companyId  :user_id?.companyId}, {createdBy : id}]
-      
+      query["$or"] = [{ companyId: user_id?.companyId }, { createdBy: id }];
     }
 
     if (role === UserRole.BUSINESS_GROUP) {
-      query["$or"] = 
-      [{ businessGroupId  :user_id?.businessGroupId}, {createdBy : id}]
+      query["$or"] = [
+        { businessGroupId: user_id?.businessGroupId },
+        { createdBy: id },
+      ];
     }
 
     if (companyId) {
       query.companyId = companyId;
     }
-    
 
     if (branchId) {
-        query.$or = [{ parentBranchId: branchId }, { _id: branchId }];
+      query.$or = [{ parentBranchId: branchId }, { _id: branchId }];
     }
-    
+
     let data = await CompanyBranch.find(query)
       .populate([
         { path: "businessGroupId", select: "groupName" },
@@ -172,6 +169,60 @@ export const getAllBranch = async (
     }
 
     res.send(createResponse({ data, totalCount }));
+  } catch (error: any) {
+    throw createHttpError(400, {
+      message: error?.message ?? "An error occurred.",
+      data: { user: null },
+    });
+  }
+};
+
+export const getBranchById = async (req: Request, res: Response) => {
+  try {
+    // @ts-ignore
+    const userId = req.user._id;
+    // @ts-ignore
+    const role = req.user.role;
+    const { id } = req.params;
+    let branchId;
+
+    try {
+      branchId = new mongoose.Types.ObjectId(id);
+    } catch (error) {
+      throw createHttpError(403, { message: "Invalid branch id" });
+    }
+
+    let query: any = {
+      isDeleted: false,
+      _id: branchId,
+    };
+
+    const user_id = await User.findById(userId).select(
+      "companyId businessGroupId"
+    );
+
+    if (role === UserRole.COMPANY) {
+      query["$or"] = [{ companyId: user_id?.companyId }, { createdBy: userId }];
+    }
+
+    if (role === UserRole.BUSINESS_GROUP) {
+      query["$or"] = [
+        { businessGroupId: user_id?.businessGroupId },
+        { createdBy: userId },
+      ];
+    }
+
+    let data = await CompanyBranch.find(query).populate([
+      { path: "businessGroupId", select: "groupName" },
+      { path: "companyId", select: "companyName" },
+      { path: "parentBranchId", select: "branchName" },
+    ]);
+
+    if (data.length) {
+      res.send(createResponse(data[0]));
+    } else {
+      throw createHttpError(404, { message: "Branch not found" });
+    }
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
