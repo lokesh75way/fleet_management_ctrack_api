@@ -554,3 +554,49 @@ export const getUnAssinedVehicles = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getVehicleById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // @ts-ignore
+    const id = req.user._id;
+    // @ts-ignore
+    const role = req.user.role;
+
+    const vehicleId = req.params.id; // Get the vehicle ID from request params
+    if (!vehicleId) {
+      throw createHttpError(400, { message: "Vehicle ID is required." });
+    }
+
+    let query: any = { isDeleted: false, _id: vehicleId }; // Add _id to query for specific vehicle
+
+    const user_id = await User.findById(id).select("companyId businessGroupId");
+
+    if (role === UserRole.COMPANY) {
+      query.companyId = user_id?.companyId;
+    }
+    if (role === UserRole.BUSINESS_GROUP) {
+      query.businessGroupId = user_id?.businessGroupId;
+    }
+
+    const data = await Vehicle.findOne(query) // Use `findOne` for a single vehicle
+      .populate("branchId");
+
+    if (!data) {
+      throw createHttpError(404, { message: "Vehicle not found." });
+    }
+
+    res.send(createResponse({ data }));
+  } catch (error: any) {
+    next(
+      createHttpError(400, {
+        message: error?.message ?? "An error occurred.",
+        data: { user: null },
+      })
+    );
+  }
+};
+
