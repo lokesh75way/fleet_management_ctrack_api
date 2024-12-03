@@ -29,13 +29,16 @@ export const createVehicle = async (
     }
 
     const existingVehicle = await Vehicle.findOne({
-      plateNumber: req.body.plateNumber,
+      registrationNumber: req.body.registrationNumber,
       isDeleted: false,
     });
 
     if (existingVehicle) {
       res.send(
-        createHttpError(409, "Vehicle with this plate number already exists")
+        createHttpError(
+          409,
+          "Vehicle with this Registration number already exists"
+        )
       );
       return;
     }
@@ -566,12 +569,12 @@ export const getVehicleById = async (
     // @ts-ignore
     const role = req.user.role;
 
-    const vehicleId = req.params.id; // Get the vehicle ID from request params
+    const vehicleId = req.params.id;
     if (!vehicleId) {
       throw createHttpError(400, { message: "Vehicle ID is required." });
     }
 
-    let query: any = { isDeleted: false, _id: vehicleId }; // Add _id to query for specific vehicle
+    let query: any = { isDeleted: false, _id: vehicleId };
 
     const user_id = await User.findById(id).select("companyId businessGroupId");
 
@@ -582,8 +585,7 @@ export const getVehicleById = async (
       query.businessGroupId = user_id?.businessGroupId;
     }
 
-    const data = await Vehicle.findOne(query) // Use `findOne` for a single vehicle
-      .populate("branchId");
+    const data = await Vehicle.findOne(query).populate("branchId");
 
     if (!data) {
       throw createHttpError(404, { message: "Vehicle not found." });

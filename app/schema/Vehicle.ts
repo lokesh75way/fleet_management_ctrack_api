@@ -80,6 +80,13 @@ export enum DurationBasedUnit {
   MM = "MM",
 }
 
+export interface Reminder {
+  lastRenewalDate: string;
+  period: string;
+  nextRenewalDate: string;
+  reminderStarts: string;
+}
+
 export interface IVehicle extends BaseSchema {
   businessGroupId: Types.ObjectId | IBusinessGroup;
   companyId: Types.ObjectId | ICompany;
@@ -130,7 +137,7 @@ export interface IVehicle extends BaseSchema {
   loadingUnloadingTolerance: number;
   fuelSensor: FuelSensor;
   gSensor: boolean;
-  distanceBasedDistanceQuantity: number
+  distanceBasedDistanceQuantity: number;
   distanceBaseFuelConsumption: number;
   distanceBaseFuelConsumptionUnit: FuelUnit;
   durationBaseFuelConsumptionDurationQuanitty: number;
@@ -144,15 +151,46 @@ export interface IVehicle extends BaseSchema {
   axisZ: number;
   durationUnit: DurationUnit;
   fuelIdlingConsumptionUnit: FuelUnit;
-  documents: {
-    documentType: DocumentType;
-    file: string;
-    issueDate: Date;
-    expireDate: Date;
-  }[];
+  // documents: {
+  //   documentType: DocumentType;
+  //   file: string;
+  //   issueDate: Date;
+  //   expireDate: Date;
+  // }[];
 
-  isActive : boolean;
-  isDeleted : boolean;
+  isActive: boolean;
+  isDeleted: boolean;
+  vehicleNumber: string;
+  unitId: string;
+  fleetNumber?: string;
+  description: string;
+  manufacture: string;
+  year: number;
+  model: string;
+  color: string;
+  vinChassisNumber: number;
+  group: string;
+  groupDescription: string;
+  tollCategory: string;
+  tarrifType: string;
+  licenseNumber: string;
+  licenseExpire: string;
+  roadWorthy: string;
+  roadWorthyExpire: string;
+  odo: string;
+  odoNextService: string;
+  hours: string;
+  hoursNextService: string;
+  currentStatus: string;
+  speed: string;
+  currentDriver: string;
+  heading: string;
+  currentLocation: string;
+  skillSet: string;
+  profile: string;
+  owningCostCenter: string;
+  licenseReminder: Reminder;
+  roadWorthyReminder: Reminder;
 }
 
 const Vehicle = new Schema<IVehicle>(
@@ -165,31 +203,31 @@ const Vehicle = new Schema<IVehicle>(
     companyId: { type: Schema.Types.ObjectId, ref: "company", required: true },
     branchId: {
       type: mongoose.Types.ObjectId,
-      ref: "company-branch"
+      ref: "company-branch",
     },
     vehicleName: { type: String, required: true },
-    deviceType: { type: String , required : true },
+    deviceType: { type: String, required: true },
     // deviceId: { type: Schema.Types.ObjectId, ref: "Device", required: true },
-    imeiNumber: { type: String, required: true , unique :true },
+    imeiNumber: { type: String, required: true, unique: true },
     copyFrom: { type: String },
     serverAddress: { type: String },
-    simNumber: { type: String , required : true },
+    simNumber: { type: String, required: true },
     secondrySimNumber: { type: String },
     distanceCounter: { type: String, enum: Object.values(DistanceCounter) },
     speedDetection: { type: String },
-    deviceAccuracyTolerance: { type: String , required : true },
+    deviceAccuracyTolerance: { type: String, required: true },
     // profile
-    plateNumber: { type: String , unique : true },
+    plateNumber: { type: String, unique: true },
     vehicleCategory: { type: String, enum: Object.values(VehicleCategory) },
     dvirTemplate: { type: String },
     manufacturerDate: { type: Date },
     purchaseDate: { type: Date },
     purchaseAmount: { type: Number },
-    weightCapacity: { type: Number , required : true},
+    weightCapacity: { type: Number },
     gpsInstallationDate: { type: Date },
-    gpsWarranty: { type: Number , required : true },
+    gpsWarranty: { type: Number },
     companyAverage: { type: String },
-    permit: { type: String, enum: Object.values(Permit) , required : true},
+    permit: { type: String, enum: Object.values(Permit), required: true },
     installationDate: { type: Date },
     registrationNumber: { type: String },
     fuelType: { type: String, enum: Object.values(FuelType) },
@@ -222,22 +260,72 @@ const Vehicle = new Schema<IVehicle>(
     fuelIdlingConsumptionUnit: { type: String, enum: Object.values(FuelUnit) },
     distanceBasedDistanceQuantity: { type: Number },
     distanceBaseFuelConsumption: { type: Number },
-    distanceBaseFuelConsumptionUnit: { type: String, enum: Object.values(FuelUnit) },
+    distanceBaseFuelConsumptionUnit: {
+      type: String,
+      enum: Object.values(FuelUnit),
+    },
     durationBaseFuelConsumptionDurationQuanitty: { type: Number },
-    durationBaseFuelConsumptionDurationUnit: { type: String, enum: Object.values(DurationBasedUnit) },
+    durationBaseFuelConsumptionDurationUnit: {
+      type: String,
+      enum: Object.values(DurationBasedUnit),
+    },
     durationBaseDistanceQuantity: { type: Number },
-    durationBaseFuelConsumptionUnit: { type: String, enum: Object.values(FuelUnit) },
-    documents: [
-      {
-        documentType: { type: String, enum: Object.values(DocumentType) },
-        file: { type: String },
-        issueDate: { type: Date },
-        expireDate: { type: Date },
-      },
-    ],
+    durationBaseFuelConsumptionUnit: {
+      type: String,
+      enum: Object.values(FuelUnit),
+    },
+    // documents: [
+    //   {
+    //     documentType: { type: String, enum: Object.values(DocumentType) },
+    //     file: { type: String },
+    //     issueDate: { type: Date },
+    //     expireDate: { type: Date },
+    //   },
+    // ],
 
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
+    vehicleNumber: { type: String },
+    unitId: { type: String },
+    fleetNumber: { type: String },
+    description: { type: String },
+    manufacture: { type: String },
+    year: { type: Number },
+    model: { type: String },
+    color: { type: String },
+    vinChassisNumber: { type: Number },
+    group: { type: String },
+    groupDescription: { type: String },
+    tollCategory: { type: String },
+    tarrifType: { type: String },
+    licenseNumber: { type: String },
+    licenseExpire: { type: String },
+    roadWorthy: { type: String },
+    roadWorthyExpire: { type: String },
+    odo: { type: String },
+    odoNextService: { type: String },
+    hours: { type: String },
+    hoursNextService: { type: String },
+    currentStatus: { type: String },
+    speed: { type: String },
+    currentDriver: { type: String },
+    heading: { type: String },
+    currentLocation: { type: String },
+    skillSet: { type: String },
+    profile: { type: String },
+    owningCostCenter: { type: String },
+    licenseReminder: {
+      lastRenewalDate: { type: String },
+      period: { type: String },
+      nextRenewalDate: { type: String },
+      reminderStarts: { type: String },
+    },
+    roadWorthyReminder: {
+      lastRenewalDate: { type: String },
+      period: { type: String },
+      nextRenewalDate: { type: String },
+      reminderStarts: { type: String },
+    },
   },
   {
     timestamps: true,
