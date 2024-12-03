@@ -5,6 +5,7 @@ import createHttpError from "http-errors";
 import { sendEmail, subadminInvitationEmailTemplate } from "../services/email";
 import { generatePasswordToken } from "../services/passport-jwt";
 import Permission from "../schema/Permission";
+import mongoose from "mongoose";
 
 export const addSubAdmin = async (
   req: Request,
@@ -21,7 +22,11 @@ export const addSubAdmin = async (
         message: `Subadmin already exist with this email!`,
       });
     }
-    const createSubadmin = await new User({...payload, role : UserRole.USER , type : UserType.STAFF}).save();
+    const createSubadmin = await new User({
+      ...payload,
+      role: UserRole.USER,
+      type: UserType.STAFF,
+    }).save();
 
     const token = await generatePasswordToken(createSubadmin);
     const html = subadminInvitationEmailTemplate(token, payload.email);
@@ -33,7 +38,7 @@ export const addSubAdmin = async (
 
     res.send(createResponse(createSubadmin, "Subadmin created successfully!"));
   } catch (error) {
-    console.log(error)
+    console.log(error);
     throw createHttpError(400, {
       message: error ?? "An error occurred.",
       data: { user: null },
@@ -140,6 +145,53 @@ export const getAllSubadmin = async (
     const count = await User.count(condition);
 
     res.send(createResponse({ data, count }, `Subadmin found successfully!`));
+  } catch (error: any) {
+    throw createHttpError(400, {
+      message: error?.message ?? "An error occurred.",
+      data: { user: null },
+    });
+  }
+};
+
+export const getSubAdminById = async (req: Request, res: Response) => {
+  try {
+    // @ts-ignore
+    const userId = req.user._id;
+    // @ts-ignore
+    const role = req?.user.role;
+    const { id } = req.params;
+    let adminId;
+
+    try {
+      adminId = new mongoose.Types.ObjectId(id);
+    } catch (error) {
+      throw createHttpError(403, { message: "Invalid user id" });
+    }
+
+    const user_id = await User.findById(userId).select(
+      "companyId businessGroupId"
+    );
+
+    const condition: any = {
+      isDeleted: false,
+      role: { $in: [UserRole.USER] },
+      type: { $in: [UserType.STAFF, UserType.ADMIN] },
+    };
+
+    if (role === UserRole.BUSINESS_GROUP) {
+      condition.businessGroupId = user_id?.businessGroupId;
+    }
+    if (role === UserRole.COMPANY) {
+      condition.companyId = user_id?.companyId;
+    }
+
+    const data = await User.find(condition).select("-password");
+
+    if (data.length) {
+      res.send(createResponse(data[0]));
+    } else {
+      throw createHttpError(404, { message: "User account not found" });
+    }
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
