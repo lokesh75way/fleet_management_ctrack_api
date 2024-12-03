@@ -802,7 +802,7 @@ export const validate = (validationName: string): any[] => {
           .notEmpty()
           .isString()
           .withMessage("Device accuracy tolerance must be a string"),
-        check("plateNumber").notEmpty().withMessage("Plate number is required"),
+        // check("plateNumber").notEmpty().withMessage("Plate number is required"),
         check("vehicleCategory")
           .notEmpty()
           .withMessage("Vehicle category is required")
@@ -821,18 +821,18 @@ export const validate = (validationName: string): any[] => {
           .notEmpty()
           .isNumeric()
           .withMessage("Purchase amount must be a number"),
-        check("weightCapacity")
-          .notEmpty()
-          .isNumeric()
-          .withMessage("Weight capacity must be a number"),
+        // check("weightCapacity")
+        //   .notEmpty()
+        //   .isNumeric()
+        //   .withMessage("Weight capacity must be a number"),
         check("gpsInstallationDate")
           .optional()
           .isISO8601()
           .withMessage("GPS installation date must be a valid ISO 8601 date"),
-        check("gpsWarranty")
-          .notEmpty()
-          .isNumeric()
-          .withMessage("GPS warranty must be a number"),
+        // check("gpsWarranty")
+        //   .notEmpty()
+        //   .isNumeric()
+        //   .withMessage("GPS warranty must be a number"),
         check("companyAverage")
           .optional()
           .isString()
@@ -929,17 +929,17 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isBoolean()
           .withMessage("G-sensor must be a boolean"),
-        check("documents.*.documentType")
-          .notEmpty()
-          .withMessage("Document type is required")
-          .isIn(Object.values(DocumentType))
-          .withMessage("Invalid document type value"),
-        check("documents.*.file")
-          .notEmpty()
-          .withMessage("Document file is required"),
-        check("documents.*.issueDate")
-          .notEmpty()
-          .withMessage("Issue date is required"),
+        // check("documents.*.documentType")
+        //   .notEmpty()
+        //   .withMessage("Document type is required")
+        //   .isIn(Object.values(DocumentType))
+        //   .withMessage("Invalid document type value"),
+        // check("documents.*.file")
+        //   .notEmpty()
+        //   .withMessage("Document file is required"),
+        // check("documents.*.issueDate")
+        //   .notEmpty()
+        //   .withMessage("Issue date is required"),
 
         check("noOfTanks")
           .optional()
