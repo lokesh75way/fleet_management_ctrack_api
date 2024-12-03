@@ -4,6 +4,8 @@ import createHttpError from "http-errors";
 import Company from "../schema/Company";
 import User, { UserRole, UserType } from "../schema/User";
 import bcrypt from "bcrypt";
+import CompanyBranch from "../schema/CompanyBranch";
+import mongoose, { Types } from "mongoose";
 
 export const createCompany = async (
   req: Request,
@@ -86,56 +88,288 @@ export const getAllCompanies = async (
     // @ts-ignore
     const role = req.user.role;
 
-    let query: any = { isDeleted: false, role: UserRole.COMPANY };
-    let secondQuery: any = {};
-    if (role === "BUSINESS_GROUP") {
-      const businessGroupId = await User.findById(id);
-
-      query["$or"] = [
-        { 'businessGroupId': businessGroupId?.businessGroupId },
-        { 'companyId.createdBy._id': id },
-      ];
-    }
-
     let { page, limit, businessGroupId } = req.query;
-    let page1 = parseInt(page as string) || 1;
-    let limit1 = parseInt(limit as string) || 10;
+    const pageNumber = parseInt(page as string) || 1;
+    const limitNumber = parseInt(limit as string) || 10;
+    const startIndex = (pageNumber - 1) * limitNumber;
 
-    const startIndex = (page1 - 1) * limit1;
+    // Base match condition
+    let matchCondition: any = { isDeleted: false, role: UserRole.COMPANY };
 
-    let companies: any[] = await User.find(query)
-      .populate([
-        {
-          path: "companyId",
-          populate: [
-            {
-              path: "businessGroupId",
-              select: "groupName",
-            },
-            {
-              path: "createdBy",
-            },
-          ],
-        },
-      ])
-      .sort({ _id: -1 })
-      .limit(limit1)
-      .skip(startIndex);
-      
-    if (businessGroupId) {
-      companies = companies.filter((company) =>{
-        return  (company.businessGroupId == businessGroupId) || (company.companyId?.createdBy == businessGroupId || (company.companyId?.createdBy.businessGroupId == businessGroupId));
-      });
+    // Additional filtering for BUSINESS_GROUP role
+    if (role === "BUSINESS_GROUP") {
+      // Fetch the user and only get the businessGroupId field
+      const businessGroupUser =
+        await User.findById(id).select("businessGroupId");
+
+      // Ensure we are accessing the `businessGroupId` as an ObjectId (not as an embedded document)
+      const businessGroupId = businessGroupUser?.businessGroupId;
+
+      if (businessGroupId) {
+        matchCondition["$or"] = [
+          { businessGroupId: businessGroupId },
+          { "companyId.createdBy._id": new mongoose.Types.ObjectId(id) },
+        ];
+      }
     }
 
-    // companies = companies.filter((item) => item.companyId);
-    const totalCount = await User.countDocuments(query);
+    // Apply businessGroupId filter
+    if (businessGroupId) {
+      const businessGroupIdStr = Array.isArray(businessGroupId)
+        ? businessGroupId[0]
+        : businessGroupId; // Handle array cases
+
+      // Ensure that businessGroupId is a valid string
+      if (
+        typeof businessGroupIdStr === "string" &&
+        Types.ObjectId.isValid(businessGroupIdStr)
+      ) {
+        matchCondition["$or"] = [
+          { businessGroupId: new Types.ObjectId(businessGroupIdStr) },
+          {
+            "companyId.createdBy.businessGroupId": new Types.ObjectId(
+              businessGroupIdStr
+            ),
+          },
+        ];
+      }
+    }
+
+    // Aggregation pipeline
+    const companiesPipeline: any[] = [
+      { $match: matchCondition },
+      {
+        $lookup: {
+          from: "companies",
+          localField: "companyId",
+          foreignField: "_id",
+          as: "companyDetails",
+        },
+      },
+      {
+        $unwind: { path: "$companyDetails", preserveNullAndEmptyArrays: true },
+      },
+      {
+        $lookup: {
+          from: "business-groups",
+          localField: "companyDetails.businessGroupId",
+          foreignField: "_id",
+          as: "businessGroupDetails",
+        },
+      },
+      {
+        $unwind: {
+          path: "$businessGroupDetails",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "companyDetails.createdBy",
+          foreignField: "_id",
+          as: "companyDetails.createdBy",
+        },
+      },
+      {
+        $unwind: {
+          path: "$companyDetails.createdBy",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $addFields: {
+          companyId: {
+            _id: "$companyDetails._id",
+            businessGroupId: {
+              _id: "$businessGroupDetails._id",
+              groupName: "$businessGroupDetails.groupName",
+            },
+            companyName: "$companyDetails.companyName",
+            tradeLicenseNumber: "$companyDetails.tradeLicenseNumber",
+            officeNumber: "$companyDetails.officeNumber",
+            workStartDay: "$companyDetails.workStartDay",
+            dateFormat: "$companyDetails.dateFormat",
+            timeFormat: "$companyDetails.timeFormat",
+            timezone: "$companyDetails.timezone",
+            createdBy: {
+              _id: "$companyDetails.createdBy._id",
+              userName: "$companyDetails.createdBy.userName",
+              userInfo: "$companyDetails.createdBy.userInfo",
+              email: "$companyDetails.createdBy.email",
+              country: "$companyDetails.createdBy.country",
+              state: "$companyDetails.createdBy.state",
+              city: "$companyDetails.createdBy.city",
+              isActive: "$companyDetails.createdBy.isActive",
+              isDeleted: "$companyDetails.createdBy.isDeleted",
+              role: "$companyDetails.createdBy.role",
+              type: "$companyDetails.createdBy.type",
+              businessGroupId: "$companyDetails.createdBy.businessGroupId",
+              branchIds: "$companyDetails.createdBy.branchIds",
+              vehicleIds: "$companyDetails.createdBy.vehicleIds",
+              createdAt: "$companyDetails.createdBy.createdAt",
+              updatedAt: "$companyDetails.createdBy.updatedAt",
+            },
+            createdAt: "$companyDetails.createdAt",
+            updatedAt: "$companyDetails.updatedAt",
+          },
+        },
+      },
+      {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+      {
+        $facet: {
+          metadata: [{ $count: "totalCount" }],
+          data: [{ $skip: startIndex }, { $limit: limitNumber }],
+        },
+      },
+    ];
+
+    // Execute aggregation
+    const result = await User.aggregate(companiesPipeline);
+
+    // Extract data and metadata
+    const companies = result[0]?.data || [];
+    const totalCount = result[0]?.metadata[0]?.totalCount || 0;
+
+    // Send response
     res.send(createResponse({ data: companies, totalCount }));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
       data: { user: null },
     });
+  }
+};
+
+export const getCompanyById = async (req: Request, res: Response) => {
+  // @ts-ignore
+  const userId = req.user._id;
+  // @ts-ignore
+  const role = req.user.role;
+  const { id } = req.params;
+  let cId;
+
+  try {
+    cId = new mongoose.Types.ObjectId(id);
+  } catch (error) {
+    throw createHttpError(403, { message: "Invalid company id" });
+  }
+
+  // Base match condition
+  let matchCondition: any = {
+    isDeleted: false,
+    role: UserRole.COMPANY,
+    companyId: cId,
+  };
+
+  // Additional filtering for BUSINESS_GROUP role
+  if (role === "BUSINESS_GROUP") {
+    // Fetch the user and only get the businessGroupId field
+    const businessGroupUser =
+      await User.findById(userId).select("businessGroupId");
+
+    // Ensure we are accessing the `businessGroupId` as an ObjectId (not as an embedded document)
+    const businessGroupId = businessGroupUser?.businessGroupId;
+
+    if (businessGroupId) {
+      matchCondition["$or"] = [
+        { businessGroupId: businessGroupId },
+        { "companyId.createdBy._id": new mongoose.Types.ObjectId(userId) },
+      ];
+    }
+  }
+
+  // Aggregation pipeline
+  const companiesPipeline = [
+    { $match: matchCondition },
+    {
+      $lookup: {
+        from: "companies",
+        localField: "companyId",
+        foreignField: "_id",
+        as: "companyDetails",
+      },
+    },
+    { $unwind: { path: "$companyDetails", preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: "business-groups",
+        localField: "companyDetails.businessGroupId",
+        foreignField: "_id",
+        as: "businessGroupDetails",
+      },
+    },
+    {
+      $unwind: {
+        path: "$businessGroupDetails",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "companyDetails.createdBy",
+        foreignField: "_id",
+        as: "companyDetails.createdBy",
+      },
+    },
+    {
+      $unwind: {
+        path: "$companyDetails.createdBy",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        companyId: {
+          _id: "$companyDetails._id",
+          businessGroupId: {
+            _id: "$businessGroupDetails._id",
+            groupName: "$businessGroupDetails.groupName",
+          },
+          companyName: "$companyDetails.companyName",
+          tradeLicenseNumber: "$companyDetails.tradeLicenseNumber",
+          officeNumber: "$companyDetails.officeNumber",
+          workStartDay: "$companyDetails.workStartDay",
+          dateFormat: "$companyDetails.dateFormat",
+          timeFormat: "$companyDetails.timeFormat",
+          timezone: "$companyDetails.timezone",
+          createdBy: {
+            _id: "$companyDetails.createdBy._id",
+            userName: "$companyDetails.createdBy.userName",
+            userInfo: "$companyDetails.createdBy.userInfo",
+            email: "$companyDetails.createdBy.email",
+            country: "$companyDetails.createdBy.country",
+            state: "$companyDetails.createdBy.state",
+            city: "$companyDetails.createdBy.city",
+            isActive: "$companyDetails.createdBy.isActive",
+            isDeleted: "$companyDetails.createdBy.isDeleted",
+            role: "$companyDetails.createdBy.role",
+            type: "$companyDetails.createdBy.type",
+            businessGroupId: "$companyDetails.createdBy.businessGroupId",
+            branchIds: "$companyDetails.createdBy.branchIds",
+            vehicleIds: "$companyDetails.createdBy.vehicleIds",
+            createdAt: "$companyDetails.createdBy.createdAt",
+            updatedAt: "$companyDetails.createdBy.updatedAt",
+          },
+          createdAt: "$companyDetails.createdAt",
+          updatedAt: "$companyDetails.updatedAt",
+        },
+      },
+    },
+  ];
+
+  // Execute aggregation
+  const result = await User.aggregate(companiesPipeline);
+
+  if (result.length) {
+    res.send(createResponse(result[0]));
+  } else {
+    throw createHttpError(404, { message: "Company not found" });
   }
 };
 
@@ -146,9 +380,9 @@ export const updateCompanyUser = async (
 ) => {
   try {
     const payload = req.body;
-
+    const { id } = req.params;
     // @ts-ignore
-    const id = req.user._id;
+    const userId = req.user._id;
 
     const payloadUser = {
       userName: payload.userName,
@@ -175,7 +409,7 @@ export const updateCompanyUser = async (
     delete payloadCompany.state;
 
     let alreadyExist = await User.findOne({
-      $or: [{ email: payload.email }],
+      $or: [{ companyId: new mongoose.Types.ObjectId(id) }],
     });
     if (!alreadyExist) {
       res.send(createHttpError(404, "Company with this email is not exists"));
@@ -254,16 +488,16 @@ export const deleteCompany = async (
 ) => {
   try {
     const { id } = req.params;
-    const user = await User.findOne({ _id: id });
-    if (!user) {
-      res.send(createHttpError(404, "Company is not exists"));
-      return;
+    const company = await Company.findOne({ _id: id, isDeleted: false });
+    if (!company) {
+      throw createHttpError(400, "Company not found.");
     }
-    if (user?.isDeleted) {
-      res.send(createHttpError(404, "Company is already deleted"));
-      return;
-    }
-    await User.updateOne({ _id: id }, { isDeleted: true });
+
+    // Update related records with isDeleted: true
+    await Company.findByIdAndUpdate(id, { isDeleted: true });
+    await CompanyBranch.updateMany({ companyId: id }, { isDeleted: true });
+    await User.updateMany({ companyId: id }, { isDeleted: true });
+
     res.send(createResponse({}, "Company has been deleted successfully."));
     return;
   } catch (error: any) {
@@ -276,7 +510,7 @@ export const deleteCompany = async (
 
 export const updatePassword = async (req: Request, res: Response) => {
   const { password, oldPassword, _id } = req.body;
-  const existUser = await User.findOne({ _id: _id }).select("password");
+  const existUser = await User.findOne({ companyId: _id }).select("password");
   if (existUser) {
     const matched = await existUser.isValidPassword(oldPassword);
     if (!matched) {

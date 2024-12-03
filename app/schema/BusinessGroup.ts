@@ -40,6 +40,7 @@ export interface IBusinessGroup extends BaseSchema {
 
   timezone: string;
   createdBy: Types.ObjectId | IUser;
+  isDeleted: boolean;
 }
 
 const BusinessGroupSchema = new Schema<IBusinessGroup>(
@@ -54,15 +55,15 @@ const BusinessGroupSchema = new Schema<IBusinessGroup>(
       type: String,
       enum: Object.values(WorkStartDay),
       default: WorkStartDay.MONDAY,
-      required: true,
     },
-    currency: { type: String, enum: Object.values(Currency), required: true },
+    currency: { type: String, enum: Object.values(Currency) },
 
     dateFormat: { type: String, enum: ["MM-DD-YYYY", "DD-MM-YYYY"] },
     timeFormat: { type: String, enum: ["12 Hour", "24 Hour"] },
 
     timezone: { type: String },
     createdBy: { type: mongoose.Types.ObjectId, ref: "user" },
+    isDeleted: {type: Boolean, default: false}
   },
   { timestamps: true }
 );

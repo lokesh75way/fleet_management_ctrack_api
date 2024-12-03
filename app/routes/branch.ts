@@ -2,7 +2,13 @@ import express from "express";
 import asyncHandler from "express-async-handler"
 import { catchError, validate } from "../middleware/validation";
 import { } from "../controllers/BusinessGroup";
-import { createCompanyBranch, deleteBranch, getAllBranch, updateBranch } from "../controllers/Branch";
+import {
+  createCompanyBranch,
+  deleteBranch,
+  getAllBranch,
+  updateBranch,
+  getBranchById,
+} from "../controllers/Branch";
 
 const router = express.Router();
 
@@ -13,7 +19,14 @@ router.post("/", validate("branch:add"), catchError, asyncHandler(createCompanyB
 router.get('/',catchError,asyncHandler(getAllBranch))
 
 // update company branch
-router.patch('/', validate("branch:update"), catchError , asyncHandler(updateBranch))
+router.put(
+  "/:id",
+  validate("branch:update"),
+  catchError,
+  asyncHandler(updateBranch)
+);
+
+router.get("/:id", asyncHandler(getBranchById));
 
 // delete company branch
 router.delete('/:id',catchError, asyncHandler(deleteBranch))

@@ -8,6 +8,7 @@ import {
   updateCompanyUser,
   deleteCompany,
   updatePassword,
+  getCompanyById,
 } from "../controllers/Company";
 import asyncHandler from "express-async-handler";
 import Company from "../schema/Company";
@@ -22,12 +23,12 @@ router.post(
   asyncHandler(createCompany)
 );
 
-// get company
+// get comxany
 router.get("/", catchError, asyncHandler(getAllCompanies));
 
 // update company
-router.patch(
-  "/",
+router.put(
+  "/:id",
   validate("company:update"),
   catchError,
   asyncHandler(updateCompanyUser)
@@ -35,6 +36,9 @@ router.patch(
 
 // delete Business group
 router.delete("/:id", catchError, asyncHandler(deleteCompany));
+
+// company by id
+router.get("/:id", asyncHandler(getCompanyById));
 
 // change password
 router.post(
