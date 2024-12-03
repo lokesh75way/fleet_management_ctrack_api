@@ -19,12 +19,12 @@ export const createBusinessUser = async (
   const id = req.user._id;
   const payloadUser = {
     userName: payload.userName,
-    email : payload.email,
+    email: payload.email,
     password: payload.password,
     country: payload.country,
     state: payload.state,
-    city : payload.city,
-    userInfo : payload.userInfo,
+    city: payload.city,
+    userInfo: payload.userInfo,
     role: UserRole.BUSINESS_GROUP,
     type: UserType.ADMIN,
   };
@@ -34,28 +34,18 @@ export const createBusinessUser = async (
   delete payloadGroup.userName;
   delete payloadGroup.password;
   delete payloadGroup.mobileNumber;
-  delete payloadGroup.city
-  delete payloadGroup.country
+  delete payloadGroup.city;
+  delete payloadGroup.country;
 
-  delete payloadGroup.state 
-  delete payloadGroup.userInfo
-
+  delete payloadGroup.state;
+  delete payloadGroup.userInfo;
 
   let alreadyExists = await User.findOne({
     email: payload.email,
   });
 
   if (alreadyExists) {
-    res.send(
-      createResponse(
-        {
-          success: false,
-          message: "Business group with this email already exists",
-        },
-        "Business group with this email already exists"
-      )
-    );
-    return;
+    throw createHttpError(409, "Business group with this email already exists");
   }
 
   alreadyExists = await User.findOne({
@@ -77,9 +67,8 @@ export const createBusinessUser = async (
     throw createHttpError(409, "Group Name with this name already exists");
   }
 
- 
   const newBusinessGroup = await BusinessGroup.create(payloadGroup);
- await User.create({
+  await User.create({
     ...payloadUser,
     businessGroupId: newBusinessGroup._id,
   });
@@ -101,10 +90,10 @@ export const updateBusinessUser = async (
     userName: payload.userName,
     password: payload.password,
     country: payload.country,
-    email : payload.email,
+    email: payload.email,
     state: payload.state,
-    city : payload.city,
-    userInfo : payload.userInfo,
+    city: payload.city,
+    userInfo: payload.userInfo,
     role: UserRole.BUSINESS_GROUP,
     type: UserType.ADMIN,
   };
@@ -115,11 +104,11 @@ export const updateBusinessUser = async (
   delete payloadGroup.userName;
   delete payloadGroup.password;
   delete payloadGroup.mobileNumber;
-  delete payloadGroup.city
-  delete payloadGroup.country
+  delete payloadGroup.city;
+  delete payloadGroup.country;
 
-  delete payloadGroup.state 
-  delete payloadGroup.userInfo
+  delete payloadGroup.state;
+  delete payloadGroup.userInfo;
   let alreadyExist = await User.findOne({
     $or: [{ businessGroupId: new mongoose.Types.ObjectId(id) }],
   });
@@ -168,7 +157,6 @@ export const updateBusinessUser = async (
     }
   }
 
-
   if (payloadGroup.groupName) {
     const alreadyExists = await BusinessGroup.findOne({
       _id: { $ne: businessId },
@@ -208,7 +196,10 @@ export const deleteBusinessGroup = async (
     const { id } = req.params;
 
     // Check if the business group exists
-    const businessGroup = await BusinessGroup.findOne({ _id: id, isDeleted: false });
+    const businessGroup = await BusinessGroup.findOne({
+      _id: id,
+      isDeleted: false,
+    });
     if (!businessGroup) {
       throw createHttpError(400, "Business group not found.");
     }
@@ -216,11 +207,17 @@ export const deleteBusinessGroup = async (
     // Update related records with isDeleted: true
     await BusinessGroup.findByIdAndUpdate(id, { isDeleted: true });
     await Company.updateMany({ businessGroupId: id }, { isDeleted: true });
-    await CompanyBranch.updateMany({ businessGroupId: id }, { isDeleted: true });
+    await CompanyBranch.updateMany(
+      { businessGroupId: id },
+      { isDeleted: true }
+    );
     await User.updateMany({ businessGroupId: id }, { isDeleted: true });
 
     res.send(
-      createResponse({}, "Business group and related data have been marked as deleted.")
+      createResponse(
+        {},
+        "Business group and related data have been marked as deleted."
+      )
     );
     return;
   } catch (error: any) {
@@ -286,7 +283,16 @@ export const getAllGroups = async (
           from: "companies",
           let: { businessGroupId: "$businessGroupId._id" },
           pipeline: [
-            { $match: { $expr: { $and: [{ $eq: ["$businessGroupId", "$$businessGroupId"] }, { $eq: ["$isDeleted", false] }] } } },
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$businessGroupId", "$$businessGroupId"] },
+                    { $eq: ["$isDeleted", false] },
+                  ],
+                },
+              },
+            },
           ],
           as: "companyCount",
         },
@@ -336,10 +342,108 @@ export const getAllGroups = async (
   }
 };
 
+export const getGroupById = async (req: Request, res: Response) => {
+  // @ts-ignore
+  const userId = req.user._id;
+  // @ts-ignore
+  const role = req.user.role;
+  const { id } = req.params;
+  let bId;
+
+  try {
+    bId = new mongoose.Types.ObjectId(id);
+  } catch (error) {
+    throw createHttpError(403, { message: "Invalid business id" });
+  }
+
+  const query: any = {
+    isDeleted: false,
+    role: UserRole.BUSINESS_GROUP,
+    businessGroupId: bId,
+  };
+  const groups = await User.aggregate([
+    {
+      $match: query,
+    },
+    {
+      $lookup: {
+        from: "business-groups",
+        localField: "businessGroupId",
+        foreignField: "_id",
+        as: "businessGroup",
+      },
+    },
+    {
+      $unwind: {
+        path: "$businessGroup",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        businessGroupId: "$businessGroup",
+      },
+    },
+    {
+      $unset: "businessGroup",
+    },
+    {
+      $lookup: {
+        from: "companies",
+        let: { businessGroupId: "$businessGroupId._id" },
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $eq: ["$businessGroupId", "$$businessGroupId"] },
+                  { $eq: ["$isDeleted", false] },
+                ],
+              },
+            },
+          },
+        ],
+        as: "companyCount",
+      },
+    },
+    {
+      $addFields: {
+        companyCount: { $size: "$companyCount" },
+      },
+    },
+    {
+      $match: {
+        $expr: {
+          $cond: {
+            if: { $eq: [role, "SUPER_ADMIN"] },
+            then: {},
+            else: { $eq: ["$businessGroupId.createdBy", id] },
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        password: 0,
+      },
+    },
+  ]);
+
+  console.log({ groups });
+
+  if (groups.length) {
+    res.send(createResponse(groups[0]));
+  } else {
+    throw createHttpError(404, { message: "Business group not found" });
+  }
+};
+
 export const updatePassword = async (req: Request, res: Response) => {
   const { password, oldPassword, _id } = req.body;
 
-  const existUser = await User.findOne({ _id: _id }).select("password");
+  const existUser = await User.findOne({ businessGroupId: _id }).select(
+    "password"
+  );
 
   if (existUser) {
     const matched = await existUser.isValidPassword(oldPassword);

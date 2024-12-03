@@ -99,11 +99,12 @@ export const getAllCompanies = async (
     // Additional filtering for BUSINESS_GROUP role
     if (role === "BUSINESS_GROUP") {
       // Fetch the user and only get the businessGroupId field
-      const businessGroupUser = await User.findById(id).select("businessGroupId");
-    
+      const businessGroupUser =
+        await User.findById(id).select("businessGroupId");
+
       // Ensure we are accessing the `businessGroupId` as an ObjectId (not as an embedded document)
       const businessGroupId = businessGroupUser?.businessGroupId;
-      
+
       if (businessGroupId) {
         matchCondition["$or"] = [
           { businessGroupId: businessGroupId },
@@ -114,19 +115,28 @@ export const getAllCompanies = async (
 
     // Apply businessGroupId filter
     if (businessGroupId) {
-      const businessGroupIdStr = Array.isArray(businessGroupId) ? businessGroupId[0] : businessGroupId; // Handle array cases
-    
+      const businessGroupIdStr = Array.isArray(businessGroupId)
+        ? businessGroupId[0]
+        : businessGroupId; // Handle array cases
+
       // Ensure that businessGroupId is a valid string
-      if (typeof businessGroupIdStr === "string" && Types.ObjectId.isValid(businessGroupIdStr)) {
+      if (
+        typeof businessGroupIdStr === "string" &&
+        Types.ObjectId.isValid(businessGroupIdStr)
+      ) {
         matchCondition["$or"] = [
           { businessGroupId: new Types.ObjectId(businessGroupIdStr) },
-          { "companyId.createdBy.businessGroupId": new Types.ObjectId(businessGroupIdStr) },
+          {
+            "companyId.createdBy.businessGroupId": new Types.ObjectId(
+              businessGroupIdStr
+            ),
+          },
         ];
       }
     }
 
     // Aggregation pipeline
-    const companiesPipeline = [
+    const companiesPipeline: any[] = [
       { $match: matchCondition },
       {
         $lookup: {
@@ -136,16 +146,23 @@ export const getAllCompanies = async (
           as: "companyDetails",
         },
       },
-      { $unwind: { path: "$companyDetails", preserveNullAndEmptyArrays: true } },
+      {
+        $unwind: { path: "$companyDetails", preserveNullAndEmptyArrays: true },
+      },
       {
         $lookup: {
-          from: "businessgroups",
+          from: "business-groups",
           localField: "companyDetails.businessGroupId",
           foreignField: "_id",
           as: "businessGroupDetails",
         },
       },
-      { $unwind: { path: "$businessGroupDetails", preserveNullAndEmptyArrays: true } },
+      {
+        $unwind: {
+          path: "$businessGroupDetails",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
       {
         $lookup: {
           from: "users",
@@ -154,10 +171,15 @@ export const getAllCompanies = async (
           as: "companyDetails.createdBy",
         },
       },
-      { $unwind: { path: "$companyDetails.createdBy", preserveNullAndEmptyArrays: true } },
+      {
+        $unwind: {
+          path: "$companyDetails.createdBy",
+          preserveNullAndEmptyArrays: true,
+        },
+      },
       {
         $addFields: {
-          "companyId": {
+          companyId: {
             _id: "$companyDetails._id",
             businessGroupId: {
               _id: "$businessGroupDetails._id",
@@ -194,12 +216,14 @@ export const getAllCompanies = async (
         },
       },
       {
+        $sort: {
+          createdAt: -1,
+        },
+      },
+      {
         $facet: {
           metadata: [{ $count: "totalCount" }],
-          data: [
-            { $skip: startIndex },
-            { $limit: limitNumber },
-          ],
+          data: [{ $skip: startIndex }, { $limit: limitNumber }],
         },
       },
     ];
@@ -221,6 +245,133 @@ export const getAllCompanies = async (
   }
 };
 
+export const getCompanyById = async (req: Request, res: Response) => {
+  // @ts-ignore
+  const userId = req.user._id;
+  // @ts-ignore
+  const role = req.user.role;
+  const { id } = req.params;
+  let cId;
+
+  try {
+    cId = new mongoose.Types.ObjectId(id);
+  } catch (error) {
+    throw createHttpError(403, { message: "Invalid company id" });
+  }
+
+  // Base match condition
+  let matchCondition: any = {
+    isDeleted: false,
+    role: UserRole.COMPANY,
+    companyId: cId,
+  };
+
+  // Additional filtering for BUSINESS_GROUP role
+  if (role === "BUSINESS_GROUP") {
+    // Fetch the user and only get the businessGroupId field
+    const businessGroupUser =
+      await User.findById(userId).select("businessGroupId");
+
+    // Ensure we are accessing the `businessGroupId` as an ObjectId (not as an embedded document)
+    const businessGroupId = businessGroupUser?.businessGroupId;
+
+    if (businessGroupId) {
+      matchCondition["$or"] = [
+        { businessGroupId: businessGroupId },
+        { "companyId.createdBy._id": new mongoose.Types.ObjectId(userId) },
+      ];
+    }
+  }
+
+  // Aggregation pipeline
+  const companiesPipeline = [
+    { $match: matchCondition },
+    {
+      $lookup: {
+        from: "companies",
+        localField: "companyId",
+        foreignField: "_id",
+        as: "companyDetails",
+      },
+    },
+    { $unwind: { path: "$companyDetails", preserveNullAndEmptyArrays: true } },
+    {
+      $lookup: {
+        from: "business-groups",
+        localField: "companyDetails.businessGroupId",
+        foreignField: "_id",
+        as: "businessGroupDetails",
+      },
+    },
+    {
+      $unwind: {
+        path: "$businessGroupDetails",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "companyDetails.createdBy",
+        foreignField: "_id",
+        as: "companyDetails.createdBy",
+      },
+    },
+    {
+      $unwind: {
+        path: "$companyDetails.createdBy",
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+    {
+      $addFields: {
+        companyId: {
+          _id: "$companyDetails._id",
+          businessGroupId: {
+            _id: "$businessGroupDetails._id",
+            groupName: "$businessGroupDetails.groupName",
+          },
+          companyName: "$companyDetails.companyName",
+          tradeLicenseNumber: "$companyDetails.tradeLicenseNumber",
+          officeNumber: "$companyDetails.officeNumber",
+          workStartDay: "$companyDetails.workStartDay",
+          dateFormat: "$companyDetails.dateFormat",
+          timeFormat: "$companyDetails.timeFormat",
+          timezone: "$companyDetails.timezone",
+          createdBy: {
+            _id: "$companyDetails.createdBy._id",
+            userName: "$companyDetails.createdBy.userName",
+            userInfo: "$companyDetails.createdBy.userInfo",
+            email: "$companyDetails.createdBy.email",
+            country: "$companyDetails.createdBy.country",
+            state: "$companyDetails.createdBy.state",
+            city: "$companyDetails.createdBy.city",
+            isActive: "$companyDetails.createdBy.isActive",
+            isDeleted: "$companyDetails.createdBy.isDeleted",
+            role: "$companyDetails.createdBy.role",
+            type: "$companyDetails.createdBy.type",
+            businessGroupId: "$companyDetails.createdBy.businessGroupId",
+            branchIds: "$companyDetails.createdBy.branchIds",
+            vehicleIds: "$companyDetails.createdBy.vehicleIds",
+            createdAt: "$companyDetails.createdBy.createdAt",
+            updatedAt: "$companyDetails.createdBy.updatedAt",
+          },
+          createdAt: "$companyDetails.createdAt",
+          updatedAt: "$companyDetails.updatedAt",
+        },
+      },
+    },
+  ];
+
+  // Execute aggregation
+  const result = await User.aggregate(companiesPipeline);
+
+  if (result.length) {
+    res.send(createResponse(result[0]));
+  } else {
+    throw createHttpError(404, { message: "Company not found" });
+  }
+};
 
 export const updateCompanyUser = async (
   req: Request,
@@ -359,7 +510,7 @@ export const deleteCompany = async (
 
 export const updatePassword = async (req: Request, res: Response) => {
   const { password, oldPassword, _id } = req.body;
-  const existUser = await User.findOne({ _id: _id }).select("password");
+  const existUser = await User.findOne({ companyId: _id }).select("password");
   if (existUser) {
     const matched = await existUser.isValidPassword(oldPassword);
     if (!matched) {

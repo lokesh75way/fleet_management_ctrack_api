@@ -8,6 +8,7 @@ import {
   getAllGroups,
   updateBusinessUser,
   deleteBusinessGroup,
+  getGroupById,
 } from "../controllers/BusinessGroup";
 import { permissionAccess } from "../middleware/featureTemplate";
 
@@ -30,7 +31,10 @@ router.put(
 );
 
 // get get all business group
-router.get("/" ,asyncHandler(getAllGroups));
+router.get("/", asyncHandler(getAllGroups));
+
+// business group by id
+router.get("/:id", asyncHandler(getGroupById));
 
 // delete Business group
 router.delete("/:id", asyncHandler(deleteBusinessGroup));
