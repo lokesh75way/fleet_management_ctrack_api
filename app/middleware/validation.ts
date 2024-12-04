@@ -999,6 +999,138 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isIn(Object.values(FuelUnit))
           .withMessage("Invalid duration base fuel consumption unit"),
+        check("vehicleNumber")
+          .optional()
+          .isString()
+          .withMessage("Invalid Vehicle Number"),
+        check("unitId")
+          .optional()
+          .isString()
+          .withMessage("Invalid Unit Id"),
+        check("fleetNumber")
+          .optional()
+          .isString()
+          .withMessage("Invalid Fleet Number"),
+        check("description")
+          .optional()
+          .isString()
+          .withMessage("Invalid description"),
+        check("manufacture")
+          .optional()
+          .isString()
+          .withMessage("Invalid Manufacture"),
+        check("year")
+          .optional()
+          .isNumeric()
+          .withMessage("Invalid Year"),
+        check("model")
+          .optional()
+          .isString()
+          .withMessage("Invalid Model"),
+        check("color")
+          .optional()
+          .isString()
+          .withMessage("Invalid color"),
+        check("vinChassisNumber")
+          .optional()
+          .isNumeric()
+          .withMessage("Invalid vin Chasis Number"),
+        check("group")
+          .optional()
+          .isString()
+          .withMessage("Invalid Group"),
+        check("groupDescription")
+          .optional()
+          .isString()
+          .withMessage("Invalid Group Description"),
+        check("tollCategory")
+          .optional()
+          .isString()
+          .withMessage("Invalid Toll Category"),
+        check("tarrifType")
+          .optional()
+          .isString()
+          .withMessage("Invalid Tarrif Type"),
+        check("licenseNumber")
+          .optional()
+          .isString()
+          .withMessage("Invalid License Number"),
+        check("licenseExpire")
+          .optional()
+          .isString()
+          .withMessage("Invalid License Expire"),
+        check("roadWorthy")
+          .optional()
+          .isString()
+          .withMessage("Invalid Road Worthy"),
+        check("roadWorthyExpire")
+          .optional()
+          .isString()
+          .withMessage("Invalid Road Worthy Expire"),
+        check("odo")
+          .optional()
+          .isString()
+          .withMessage("Invalid Odo"),
+        check("odoNextService")
+          .optional()
+          .isString()
+          .withMessage("Invalid Odo Next Service"),
+        check("hours")
+          .optional()
+          .isString()
+          .withMessage("Invalid Hours"),
+        check("hoursNextService")
+          .optional()
+          .isString()
+          .withMessage("Invalid Hours Next Service"),
+        check("currentStatus")
+          .optional()
+          .isString()
+          .withMessage("Invalid current Status"),
+        check("speed")
+          .optional()
+          .isString()
+          .withMessage("Invalid Speed"),
+        check("currentDriver")
+          .optional()
+          .isString()
+          .withMessage("Invalid current Driver"),
+        check("heading")
+          .optional()
+          .isString()
+          .withMessage("Invalid Heading"),
+        check("currentLocation")
+          .optional()
+          .isString()
+          .withMessage("Invalid Current Location"),
+        check("skillSet")
+          .optional()
+          .isString()
+          .withMessage("Invalid Skill Set"),
+        check("profile")
+          .optional()
+          .isString()
+          .withMessage("Invalid profile"),
+        check("owningCostCenter")
+          .optional()
+          .isString()
+          .withMessage("Invalid Owning Cost Center"),
+        check("licenseReminder*lastRenewalDate")
+          .optional({ values: "falsy" }),
+        check("licenseReminder*period")
+          .optional({ values: "falsy" }),
+        check("licenseReminder*nextRenewalDate")
+          .optional({ values: "falsy" }),
+        check("licenseReminder*reminderStarts")
+          .optional({ values: "falsy" }),
+        check("roadWorthyReminder*lastRenewalDate")
+          .optional({ values: "falsy" }),
+        check("roadWorthyReminder*period")
+          .optional({ values: "falsy" }),
+        check("roadWorthyReminder*nextRenewalDate")
+          .optional({ values: "falsy" }),
+        check("roadWorthyReminder*reminderStarts")
+          .optional({ values: "falsy" }),
       ];
     }
 
@@ -1048,7 +1180,7 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Device accuracy tolerance must be a string"),
-        check("plateNumber").optional({ values: "falsy" }),
+        // check("plateNumber").optional({ values: "falsy" }),
         check("vehicleCategory")
           .optional({ values: "falsy" })
           .isIn(Object.values(VehicleCategory))
@@ -1066,18 +1198,18 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isNumeric()
           .withMessage("Purchase amount must be a number"),
-        check("weightCapacity")
-          .optional()
-          .isNumeric()
-          .withMessage("Weight capacity must be a number"),
+        // check("weightCapacity")
+        //   .optional()
+        //   .isNumeric()
+        //   .withMessage("Weight capacity must be a number"),
         check("gpsInstallationDate")
           .optional()
           .isISO8601()
           .withMessage("GPS installation date must be a valid ISO 8601 date"),
-        check("gpsWarranty")
-          .optional()
-          .isNumeric()
-          .withMessage("GPS warranty must be a number"),
+        // check("gpsWarranty")
+        //   .optional()
+        //   .isNumeric()
+        //   .withMessage("GPS warranty must be a number"),
         check("companyAverage")
           .optional()
           .isString()
@@ -1174,12 +1306,12 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isBoolean()
           .withMessage("G-sensor must be a boolean"),
-        check("documents.*.documentType")
-          .optional({ values: "falsy" })
-          .isIn(Object.values(DocumentType))
-          .withMessage("Invalid document type value"),
-        check("documents.*.file").optional({ values: "falsy" }),
-        check("documents.*.issueDate").optional({ values: "falsy" }),
+        // check("documents.*.documentType")
+        //   .optional({ values: "falsy" })
+        //   .isIn(Object.values(DocumentType))
+        //   .withMessage("Invalid document type value"),
+        // check("documents.*.file").optional({ values: "falsy" }),
+        // check("documents.*.issueDate").optional({ values: "falsy" }),
 
         check("noOfTanks")
           .optional()
@@ -1239,6 +1371,270 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isIn(Object.values(FuelUnit))
           .withMessage("Invalid duration base fuel consumption unit"),
+        check("vehicleNumber")
+          .optional()
+          .isString()
+          .withMessage("Invalid Vehicle Number"),
+        check("unitId")
+          .optional()
+          .isString()
+          .withMessage("Invalid Unit Id"),
+        check("fleetNumber")
+          .optional()
+          .isString()
+          .withMessage("Invalid Fleet Number"),
+        check("description")
+          .optional()
+          .isString()
+          .withMessage("Invalid description"),
+        check("manufacture")
+          .optional()
+          .isString()
+          .withMessage("Invalid Manufacture"),
+        check("year")
+          .optional()
+          .isNumeric()
+          .withMessage("Invalid Year"),
+        check("model")
+          .optional()
+          .isString()
+          .withMessage("Invalid Model"),
+        check("color")
+          .optional()
+          .isString()
+          .withMessage("Invalid color"),
+        check("vinChassisNumber")
+          .optional()
+          .isNumeric()
+          .withMessage("Invalid vin Chasis Number"),
+        check("group")
+          .optional()
+          .isString()
+          .withMessage("Invalid Group"),
+        check("groupDescription")
+          .optional()
+          .isString()
+          .withMessage("Invalid Group Description"),
+        check("tollCategory")
+          .optional()
+          .isString()
+          .withMessage("Invalid Toll Category"),
+        check("tarrifType")
+          .optional()
+          .isString()
+          .withMessage("Invalid Tarrif Type"),
+        check("licenseNumber")
+          .optional()
+          .isString()
+          .withMessage("Invalid License Number"),
+        check("licenseExpire")
+          .optional()
+          .isString()
+          .withMessage("Invalid License Expire"),
+        check("roadWorthy")
+          .optional()
+          .isString()
+          .withMessage("Invalid Road Worthy"),
+        check("roadWorthyExpire")
+          .optional()
+          .isString()
+          .withMessage("Invalid Road Worthy Expire"),
+        check("odo")
+          .optional()
+          .isString()
+          .withMessage("Invalid Odo"),
+        check("odoNextService")
+          .optional()
+          .isString()
+          .withMessage("Invalid Odo Next Service"),
+        check("hours")
+          .optional()
+          .isString()
+          .withMessage("Invalid Hours"),
+        check("hoursNextService")
+          .optional()
+          .isString()
+          .withMessage("Invalid Hours Next Service"),
+        check("currentStatus")
+          .optional()
+          .isString()
+          .withMessage("Invalid current Status"),
+        check("speed")
+          .optional()
+          .isString()
+          .withMessage("Invalid Speed"),
+        check("currentDriver")
+          .optional()
+          .isString()
+          .withMessage("Invalid current Driver"),
+        check("heading")
+          .optional()
+          .isString()
+          .withMessage("Invalid Heading"),
+        check("currentLocation")
+          .optional()
+          .isString()
+          .withMessage("Invalid Current Location"),
+        check("skillSet")
+          .optional()
+          .isString()
+          .withMessage("Invalid Skill Set"),
+        check("profile")
+          .optional()
+          .isString()
+          .withMessage("Invalid profile"),
+        check("owningCostCenter")
+          .optional()
+          .isString()
+          .withMessage("Invalid Owning Cost Center"),
+        check("licenseReminder*lastRenewalDate")
+          .optional({ values: "falsy" }),
+        check("licenseReminder*period")
+          .optional({ values: "falsy" }),
+        check("licenseReminder*nextRenewalDate")
+          .optional({ values: "falsy" }),
+        check("licenseReminder*reminderStarts")
+          .optional({ values: "falsy" }),
+        check("roadWorthyReminder*lastRenewalDate")
+          .optional({ values: "falsy" }),
+        check("roadWorthyReminder*period")
+          .optional({ values: "falsy" }),
+        check("roadWorthyReminder*nextRenewalDate")
+          .optional({ values: "falsy" }),
+        check("roadWorthyReminder*reminderStarts")
+          .optional({ values: "falsy" }),
+          check("vehicleNumber")
+          .optional()
+          .isString()
+          .withMessage("Invalid Vehicle Number"),
+        check("unitId")
+          .optional()
+          .isString()
+          .withMessage("Invalid Unit Id"),
+        check("fleetNumber")
+          .optional()
+          .isString()
+          .withMessage("Invalid Fleet Number"),
+        check("description")
+          .optional()
+          .isString()
+          .withMessage("Invalid description"),
+        check("manufacture")
+          .optional()
+          .isString()
+          .withMessage("Invalid Manufacture"),
+        check("year")
+          .optional()
+          .isNumeric()
+          .withMessage("Invalid Year"),
+        check("model")
+          .optional()
+          .isString()
+          .withMessage("Invalid Model"),
+        check("color")
+          .optional()
+          .isString()
+          .withMessage("Invalid color"),
+        check("vinChassisNumber")
+          .optional()
+          .isNumeric()
+          .withMessage("Invalid vin Chasis Number"),
+        check("group")
+          .optional()
+          .isString()
+          .withMessage("Invalid Group"),
+        check("groupDescription")
+          .optional()
+          .isString()
+          .withMessage("Invalid Group Description"),
+        check("tollCategory")
+          .optional()
+          .isString()
+          .withMessage("Invalid Toll Category"),
+        check("tarrifType")
+          .optional()
+          .isString()
+          .withMessage("Invalid Tarrif Type"),
+        check("licenseNumber")
+          .optional()
+          .isString()
+          .withMessage("Invalid License Number"),
+        check("licenseExpire")
+          .optional()
+          .isString()
+          .withMessage("Invalid License Expire"),
+        check("roadWorthy")
+          .optional()
+          .isString()
+          .withMessage("Invalid Road Worthy"),
+        check("roadWorthyExpire")
+          .optional()
+          .isString()
+          .withMessage("Invalid Road Worthy Expire"),
+        check("odo")
+          .optional()
+          .isString()
+          .withMessage("Invalid Odo"),
+        check("odoNextService")
+          .optional()
+          .isString()
+          .withMessage("Invalid Odo Next Service"),
+        check("hours")
+          .optional()
+          .isString()
+          .withMessage("Invalid Hours"),
+        check("hoursNextService")
+          .optional()
+          .isString()
+          .withMessage("Invalid Hours Next Service"),
+        check("currentStatus")
+          .optional()
+          .isString()
+          .withMessage("Invalid current Status"),
+        check("speed")
+          .optional()
+          .isString()
+          .withMessage("Invalid Speed"),
+        check("currentDriver")
+          .optional()
+          .isString()
+          .withMessage("Invalid current Driver"),
+        check("heading")
+          .optional()
+          .isString()
+          .withMessage("Invalid Heading"),
+        check("currentLocation")
+          .optional()
+          .isString()
+          .withMessage("Invalid Current Location"),
+        check("skillSet")
+          .optional()
+          .isString()
+          .withMessage("Invalid Skill Set"),
+        check("profile")
+          .optional()
+          .isString()
+          .withMessage("Invalid profile"),
+        check("owningCostCenter")
+          .optional()
+          .isString()
+          .withMessage("Invalid Owning Cost Center"),
+        check("licenseReminder*lastRenewalDate")
+          .optional({ values: "falsy" }),
+        check("licenseReminder*period")
+          .optional({ values: "falsy" }),
+        check("licenseReminder*nextRenewalDate")
+          .optional({ values: "falsy" }),
+        check("licenseReminder*reminderStarts")
+          .optional({ values: "falsy" }),
+        check("roadWorthyReminder*lastRenewalDate")
+          .optional({ values: "falsy" }),
+        check("roadWorthyReminder*period")
+          .optional({ values: "falsy" }),
+        check("roadWorthyReminder*nextRenewalDate")
+          .optional({ values: "falsy" }),
+        check("roadWorthyReminder*reminderStarts")
+          .optional({ values: "falsy" }),
       ];
     }
 
