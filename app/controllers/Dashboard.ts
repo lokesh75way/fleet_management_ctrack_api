@@ -1,20 +1,38 @@
 import { NextFunction, Request, Response } from "express";
 import { createResponse } from "../helper/response";
 import createHttpError from "http-errors";
+import moment from "moment";
+import Task from "../schema/Task";
+import Trip from "../schema/Trip";
 
 export const getFleetStatus = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
+  req: Request,
+  res: Response,
+  next: NextFunction
 ) => {
+  try {
+    // Fetch counts for each trip status
+    const completeCount = await Trip.countDocuments({ tripStatus: "COMPLETED" });
+    const progressCount = await Trip.countDocuments({ tripStatus: "ONGOING" });
+    const yetToStartCount = await Trip.countDocuments({
+      tripStatus: "JUST_STARTED",
+    });
+    const cancelledCount = await Trip.countDocuments({ tripStatus: "CANCELLED" });
+
+    // Prepare the fleet status response
     const fleetStatus = {
-        complete: 100,
-        progress: 200,
-        yetToStart: 50,
-        cancelled: 10
-    }
+      complete: completeCount,
+      progress: progressCount,
+      yetToStart: yetToStartCount,
+      cancelled: cancelledCount,
+    };
+
     res.send(createResponse(fleetStatus, "Fleet status fetched successfully!"));
+  } catch (error) {
+    next(error);
+  }
 };
+
 
 export const getFleetUsage = async (
     req: Request,
@@ -240,43 +258,81 @@ export const getTasks = async (
     req: Request,
     res: Response,
     next: NextFunction
-) => {
-    const tasks = {
-        xAxis: [
-            "05-08-17",
-            "09-11-23",
-            "03-06-29",
-            "10-04-18",
-            "07-12-31",
-            "01-10-22",
-            "06-09-25",
-            "02-01-14",
-            "08-03-10",
-            "11-05-27",
-            "04-07-12",
-            "12-02-24",
-          ],
+  ) => {
+    try {
+      const today = moment().startOf("day");
+  
+      // Fetch all tasks
+      const allTasks = await Task.find({}).lean();
+  
+      // Initialize arrays for xAxis and task data
+      const xAxis: string[] = [];
+      const upcomingData: number[] = [];
+      const missedData: number[] = [];
+      const incompleteData: number[] = [];
+      const completedData: number[] = [];
+  
+      // Group tasks by `plannedReportingDate`
+      const taskMap = allTasks.reduce((map, task) => {
+        const date = moment(task.plannedReportingDate).format("MM-DD-YY");
+        if (!map[date]) {
+          map[date] = { upcoming: 0, missed: 0, incomplete: 0, completed: 0 };
+          xAxis.push(date);
+        }
+  
+        const plannedDate = moment(task.plannedReportingDate).startOf("day");
+        if (plannedDate.isAfter(today)) {
+          map[date].upcoming++;
+        } else if (plannedDate.isSame(today)) {
+          map[date].incomplete++;
+        } else if (plannedDate.isBefore(today)) {
+          map[date].completed++;
+        }
+  
+        return map;
+      }, {} as Record<string, { upcoming: number; missed: number; incomplete: number; completed: number }>);
+  
+      // Populate the data arrays based on xAxis order
+      xAxis.sort((a, b) => moment(a, "MM-DD-YY").diff(moment(b, "MM-DD-YY"))); // Sort xAxis by date
+      xAxis.forEach((date) => {
+        const taskData = taskMap[date] || {
+          upcoming: 0,
+          missed: 0,
+          incomplete: 0,
+          completed: 0,
+        };
+        upcomingData.push(taskData.upcoming);
+        missedData.push(taskData.missed);
+        incompleteData.push(taskData.incomplete);
+        completedData.push(taskData.completed);
+      });
+  
+      const tasks = {
+        xAxis,
         series: [
-            {
-                name: "Upcoming Taska",
-                data: [65, 65, 65, 120, 120, 80, 120, 100, 100, 120, 120, 120]
-            },
-            {
-                name: "Missed Tasks",
-                data: [50, 100, 35, 35, 0, 0, 80, 20, 40, 40, 40, 40]
-            },
-            {
-                name: "Incomplete Tasks",
-                data: [20, 40, 20, 80, 40, 40, 20, 60, 60, 20, 110, 60],
-            },
-            {
-                name: "Completed tasks",
-                data: [10, 20, 10, 40, 60, 30, 80, 20, 50, 90, 10, 110],
-            }
-        ]
-
+          {
+            name: "Upcoming Tasks",
+            data: upcomingData,
+          },
+          {
+            name: "Missed Tasks",
+            data: missedData,
+          },
+          {
+            name: "Incomplete Tasks",
+            data: incompleteData,
+          },
+          {
+            name: "Completed Tasks",
+            data: completedData,
+          },
+        ],
+      };
+  
+      res.send(createResponse(tasks, "Tasks fetched successfully!"));
+    } catch (error) {
+      next(error);
     }
-    res.send(createResponse(tasks, "Tasks fetched successfully!"));
-}
+  };
 
 
