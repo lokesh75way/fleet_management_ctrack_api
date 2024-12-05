@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { createResponse } from "../helper/response";
 import createHttpError from "http-errors";
-import Task from "../schema/Task";
+import Task, { TaskCategory } from "../schema/Task";
 import Technician from "../schema/Technician";
 import User, { UserRole } from "../schema/User";
 import Company from "../schema/Company";
@@ -113,7 +113,34 @@ export const getTechnician = async (
 
   const count = await Technician.countDocuments(query);
 
-  res.send(createResponse({ technicians, count }));
+  // Fetch all tasks and calculate category percentages
+  const tasks = await Task.find({});
+  const totalTasks = tasks.length;
+
+  let installationCount = 0;
+  let maintenanceCount = 0;
+
+  tasks.forEach((task) => {
+    if (task.taskCategory === TaskCategory.INSTALLATION) installationCount++;
+    if (task.taskCategory === TaskCategory.MAINTAINANCE) maintenanceCount++;
+  });
+
+  const installationPercentage = totalTasks
+    ? (installationCount / totalTasks) * 100
+    : 0;
+  const maintenancePercentage = totalTasks
+    ? (maintenanceCount / totalTasks) * 100
+    : 0;
+
+  const taskSummary = {
+    totalTasks,
+    installationCount,
+    maintenanceCount,
+    installationPercentage: installationPercentage.toFixed(2),
+    maintenancePercentage: maintenancePercentage.toFixed(2),
+  };
+
+  res.send(createResponse({ technicians, count, taskSummary }));
 };
 
 export const getTechnicianById = async (
