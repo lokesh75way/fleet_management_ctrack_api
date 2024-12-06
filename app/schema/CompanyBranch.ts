@@ -37,6 +37,8 @@ export interface IBranch extends BaseSchema {
   timeFormat: string;
 
   createdBy: Types.ObjectId | IUser;
+  latitude: string;
+  longitude: string;
 }
 
 const BranchSchema = new Schema<IBranch>(
@@ -85,6 +87,8 @@ const BranchSchema = new Schema<IBranch>(
 
     timezone: { type: String },
     createdBy: { type: Schema.Types.ObjectId, ref: "user", required: true },
+    latitude: { type: String },
+    longitude: { type: String },
   },
   {
     timestamps: true,

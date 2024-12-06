@@ -41,6 +41,8 @@ export interface IBusinessGroup extends BaseSchema {
   timezone: string;
   createdBy: Types.ObjectId | IUser;
   isDeleted: boolean;
+  latitude: string;
+  longitude: string;
 }
 
 const BusinessGroupSchema = new Schema<IBusinessGroup>(
@@ -63,7 +65,9 @@ const BusinessGroupSchema = new Schema<IBusinessGroup>(
 
     timezone: { type: String },
     createdBy: { type: mongoose.Types.ObjectId, ref: "user" },
-    isDeleted: {type: Boolean, default: false}
+    isDeleted: {type: Boolean, default: false},
+    latitude: { type: String },
+    longitude: { type: String },
   },
   { timestamps: true }
 );
