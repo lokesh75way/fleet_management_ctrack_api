@@ -28,19 +28,21 @@ export const createVehicle = async (
       res.send(createHttpError(404, "Company doesn't not exist"));
     }
 
-    const existingVehicle = await Vehicle.findOne({
-      registrationNumber: req.body.registrationNumber,
-      isDeleted: false,
-    });
-
-    if (existingVehicle) {
-      res.send(
-        createHttpError(
-          409,
-          "Vehicle with this Registration number already exists"
-        )
-      );
-      return;
+    if (req.body.registrationNumber) {
+      const existingVehicle = await Vehicle.findOne({
+        registrationNumber: req.body.registrationNumber,
+        isDeleted: false,
+      });
+  
+      if (existingVehicle) {
+        res.send(
+          createHttpError(
+            409,
+            "Vehicle with this Registration number already exists"
+          )
+        );
+        return;
+      }
     }
 
     // Temproary check take imei only from traking table
