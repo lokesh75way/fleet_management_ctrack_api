@@ -6,16 +6,18 @@ import Task from "../schema/Task";
 import Trip from "../schema/Trip";
 import User, { IUser, UserRole } from "../schema/User";
 import { Types } from "mongoose";
+import CompanyBranch from "../schema/CompanyBranch";
 interface ActiveUser {
     title: string;
     country: string;
-    value: number;
+    value: string;
     lat: string;
     long: string;
 }
 
 interface FleetUsage {
     groups: {
+        total: number;
         businesses: number;
         companies: number;
         users: number;
@@ -69,11 +71,18 @@ export const getFleetUsage = async (
     next: NextFunction
 ) => {
     const { businessGroupId, companyId } = req.query;
+    const businessQuery: any = { isDeleted: false, role: UserRole.BUSINESS_GROUP };
+    const companyQuery: any = { isDeleted: false, role: UserRole.COMPANY }
+
     const fleetUsage: FleetUsage = {
         groups: {
-            businesses: 100,
-            companies: 200,
-            users: 50
+            total: await User.countDocuments({ isDeleted: false}),
+            businesses: await User.countDocuments(businessQuery),
+            companies: await User.countDocuments(companyQuery),
+            users: await User.countDocuments({
+                isDeleted: false,
+                role: { $nin: ["BUSINESS_GROUP", "COMPANY"] }
+            })
         },
         vehicle: {
             running: 45,
@@ -89,6 +98,7 @@ export const getFleetUsage = async (
         ],
         percentage: []
     }
+    let groups: any[] = []; 
     if (businessGroupId) {
         let matchCondition: any = { isDeleted: false, role: UserRole.COMPANY };
             matchCondition["$or"] = [{ businessGroupId: businessGroupId }];
@@ -104,11 +114,6 @@ export const getFleetUsage = async (
                 ) {
                   matchCondition["$or"] = [
                     { businessGroupId: new Types.ObjectId(businessGroupIdStr) },
-                    {
-                      "companyId.createdBy.businessGroupId": new Types.ObjectId(
-                        businessGroupIdStr
-                      ),
-                    },
                   ];
                 }
               }
@@ -144,56 +149,59 @@ export const getFleetUsage = async (
                 { $sort: { createdAt: -1 } },
             ];
 
-            // Execute aggregation
-            const result = await User.aggregate(companiesPipeline);
+            groups = await User.aggregate(companiesPipeline);
 
-            // Calculate active users and percentage
-            if (result && result.length > 0) {
-                // Format active users
-                const activeUsers = result.map(group => ({
-                    title: group.companyId._id,
-                    country: group.companyId.country,
-                    value: 1,
-                    lat: group.companyId.lat,
-                    long: group.companyId.long
+            if (groups && groups.length > 0) {
+                const activeUsers = groups.map(group => ({
+                    title: group._id,
+                    country: group._id,
+                    value: group.country,
+                    lat: group.companyId.latitude,
+                    long: group.companyId.longitude
                 }));
 
                 fleetUsage.activeUsers = activeUsers;
-
-                // Calculate the percentage grouped by country
-                const totalCount = result.length;
-
-                const groupedByCountry = result.reduce((acc, group) => {
-                    const country = group.companyId.country;
-                    const existingGroup = acc.find((g: any) => g.country === country);
-
-                    if (!existingGroup) {
-                        acc.push({
-                            country,
-                            count: 1,
-                            percentage: 0,
-                        });
-                    } else {
-                        existingGroup.count += 1;
-                    }
-
-                    return acc;
-                }, []);
-
-                // Now, calculate the percentage for each country
-                const percentage = groupedByCountry.map((group: any) => ({
-                    country: group.country,
-                    count: group.count,
-                    percentage: ((group.count / totalCount) * 100).toFixed(2),
-                }));
-
-                fleetUsage.percentage = percentage;
             }
     } else if (companyId) {
+        const matchCondition: any = { isDeleted: false};
+        matchCondition["$or"] = [{ companyId: companyId }];
+            if (companyId) {
+                const companyIdStr = Array.isArray(companyId)
+                  ? companyId[0]
+                  : companyId;
+          
+                if (
+                  typeof companyIdStr === "string" &&
+                  Types.ObjectId.isValid(companyIdStr)
+                ) {
+                  matchCondition["$or"] = [
+                    { companyId: new Types.ObjectId(companyIdStr) },
+                  ];
+                }
+              }
+            groups = await CompanyBranch.find(matchCondition)
+            .populate([
+              { path: "businessGroupId"},
+              { path: "companyId"},
+              { path: "parentBranchId"},
+            ])
+            .sort({ createdAt: -1 })
 
+        if (groups && groups.length > 0) {
+            const activeUsers = groups.map(group => ({
+                title: group._id.toString(),
+                country: group._id.toString(),
+                value: group.country,
+                lat: group.latitude,
+                long: group.longitude
+                
+            }));
+
+            fleetUsage.activeUsers = activeUsers;
+        }      
     } else {
         const query: any = { isDeleted: false, role: UserRole.BUSINESS_GROUP };
-        const groups = await User.aggregate([
+        groups = await User.aggregate([
             {
             $match: query,
             },
@@ -254,52 +262,45 @@ export const getFleetUsage = async (
             },
             }
         ]);
-
-        // Format the result to match the response structure
         if (groups && groups.length > 0) {
             const activeUsers = groups.map(group => ({
                 title: group._id,
                 country: group._id,
                 value: group.country,
-                lat: group.businessGroupId.lat,
-                long: group.businessGroupId.long
-                
+                lat: group.businessGroupId.latitude,
+                long: group.businessGroupId.longitude
             }));
 
             fleetUsage.activeUsers = activeUsers;
         }
-        const totalCount = groups.length; // Total number of users
-
-            // Create an array with the count and percentage for each country
-            const groupedByCountry = groups.reduce((acc, group) => {
-                const country = group.country;
-                const existingGroup = acc.find((g: any) => g.country === country);
-
-                // If the country doesn't exist, create a new entry
-                if (!existingGroup) {
-                    acc.push({
-                        country,
-                        count: 1,
-                        percentage: 0, // Placeholder percentage
-                    });
-                } else {
-                    existingGroup.count += 1;
-                }
-
-                return acc;
-            }, []);
-
-            // Now, calculate the percentage for each country
-            const percentage = groupedByCountry.map((group: any) => ({
-                country: group.country,
-                count: group.count,
-                percentage: ((group.count / totalCount) * 100).toFixed(2), // Calculate the percentage
-            }));
-
-            // Add the percentage data to fleetUsage
-            fleetUsage.percentage = percentage;
-
     }
+
+    const totalCount: number = groups.length;
+
+        const groupedByCountry = groups.reduce((acc: { country: string; count: number; percentage: number }[], group) => {
+            const country = group.country;
+            const existingGroup = acc.find((g) => g.country === country);
+    
+            if (!existingGroup) {
+                acc.push({
+                    country,
+                    count: 1,
+                    percentage: 0,
+                });
+            } else {
+                existingGroup.count += 1;
+            }
+        
+            return acc;
+        }, [] as { country: string; count: number; percentage: number }[]);
+        
+        const percentage = groupedByCountry.map((group) => ({
+            country: group.country,
+            count: group.count,
+            percentage: ((group.count / totalCount) * 100).toFixed(2),
+        }));
+        
+        fleetUsage.percentage = percentage;
     res.send(createResponse(fleetUsage, "Fleet usage fetched successfully!"));
 }
 
