@@ -25,7 +25,7 @@ export const createVehicle = async (
     const id = req.user._id;
     const alreadyExists = await User.findById(id);
     if (!alreadyExists) {
-      res.send(createHttpError(404, "Company doesn't not exist"));
+      res.send(createHttpError(400, { message: "Company doesn't not exist" } ));
     }
 
     if (req.body.registrationNumber) {
@@ -37,8 +37,8 @@ export const createVehicle = async (
       if (existingVehicle) {
         res.send(
           createHttpError(
-            409,
-            "Vehicle with this Registration number already exists"
+            400,
+            { message: "Vehicle with this Registration number already exists" }
           )
         );
         return;
@@ -96,7 +96,7 @@ export const createVehicle = async (
       createResponse(populatedVehicle, "Vehicle has been created successfully!")
     );
   } catch (error: any) {
-    throw createHttpError(400, {
+    throw createHttpError(error.status || 400, {
       message: error?.message ?? "An error occurred.",
       data: { user: null },
     });
