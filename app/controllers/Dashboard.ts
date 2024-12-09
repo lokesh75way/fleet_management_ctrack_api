@@ -4,6 +4,35 @@ import createHttpError from "http-errors";
 import moment from "moment";
 import Task from "../schema/Task";
 import Trip from "../schema/Trip";
+import User, { IUser, UserRole } from "../schema/User";
+import { Types } from "mongoose";
+interface ActiveUser {
+    title: string;
+    country: string;
+    value: number;
+    lat: string;
+    long: string;
+}
+
+interface FleetUsage {
+    groups: {
+        businesses: number;
+        companies: number;
+        users: number;
+    };
+    vehicle: {
+        running: number;
+        idle: number;
+        stopped: number;
+        total: number;
+    };
+    applicationUsage: {
+        mobile: number;
+        web: number;
+    };
+    activeUsers: ActiveUser[];
+    percentage: any[]
+}
 
 export const getFleetStatus = async (
   req: Request,
@@ -39,9 +68,10 @@ export const getFleetUsage = async (
     res: Response,
     next: NextFunction
 ) => {
-    const fleetUsage = {
+    const { businessGroupId, companyId } = req.query;
+    const fleetUsage: FleetUsage = {
         groups: {
-            buisnesses: 100,
+            businesses: 100,
             companies: 200,
             users: 50
         },
@@ -56,12 +86,219 @@ export const getFleetUsage = async (
             web: 80
         },
         activeUsers: [
-            { title: "Abu Dhabi", country: "Uae", value: 60, lat: 25.2233, lon: 55.2869},
-            { title: "India", country: "India", value: 20, lat: 28.652, lon: 77.212 },
-            { title: "Sharjah", country: "Uae", value: 3, lat: 25.3197, lon: 55.5463 },
-            { title: "Ajman", country: "Uae", value: 10, lat: 25.1821, lon: 55.6703 },
-            { title: "Umm Al-Quwain", country: "Uae", value: 7, lat: 25.5830, lon: 55.6263 }
-        ]
+        ],
+        percentage: []
+    }
+    if (businessGroupId) {
+        let matchCondition: any = { isDeleted: false, role: UserRole.COMPANY };
+            matchCondition["$or"] = [{ businessGroupId: businessGroupId }];
+            if (businessGroupId) {
+                const businessGroupIdStr = Array.isArray(businessGroupId)
+                  ? businessGroupId[0]
+                  : businessGroupId; // Handle array cases
+          
+                // Ensure that businessGroupId is a valid string
+                if (
+                  typeof businessGroupIdStr === "string" &&
+                  Types.ObjectId.isValid(businessGroupIdStr)
+                ) {
+                  matchCondition["$or"] = [
+                    { businessGroupId: new Types.ObjectId(businessGroupIdStr) },
+                    {
+                      "companyId.createdBy.businessGroupId": new Types.ObjectId(
+                        businessGroupIdStr
+                      ),
+                    },
+                  ];
+                }
+              }
+
+            const companiesPipeline: any[] = [
+                { $match: matchCondition },
+                {
+                    $lookup: {
+                        from: "companies",
+                        localField: "companyId",
+                        foreignField: "_id",
+                        as: "companyDetails",
+                    },
+                },
+                { $unwind: { path: "$companyDetails", preserveNullAndEmptyArrays: true } },
+                {
+                    $lookup: {
+                        from: "business-groups",
+                        localField: "companyDetails.businessGroupId",
+                        foreignField: "_id",
+                        as: "businessGroupDetails",
+                    },
+                },
+                { $unwind: { path: "$businessGroupDetails", preserveNullAndEmptyArrays: true } },
+                {
+                    $addFields: {
+                        companyId: {
+                            _id: "$companyDetails._id",
+                            country: "$companyDetails.createdBy.country", // Only relevant fields
+                        },
+                    },
+                },
+                { $sort: { createdAt: -1 } },
+            ];
+
+            // Execute aggregation
+            const result = await User.aggregate(companiesPipeline);
+
+            // Calculate active users and percentage
+            if (result && result.length > 0) {
+                // Format active users
+                const activeUsers = result.map(group => ({
+                    title: group.companyId._id,
+                    country: group.companyId.country,
+                    value: 1,
+                    lat: group.companyId.lat,
+                    long: group.companyId.long
+                }));
+
+                fleetUsage.activeUsers = activeUsers;
+
+                // Calculate the percentage grouped by country
+                const totalCount = result.length;
+
+                const groupedByCountry = result.reduce((acc, group) => {
+                    const country = group.companyId.country;
+                    const existingGroup = acc.find((g: any) => g.country === country);
+
+                    if (!existingGroup) {
+                        acc.push({
+                            country,
+                            count: 1,
+                            percentage: 0,
+                        });
+                    } else {
+                        existingGroup.count += 1;
+                    }
+
+                    return acc;
+                }, []);
+
+                // Now, calculate the percentage for each country
+                const percentage = groupedByCountry.map((group: any) => ({
+                    country: group.country,
+                    count: group.count,
+                    percentage: ((group.count / totalCount) * 100).toFixed(2),
+                }));
+
+                fleetUsage.percentage = percentage;
+            }
+    } else if (companyId) {
+
+    } else {
+        const query: any = { isDeleted: false, role: UserRole.BUSINESS_GROUP };
+        const groups = await User.aggregate([
+            {
+            $match: query,
+            },
+            {
+            $lookup: {
+                from: "business-groups",
+                localField: "businessGroupId",
+                foreignField: "_id",
+                as: "businessGroup",
+            },
+            },
+            {
+            $unwind: {
+                path: "$businessGroup",
+                preserveNullAndEmptyArrays: true,
+            },
+            },
+            {
+            $addFields: {
+                businessGroupId: "$businessGroup",
+            },
+            },
+            {
+            $unset: "businessGroup",
+            },
+            {
+            $lookup: {
+                from: "companies",
+                let: { businessGroupId: "$businessGroupId._id" },
+                pipeline: [
+                {
+                    $match: {
+                    $expr: {
+                        $and: [
+                        { $eq: ["$businessGroupId", "$$businessGroupId"] },
+                        { $eq: ["$isDeleted", false] },
+                        ],
+                    },
+                    },
+                },
+                ],
+                as: "companyCount",
+            },
+            },
+            {
+            $addFields: {
+                companyCount: { $size: "$companyCount" },
+            },
+            },
+            {
+            $project: {
+                password: 0,
+            },
+            },
+            {
+            $sort: {
+                _id: -1,
+            },
+            }
+        ]);
+
+        // Format the result to match the response structure
+        if (groups && groups.length > 0) {
+            const activeUsers = groups.map(group => ({
+                title: group._id,
+                country: group._id,
+                value: group.country,
+                lat: group.businessGroupId.lat,
+                long: group.businessGroupId.long
+                
+            }));
+
+            fleetUsage.activeUsers = activeUsers;
+        }
+        const totalCount = groups.length; // Total number of users
+
+            // Create an array with the count and percentage for each country
+            const groupedByCountry = groups.reduce((acc, group) => {
+                const country = group.country;
+                const existingGroup = acc.find((g: any) => g.country === country);
+
+                // If the country doesn't exist, create a new entry
+                if (!existingGroup) {
+                    acc.push({
+                        country,
+                        count: 1,
+                        percentage: 0, // Placeholder percentage
+                    });
+                } else {
+                    existingGroup.count += 1;
+                }
+
+                return acc;
+            }, []);
+
+            // Now, calculate the percentage for each country
+            const percentage = groupedByCountry.map((group: any) => ({
+                country: group.country,
+                count: group.count,
+                percentage: ((group.count / totalCount) * 100).toFixed(2), // Calculate the percentage
+            }));
+
+            // Add the percentage data to fleetUsage
+            fleetUsage.percentage = percentage;
+
     }
     res.send(createResponse(fleetUsage, "Fleet usage fetched successfully!"));
 }
