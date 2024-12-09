@@ -151,12 +151,12 @@ export interface IVehicle extends BaseSchema {
   axisZ: number;
   durationUnit: DurationUnit;
   fuelIdlingConsumptionUnit: FuelUnit;
-  // documents: {
-  //   documentType: DocumentType;
-  //   file: string;
-  //   issueDate: Date;
-  //   expireDate: Date;
-  // }[];
+  documents: {
+    documentType: DocumentType;
+    file: string;
+    issueDate: Date;
+    expireDate: Date;
+  }[];
 
   isActive: boolean;
   isDeleted: boolean;
@@ -274,14 +274,14 @@ const Vehicle = new Schema<IVehicle>(
       type: String,
       enum: Object.values(FuelUnit),
     },
-    // documents: [
-    //   {
-    //     documentType: { type: String, enum: Object.values(DocumentType) },
-    //     file: { type: String },
-    //     issueDate: { type: Date },
-    //     expireDate: { type: Date },
-    //   },
-    // ],
+    documents: [
+      {
+        documentType: { type: String, enum: Object.values(DocumentType) },
+        file: { type: String },
+        issueDate: { type: Date },
+        expireDate: { type: Date },
+      },
+    ],
 
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },

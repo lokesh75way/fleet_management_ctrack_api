@@ -2,6 +2,7 @@ import mongoose, { Schema, Types } from 'mongoose';
 import { BaseSchema } from '.';
 import { IDriver } from './Driver';
 import { IUser } from './User';
+import { IVehicle } from './Vehicle';
 
 
 export enum TripStatus {
@@ -12,6 +13,7 @@ export enum TripStatus {
 
 interface ITrip extends BaseSchema {
     driver: Types.ObjectId | IDriver;
+    vehicle: Types.ObjectId | IVehicle;
     tripStatus: TripStatus;
     startLocation: string;
     reachLocation: string;
@@ -28,6 +30,7 @@ interface ITrip extends BaseSchema {
 const TripSchema = new Schema<ITrip>(
     {
         driver: { type: Schema.Types.ObjectId, ref: 'driver', required: true },
+        vehicle: { type: Schema.Types.ObjectId, ref: 'vehicle' },
         tripStatus: { type: String, enum: Object.values(TripStatus) },
         startLocation: { type: String, required: true },
         reachLocation: { type: String, required: true },

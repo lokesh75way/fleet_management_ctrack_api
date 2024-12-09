@@ -929,17 +929,17 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isBoolean()
           .withMessage("G-sensor must be a boolean"),
-        // check("documents.*.documentType")
-        //   .notEmpty()
-        //   .withMessage("Document type is required")
-        //   .isIn(Object.values(DocumentType))
-        //   .withMessage("Invalid document type value"),
-        // check("documents.*.file")
-        //   .notEmpty()
-        //   .withMessage("Document file is required"),
-        // check("documents.*.issueDate")
-        //   .notEmpty()
-        //   .withMessage("Issue date is required"),
+        check("documents.*.documentType")
+          .notEmpty()
+          .withMessage("Document type is required")
+          .isIn(Object.values(DocumentType))
+          .withMessage("Invalid document type value"),
+        check("documents.*.file")
+          .notEmpty()
+          .withMessage("Document file is required"),
+        check("documents.*.issueDate")
+          .notEmpty()
+          .withMessage("Issue date is required"),
 
         check("noOfTanks")
           .optional()
@@ -1306,12 +1306,12 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isBoolean()
           .withMessage("G-sensor must be a boolean"),
-        // check("documents.*.documentType")
-        //   .optional({ values: "falsy" })
-        //   .isIn(Object.values(DocumentType))
-        //   .withMessage("Invalid document type value"),
-        // check("documents.*.file").optional({ values: "falsy" }),
-        // check("documents.*.issueDate").optional({ values: "falsy" }),
+        check("documents.*.documentType")
+          .optional({ values: "falsy" })
+          .isIn(Object.values(DocumentType))
+          .withMessage("Invalid document type value"),
+        check("documents.*.file").optional({ values: "falsy" }),
+        check("documents.*.issueDate").optional({ values: "falsy" }),
 
         check("noOfTanks")
           .optional()
