@@ -25,19 +25,24 @@ export const createVehicle = async (
     const id = req.user._id;
     const alreadyExists = await User.findById(id);
     if (!alreadyExists) {
-      res.send(createHttpError(404, "Company doesn't not exist"));
+      throw createHttpError(400, {
+        message: "Company doesn't not exist",
+        data: { user: null },
+      });
     }
 
-    const existingVehicle = await Vehicle.findOne({
-      plateNumber: req.body.plateNumber,
-      isDeleted: false,
-    });
-
-    if (existingVehicle) {
-      res.send(
-        createHttpError(409, "Vehicle with this plate number already exists")
-      );
-      return;
+    if (req.body.registrationNumber) {
+      const existingVehicle = await Vehicle.findOne({
+        registrationNumber: req.body.registrationNumber,
+        isDeleted: false,
+      });
+  
+      if (existingVehicle) {
+        throw createHttpError(400, {
+          message: `Vehicle with this Registration number already exists`,
+          data: { user: null },
+        });
+      }
     }
 
     // Temproary check take imei only from traking table
@@ -91,7 +96,7 @@ export const createVehicle = async (
       createResponse(populatedVehicle, "Vehicle has been created successfully!")
     );
   } catch (error: any) {
-    throw createHttpError(400, {
+    throw createHttpError(error.status || 400, {
       message: error?.message ?? "An error occurred.",
       data: { user: null },
     });
@@ -554,3 +559,48 @@ export const getUnAssinedVehicles = async (req: Request, res: Response) => {
     });
   }
 };
+
+export const getVehicleById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // @ts-ignore
+    const id = req.user._id;
+    // @ts-ignore
+    const role = req.user.role;
+
+    const vehicleId = req.params.id;
+    if (!vehicleId) {
+      throw createHttpError(400, { message: "Vehicle ID is required." });
+    }
+
+    let query: any = { isDeleted: false, _id: vehicleId };
+
+    const user_id = await User.findById(id).select("companyId businessGroupId");
+
+    if (role === UserRole.COMPANY) {
+      query.companyId = user_id?.companyId;
+    }
+    if (role === UserRole.BUSINESS_GROUP) {
+      query.businessGroupId = user_id?.businessGroupId;
+    }
+
+    const data = await Vehicle.findOne(query).populate("branchId");
+
+    if (!data) {
+      throw createHttpError(404, { message: "Vehicle not found." });
+    }
+
+    res.send(createResponse({ data }));
+  } catch (error: any) {
+    next(
+      createHttpError(400, {
+        message: error?.message ?? "An error occurred.",
+        data: { user: null },
+      })
+    );
+  }
+};
+

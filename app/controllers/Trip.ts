@@ -3,6 +3,7 @@ import Trip, { TripStatus } from "../schema/Trip";
 import { createResponse } from "../helper/response";
 import createHttpError from "http-errors";
 import Driver from "../schema/Driver";
+import Vehicle from "../schema/Vehicle";
 
 export const addTrip = async (
   req: Request,
@@ -82,6 +83,10 @@ export const getAllTrips = async (
       condition["driverId"] = req.query.driver;
     }
 
+    if (req.query.vehicle) {
+      condition["vehicle"] = req.query.vehicle;
+    }
+
     if (req.query.start) {
       condition["startTime"] = { $gte: req.query.start };
     }
@@ -152,6 +157,7 @@ export const updateTrip = async (
 
     const trip = await Trip.findById(tripId);
     const driver = await Driver.findById({ _id: payload.driverId });
+    const vehicle = await Vehicle.findById({ _id: payload.vehicleId });
 
     if (!trip) {
       throw createHttpError(404, "Trip not found");
@@ -159,6 +165,10 @@ export const updateTrip = async (
 
     if (!driver) {
       throw createHttpError(400, "Invalid driver! Please select valid driver");
+    }
+
+    if (!vehicle) {
+      throw createHttpError(400, "Invalid vehicle! Please select valid vehicle");
     }
 
     const data = await Trip.findOneAndUpdate(condition, payload);

@@ -1,31 +1,88 @@
 import { NextFunction, Request, Response } from "express";
 import { createResponse } from "../helper/response";
 import createHttpError from "http-errors";
+import moment from "moment";
+import Task from "../schema/Task";
+import Trip from "../schema/Trip";
+import User, { IUser, UserRole } from "../schema/User";
+import { Types } from "mongoose";
+import CompanyBranch from "../schema/CompanyBranch";
+interface ActiveUser {
+    title: string;
+    country: string;
+    value: string;
+    lat: string;
+    long: string;
+}
+
+interface FleetUsage {
+    groups: {
+        total: number;
+        businesses: number;
+        companies: number;
+        users: number;
+    };
+    vehicle: {
+        running: number;
+        idle: number;
+        stopped: number;
+        total: number;
+    };
+    applicationUsage: {
+        mobile: number;
+        web: number;
+    };
+    activeUsers: ActiveUser[];
+    percentage: any[]
+}
 
 export const getFleetStatus = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
+  req: Request,
+  res: Response,
+  next: NextFunction
 ) => {
+  try {
+    // Fetch counts for each trip status
+    const completeCount = await Trip.countDocuments({ tripStatus: "COMPLETED" });
+    const progressCount = await Trip.countDocuments({ tripStatus: "ONGOING" });
+    const yetToStartCount = await Trip.countDocuments({
+      tripStatus: "JUST_STARTED",
+    });
+    const cancelledCount = await Trip.countDocuments({ tripStatus: "CANCELLED" });
+
+    // Prepare the fleet status response
     const fleetStatus = {
-        complete: 100,
-        progress: 200,
-        yetToStart: 50,
-        cancelled: 10
-    }
+      complete: completeCount,
+      progress: progressCount,
+      yetToStart: yetToStartCount,
+      cancelled: cancelledCount,
+    };
+
     res.send(createResponse(fleetStatus, "Fleet status fetched successfully!"));
+  } catch (error) {
+    next(error);
+  }
 };
+
 
 export const getFleetUsage = async (
     req: Request,
     res: Response,
     next: NextFunction
 ) => {
-    const fleetUsage = {
+    const { businessGroupId, companyId } = req.query;
+    const businessQuery: any = { isDeleted: false, role: UserRole.BUSINESS_GROUP };
+    const companyQuery: any = { isDeleted: false, role: UserRole.COMPANY }
+
+    const fleetUsage: FleetUsage = {
         groups: {
-            buisnesses: 100,
-            companies: 200,
-            users: 50
+            total: await User.countDocuments({ isDeleted: false}),
+            businesses: await User.countDocuments(businessQuery),
+            companies: await User.countDocuments(companyQuery),
+            users: await User.countDocuments({
+                isDeleted: false,
+                role: { $nin: ["BUSINESS_GROUP", "COMPANY"] }
+            })
         },
         vehicle: {
             running: 45,
@@ -38,13 +95,212 @@ export const getFleetUsage = async (
             web: 80
         },
         activeUsers: [
-            { title: "Abu Dhabi", country: "Uae", value: 60, lat: 25.2233, lon: 55.2869},
-            { title: "India", country: "India", value: 20, lat: 28.652, lon: 77.212 },
-            { title: "Sharjah", country: "Uae", value: 3, lat: 25.3197, lon: 55.5463 },
-            { title: "Ajman", country: "Uae", value: 10, lat: 25.1821, lon: 55.6703 },
-            { title: "Umm Al-Quwain", country: "Uae", value: 7, lat: 25.5830, lon: 55.6263 }
-        ]
+        ],
+        percentage: []
     }
+    let groups: any[] = []; 
+    if (businessGroupId) {
+        let matchCondition: any = { isDeleted: false, role: UserRole.COMPANY };
+            matchCondition["$or"] = [{ businessGroupId: businessGroupId }];
+            if (businessGroupId) {
+                const businessGroupIdStr = Array.isArray(businessGroupId)
+                  ? businessGroupId[0]
+                  : businessGroupId; // Handle array cases
+          
+                // Ensure that businessGroupId is a valid string
+                if (
+                  typeof businessGroupIdStr === "string" &&
+                  Types.ObjectId.isValid(businessGroupIdStr)
+                ) {
+                  matchCondition["$or"] = [
+                    { businessGroupId: new Types.ObjectId(businessGroupIdStr) },
+                  ];
+                }
+              }
+
+            const companiesPipeline: any[] = [
+                { $match: matchCondition },
+                {
+                    $lookup: {
+                        from: "companies",
+                        localField: "companyId",
+                        foreignField: "_id",
+                        as: "companyDetails",
+                    },
+                },
+                { $unwind: { path: "$companyDetails", preserveNullAndEmptyArrays: true } },
+                {
+                    $lookup: {
+                        from: "business-groups",
+                        localField: "companyDetails.businessGroupId",
+                        foreignField: "_id",
+                        as: "businessGroupDetails",
+                    },
+                },
+                { $unwind: { path: "$businessGroupDetails", preserveNullAndEmptyArrays: true } },
+                {
+                    $addFields: {
+                        companyId: {
+                            _id: "$companyDetails._id",
+                            country: "$companyDetails.createdBy.country", // Only relevant fields
+                        },
+                    },
+                },
+                { $sort: { createdAt: -1 } },
+            ];
+
+            groups = await User.aggregate(companiesPipeline);
+
+            if (groups && groups.length > 0) {
+                const activeUsers = groups.map(group => ({
+                    title: group._id,
+                    country: group._id,
+                    value: group.country,
+                    lat: group.companyId.latitude,
+                    long: group.companyId.longitude
+                }));
+
+                fleetUsage.activeUsers = activeUsers;
+            }
+    } else if (companyId) {
+        const matchCondition: any = { isDeleted: false};
+        matchCondition["$or"] = [{ companyId: companyId }];
+            if (companyId) {
+                const companyIdStr = Array.isArray(companyId)
+                  ? companyId[0]
+                  : companyId;
+          
+                if (
+                  typeof companyIdStr === "string" &&
+                  Types.ObjectId.isValid(companyIdStr)
+                ) {
+                  matchCondition["$or"] = [
+                    { companyId: new Types.ObjectId(companyIdStr) },
+                  ];
+                }
+              }
+            groups = await CompanyBranch.find(matchCondition)
+            .populate([
+              { path: "businessGroupId"},
+              { path: "companyId"},
+              { path: "parentBranchId"},
+            ])
+            .sort({ createdAt: -1 })
+
+        if (groups && groups.length > 0) {
+            const activeUsers = groups.map(group => ({
+                title: group._id.toString(),
+                country: group._id.toString(),
+                value: group.country,
+                lat: group.latitude,
+                long: group.longitude
+                
+            }));
+
+            fleetUsage.activeUsers = activeUsers;
+        }      
+    } else {
+        const query: any = { isDeleted: false, role: UserRole.BUSINESS_GROUP };
+        groups = await User.aggregate([
+            {
+            $match: query,
+            },
+            {
+            $lookup: {
+                from: "business-groups",
+                localField: "businessGroupId",
+                foreignField: "_id",
+                as: "businessGroup",
+            },
+            },
+            {
+            $unwind: {
+                path: "$businessGroup",
+                preserveNullAndEmptyArrays: true,
+            },
+            },
+            {
+            $addFields: {
+                businessGroupId: "$businessGroup",
+            },
+            },
+            {
+            $unset: "businessGroup",
+            },
+            {
+            $lookup: {
+                from: "companies",
+                let: { businessGroupId: "$businessGroupId._id" },
+                pipeline: [
+                {
+                    $match: {
+                    $expr: {
+                        $and: [
+                        { $eq: ["$businessGroupId", "$$businessGroupId"] },
+                        { $eq: ["$isDeleted", false] },
+                        ],
+                    },
+                    },
+                },
+                ],
+                as: "companyCount",
+            },
+            },
+            {
+            $addFields: {
+                companyCount: { $size: "$companyCount" },
+            },
+            },
+            {
+            $project: {
+                password: 0,
+            },
+            },
+            {
+            $sort: {
+                _id: -1,
+            },
+            }
+        ]);
+        if (groups && groups.length > 0) {
+            const activeUsers = groups.map(group => ({
+                title: group._id,
+                country: group._id,
+                value: group.country,
+                lat: group.businessGroupId.latitude,
+                long: group.businessGroupId.longitude
+            }));
+
+            fleetUsage.activeUsers = activeUsers;
+        }
+    }
+
+    const totalCount: number = groups.length;
+
+        const groupedByCountry = groups.reduce((acc: { country: string; count: number; percentage: number }[], group) => {
+            const country = group.country;
+            const existingGroup = acc.find((g) => g.country === country);
+    
+            if (!existingGroup) {
+                acc.push({
+                    country,
+                    count: 1,
+                    percentage: 0,
+                });
+            } else {
+                existingGroup.count += 1;
+            }
+        
+            return acc;
+        }, [] as { country: string; count: number; percentage: number }[]);
+        
+        const percentage = groupedByCountry.map((group) => ({
+            country: group.country,
+            count: group.count,
+            percentage: ((group.count / totalCount) * 100).toFixed(2),
+        }));
+        
+        fleetUsage.percentage = percentage;
     res.send(createResponse(fleetUsage, "Fleet usage fetched successfully!"));
 }
 
@@ -240,43 +496,81 @@ export const getTasks = async (
     req: Request,
     res: Response,
     next: NextFunction
-) => {
-    const tasks = {
-        xAxis: [
-            "05-08-17",
-            "09-11-23",
-            "03-06-29",
-            "10-04-18",
-            "07-12-31",
-            "01-10-22",
-            "06-09-25",
-            "02-01-14",
-            "08-03-10",
-            "11-05-27",
-            "04-07-12",
-            "12-02-24",
-          ],
+  ) => {
+    try {
+      const today = moment().startOf("day");
+  
+      // Fetch all tasks
+      const allTasks = await Task.find({}).lean();
+  
+      // Initialize arrays for xAxis and task data
+      const xAxis: string[] = [];
+      const upcomingData: number[] = [];
+      const missedData: number[] = [];
+      const incompleteData: number[] = [];
+      const completedData: number[] = [];
+  
+      // Group tasks by `plannedReportingDate`
+      const taskMap = allTasks.reduce((map, task) => {
+        const date = moment(task.plannedReportingDate).format("MM-DD-YY");
+        if (!map[date]) {
+          map[date] = { upcoming: 0, missed: 0, incomplete: 0, completed: 0 };
+          xAxis.push(date);
+        }
+  
+        const plannedDate = moment(task.plannedReportingDate).startOf("day");
+        if (plannedDate.isAfter(today)) {
+          map[date].upcoming++;
+        } else if (plannedDate.isSame(today)) {
+          map[date].incomplete++;
+        } else if (plannedDate.isBefore(today)) {
+          map[date].completed++;
+        }
+  
+        return map;
+      }, {} as Record<string, { upcoming: number; missed: number; incomplete: number; completed: number }>);
+  
+      // Populate the data arrays based on xAxis order
+      xAxis.sort((a, b) => moment(a, "MM-DD-YY").diff(moment(b, "MM-DD-YY"))); // Sort xAxis by date
+      xAxis.forEach((date) => {
+        const taskData = taskMap[date] || {
+          upcoming: 0,
+          missed: 0,
+          incomplete: 0,
+          completed: 0,
+        };
+        upcomingData.push(taskData.upcoming);
+        missedData.push(taskData.missed);
+        incompleteData.push(taskData.incomplete);
+        completedData.push(taskData.completed);
+      });
+  
+      const tasks = {
+        xAxis,
         series: [
-            {
-                name: "Upcoming Taska",
-                data: [65, 65, 65, 120, 120, 80, 120, 100, 100, 120, 120, 120]
-            },
-            {
-                name: "Missed Tasks",
-                data: [50, 100, 35, 35, 0, 0, 80, 20, 40, 40, 40, 40]
-            },
-            {
-                name: "Incomplete Tasks",
-                data: [20, 40, 20, 80, 40, 40, 20, 60, 60, 20, 110, 60],
-            },
-            {
-                name: "Completed tasks",
-                data: [10, 20, 10, 40, 60, 30, 80, 20, 50, 90, 10, 110],
-            }
-        ]
-
+          {
+            name: "Upcoming Tasks",
+            data: upcomingData,
+          },
+          {
+            name: "Missed Tasks",
+            data: missedData,
+          },
+          {
+            name: "Incomplete Tasks",
+            data: incompleteData,
+          },
+          {
+            name: "Completed Tasks",
+            data: completedData,
+          },
+        ],
+      };
+  
+      res.send(createResponse(tasks, "Tasks fetched successfully!"));
+    } catch (error) {
+      next(error);
     }
-    res.send(createResponse(tasks, "Tasks fetched successfully!"));
-}
+  };
 
 
