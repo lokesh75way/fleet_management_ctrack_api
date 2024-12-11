@@ -23,7 +23,7 @@ router.post(
   asyncHandler(createCompany)
 );
 
-// get company
+// get comxany
 router.get("/", catchError, asyncHandler(getAllCompanies));
 
 // update company
