@@ -32,6 +32,7 @@ router.put(
   "/profile",
   validate("user:update"),
   catchError,
+  passport.authenticate("jwt", { session: false }),
   asyncHandler(profileUpdate)
 );
 router.post(
