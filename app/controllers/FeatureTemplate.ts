@@ -63,7 +63,7 @@ export const updateFeatureTemplate = async (req: Request, res: Response) => {
 export const deletePermission = async (req: Request, res: Response) => {
   const { id } = req.params;
   const data = await Permission.findOne({ _id: id });
-  
+
   if (!data) {
     res.send(createHttpError(404, "Template not found!"));
     return;

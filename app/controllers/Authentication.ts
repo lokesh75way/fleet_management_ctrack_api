@@ -78,7 +78,7 @@ export const adminLogin = async (req: Request, res: Response) => {
           vehicleIds: 1,
           createdAt: 1,
           updatedAt: 1,
-          featureTemplateId : 1,
+          featureTemplateId: 1,
           businessGroupId: {
             _id: 1,
             groupName: 1,
@@ -91,7 +91,7 @@ export const adminLogin = async (req: Request, res: Response) => {
         },
       },
     ]);
-   
+
     if (!data) {
       res.send(createResponse({}, "User not found!"));
       return;
@@ -103,7 +103,6 @@ export const adminLogin = async (req: Request, res: Response) => {
         _id: data[0].featureTemplateId,
       }).populate("permission.moduleId");
     }
-    console.log(data, "template")
 
     if (!data[0]?.logo) {
       data["logo"] = "";

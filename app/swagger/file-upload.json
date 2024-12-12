@@ -1,0 +1,118 @@
+{
+  "tags": [
+    {
+      "name": "File Upload",
+      "description": "API for file CRUD operations."
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+    }
+  },
+  "paths": {
+    "/file-upload": {
+      "post": {
+        "summary": "Uploading a file",
+        "security": [{ "bearerAuth": [] }],
+        "description": "Endpoint to upload a file",
+        "tags": ["File"],
+        "requestBody": {
+          "required": true,
+          "content": {
+              "multipart/form-data": {
+                  "schema": {
+                      "type": "object",
+                      "properties": {
+                          "file": {
+                              "type": "string",
+                              "description": "File content in base64 format",
+                              "format": "binary",
+                              "required": true
+                          }
+                      },
+                      "required": ["file"]
+                  }
+              }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "File uploaded successfully"
+                    },
+                    "link": {
+                      "type": "string",
+                      "example": "file link"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401":  {
+              "description": "",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+                  }
+                }
+              }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

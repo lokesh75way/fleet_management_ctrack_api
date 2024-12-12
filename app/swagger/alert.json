@@ -1,107 +1,163 @@
 {
   "tags": [
     {
-      "name": "Auth",
-      "description": "API for Authorization."
+      "name": "Alert",
+      "description": "API for Alert."
     }
   ],
   "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      }
-    },
     "schemas": {
-      "UserResponseSchema": {
+      "AlertResponseSchema": {
         "type": "object",
         "properties": {
-          "user": {
+          "_id": {
+            "type": "string",
+            "example": "666968c3bb67a71a9b27fe57"
+          },
+          "branch": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "666968c3bb67a71a9b27fe57"
+            }
+          },
+          "basedOn": {
+            "type": "string",
+            "example": "VEHICLE"
+          },
+          "object": {
+            "type": "string",
+            "example": "Car123"
+          },
+          "objectGroup": {
+            "type": "string",
+            "example": "GroupA"
+          },
+          "alertName": {
+            "type": "string",
+            "example": "Crash Alert"
+          },
+          "alertType": {
+            "type": "string",
+            "example": "Crash Detection"
+          },
+          "value": {
+            "type": "string",
+            "example": "START"
+          },
+          "validDays": {
+            "type": "string",
+            "example": "EVERYDAY"
+          },
+          "validFrom": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-06-18T09:22:11.200Z"
+          },
+          "validTo": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-06-25T09:22:11.200Z"
+          },
+          "action": {
             "type": "object",
             "properties": {
-              "_id": {
-                "type": "string",
-                "example": "67503b80deb0dcac789cbf60"
-              },
-              "email": {
-                "type": "string",
-                "example": "simranjeet.75way@gmail.com"
-              },
-              "isActive": {
+              "SMS": {
                 "type": "boolean",
                 "example": true
               },
-              "isDeleted": {
+              "Email": {
                 "type": "boolean",
                 "example": false
               },
-              "role": {
-                "type": "string",
-                "enum": ["SUPER_ADMIN", "BUSINESS_GROUP", "COMPANY", "USER"],
-                "example": "SUPER_ADMIN"
-              },
-              "type": {
-                "type": "string",
-                "enum": ["ADMIN", "STAFF"],
-                "example": "STAFF"
-              },
-              "branchIds": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "example": []
-              },
-              "vehicleIds": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "example": [
-                  "675040161e8ff474020bd898",
-                  "6750417f1e8ff474020bd904",
-                  "675155fae7a6b9d28a911432",
-                  "675156ad0d044ac1c9497b7b",
-                  "67515877b19c382e6dfdc313"
-                ]
-              },
-              "createdAt": {
-                "type": "string",
-                "format": "date-time",
-                "example": "2024-12-04T11:22:40.061Z"
-              },
-              "updatedAt": {
-                "type": "string",
-                "format": "date-time",
-                "example": "2024-12-05T07:38:31.698Z"
-              },
-              "companyId": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "example": []
-              },
-              "businessGroupId": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "example": []
+              "Notification": {
+                "type": "boolean",
+                "example": true
               }
             }
           },
-          "token": {
-            "type": "string",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjc1MDNiODBkZWIwZGNhYzc4OWNiZjYwIiwicm9sZSI6IlNVUEVSX0FETUlOIiwidHlwZSI6IlNUQUZGIn0sImlhdCI6MTczMzkwMzYzMX0.maEfwQ-RtDGaR14qJ1yT6brc0Avlk2Qkn1ddfQO01fA"
+          "isDeleted": {
+            "type": "boolean",
+            "example": false
           },
-          "permissions": {
+          "severity": {
+            "type": "string",
+            "example": "HIGH"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-06-18T09:22:11.200Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-06-18T12:23:40.803Z"
+          },
+          "__v": {
+            "type": "number",
+            "example": 0
+          }
+        }
+      },
+      "AlertSchema": {
+        "type": "object",
+        "properties": {
+          "branch": {
             "type": "array",
             "items": {
-              "type": "string"
-            },
-            "example": []
+              "type": "string",
+              "example": "6756bb6f1336dde08ec59e72"
+            }
+          },
+          "object": {
+            "type": "string",
+            "example": "All"
+          },
+          "objectGroup": {
+            "type": "string",
+            "example": ""
+          },
+          "alertName": {
+            "type": "string",
+            "example": "Test FMS"
+          },
+          "alertType": {
+            "type": "string",
+            "example": "Crash Detection"
+          },
+          "severity": {
+            "type": "string",
+            "example": "LOW"
+          },
+          "basedOn": {
+            "type": "string",
+            "example": "VEHICLE_TYPE"
+          },
+          "value": {
+            "type": "string",
+            "example": "BOTH"
+          },
+          "validDays": {
+            "type": "string",
+            "example": "EVERYDAY"
+          },
+          "action": {
+            "type": "object",
+            "properties": {
+              "Email": {
+                "type": "boolean",
+                "example": false
+              },
+              "SMS": {
+                "type": "boolean",
+                "example": true
+              },
+              "Notification": {
+                "type": "boolean",
+                "example": true
+              }
+            }
           }
         }
       },
@@ -173,30 +229,32 @@
     }
   },
   "paths": {
-    "/auth/register": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Create Admin",
-        "description": "Endpoint for Admin create",
+    "/alerts": {
+      "get": {
+        "tags": ["Alert"],
+        "summary": "Alert List Api",
+        "description": "Endpoint for Alert List",
         "security": [{ "bearerAuth": [] }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string", "example": "Lokesh" },
-                  "email": { "type": "string", "example": "lokeshbansal.75way@gmail.com" },
-                  "username": { "type": "string", "example": "LBansal" },
-                  "password": { "type": "string", "example": "password@123" },
-                  "mobile": { "type": "string", "example": "9876543210" }
-                },
-                "required": ["name", "email", "username", "password", "mobile"]
-              }
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page no",
+            "schema": {
+              "type": "number",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit no of records per page",
+            "schema": {
+              "type": "number",
+              "example": 10
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -211,356 +269,12 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "Admin created successfully"
+                      "example": "Alert found successfully!"
                     },
                     "data": {
-                      "type": "object",
-                      "example": {}
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "",
-                  "$ref": "#/components/schemas/BadRequestSchema"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
-              }
-            }
-          },
-          "404":  {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "",
-                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                  "schema": {
-                    "description": "",
-                    "$ref": "#/components/schemas/ErrorResponseSchema"
-                  }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/login": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Login to account",
-        "description": "Endpoint to login to account",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": { "type": "string", "example": "lokeshbansal.75way@gmail.com" },
-                  "password": { "type": "string", "example": "Admin@123" }
-                },
-                "required": ["email", "password"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Login successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/UserResponseSchema"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Login successfully!"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "",
-                  "$ref": "#/components/schemas/BadRequestSchema"
-                }
-              }
-            }
-          },
-          "404":  {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "",
-                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                  "schema": {
-                    "description": "",
-                    "$ref": "#/components/schemas/ErrorResponseSchema"
-                  }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/change-password": {
-      "put": {
-        "tags": ["Auth"],
-        "summary": "Change password of user",
-        "description": "Endpoint to update user password",
-        "security": [{ "bearerAuth": [] }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "password": { "type": "string", "example": "oldPassword@123" },
-                  "newPassword": { "type": "string", "example": "newPassword@123" }
-                },
-                "required": ["oldPassword", "newPassword"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Password changes successfully!"
-                    },
-                    "data": {
-                      "type": "object",
-                      "example": {}
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "",
-                  "$ref": "#/components/schemas/BadRequestSchema"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
-              }
-            }
-          },
-          "404":  {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "",
-                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                  "schema": {
-                    "description": "",
-                    "$ref": "#/components/schemas/ErrorResponseSchema"
-                  }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/profile": {
-      "put": {
-        "tags": ["Auth"],
-        "summary": "User Profile Update Api",
-        "description": "Endpoint for User Update",
-        "security": [{ "bearerAuth": [] }],
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": { "type": "string", "example": "lokeshbansal.75way@gmail.com" },
-                  "name": { "type": "string", "example": "Bansal" },
-                  "active": {  "type": "boolean", "example": true }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Profile updated successfully!"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/UserResponseSchema"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "",
-                  "$ref": "#/components/schemas/BadRequestSchema"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
-              }
-            }
-          },
-          "404":  {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "",
-                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                  "schema": {
-                    "description": "",
-                    "$ref": "#/components/schemas/ErrorResponseSchema"
-                  }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/forgot-password": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Forgot password of user",
-        "description": "Endpoint to get new password",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": { "type": "string" }
-                },
-                "required": ["email"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": { "type": "boolean", "example": true },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "message": { "type": "string", "example": "A password reset link send to your registered email" },
-                        "data": {
-                          "type": "object",
-                          "example": {}
-                        }
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/AlertResponseSchema"
                       }
                     }
                   }
@@ -579,6 +293,95 @@
               }
             }
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Alert"],
+        "summary": "Alert Create Api",
+        "description": "Endpoint for Alert",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AlertSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Alert created successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AlertResponseSchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
           "404":  {
             "description": "",
             "content": {
@@ -604,23 +407,30 @@
         }
       }
     },
-    "/auth/reset-password": {
+    "/alerts/{id}": {
       "put": {
-        "tags": ["Auth"],
-        "summary": "Reset api to update password",
-        "description": "Endpoint for User Password Update",
+        "tags": ["Alert"],
+        "summary": "Alert Update Api",
+        "description": "Endpoint for Alert Update",
         "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Alert to be updated",
+            "schema": {
+              "type": "string",
+              "example": "6756bb6f1336dde08ec59e72"
+            }
+          }
+        ],
         "requestBody": {
-          "required": false,
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "token": { "type": "string", "example": "66e95354cc669cdb38fe710f" },
-                  "password": { "type": "string", "example": "example@123" }
-                },
-                "required": ["token", "password"]
+                "$ref": "#/components/schemas/AlertSchema"
               }
             }
           }
@@ -639,11 +449,179 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "Password changed successfully!"
+                      "example": "Alert updated successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AlertResponseSchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Alert"],
+        "summary": "Alert delete Api",
+        "description": "Endpoint for delete Alert",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Alert to be deleted",
+            "schema": {
+              "type": "string",
+              "example": "6756bb6f1336dde08ec59e72"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Alert deleted successfully!"
                     },
                     "data": {
                       "type": "object",
                       "example": {}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Alert"],
+        "summary": "Alert get Api",
+        "description": "Endpoint for get Alert",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Alert",
+            "schema": {
+              "type": "string",
+              "example": "60d0fe4f5311236168a109ca"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Alert found successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/AlertResponseSchema"
                     }
                   }
                 }

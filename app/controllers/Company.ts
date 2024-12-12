@@ -25,8 +25,8 @@ export const createCompany = async (
       businessGroupId: payload.businessGroupId,
       country: payload.country,
       state: payload.state,
-      city : payload.city,
-      userInfo : payload.userInfo,
+      city: payload.city,
+      userInfo: payload.userInfo,
       role: UserRole.COMPANY,
       type: UserType.ADMIN,
     };
@@ -36,7 +36,7 @@ export const createCompany = async (
     delete payloadCompany.userName;
     delete payloadCompany.password;
     delete payloadCompany.mobileNumber;
-    delete payloadCompany.userInfo
+    delete payloadCompany.userInfo;
 
     let alreadyExists = await User.findOne({
       email: payload.userInfo.email,
@@ -58,7 +58,6 @@ export const createCompany = async (
       throw createHttpError(400, "Company is not created");
     }
 
-    console.log(payloadUser)
     const newUser = await User.create({
       ...payloadUser,
       companyId: newCompany._id,
@@ -464,7 +463,6 @@ export const updateCompanyUser = async (
         throw createHttpError(409, "Company with this name already exists");
       }
     }
-    console.log(updatedFields, payloadCompany);
 
     await User.updateOne({ email: payload.email }, updatedFields);
 

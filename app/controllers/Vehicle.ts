@@ -227,7 +227,6 @@ export const fileUploader = async (
       );
       return;
     }
-    console.log("log 3");
     res.send(createResponse({}, "File is not uploaded"));
   } catch (error: any) {
     throw createHttpError(400, {

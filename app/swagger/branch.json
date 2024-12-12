@@ -1,109 +1,182 @@
 {
   "tags": [
     {
-      "name": "Auth",
-      "description": "API for Authorization."
+      "name": "Branches",
+      "description": "API for Branches."
     }
   ],
   "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT"
-      }
-    },
     "schemas": {
-      "UserResponseSchema": {
+      "BranchResponse": {
         "type": "object",
         "properties": {
-          "user": {
-            "type": "object",
-            "properties": {
-              "_id": {
-                "type": "string",
-                "example": "67503b80deb0dcac789cbf60"
-              },
-              "email": {
-                "type": "string",
-                "example": "simranjeet.75way@gmail.com"
-              },
-              "isActive": {
-                "type": "boolean",
-                "example": true
-              },
-              "isDeleted": {
-                "type": "boolean",
-                "example": false
-              },
-              "role": {
-                "type": "string",
-                "enum": ["SUPER_ADMIN", "BUSINESS_GROUP", "COMPANY", "USER"],
-                "example": "SUPER_ADMIN"
-              },
-              "type": {
-                "type": "string",
-                "enum": ["ADMIN", "STAFF"],
-                "example": "STAFF"
-              },
-              "branchIds": {
-                "type": "array",
-                "items": {
-                  "type": "string"
+          "branchName": {
+            "type": "string",
+            "example": "Main Branch"
+          },
+          "logo": {
+            "type": "string",
+            "example": "https://example.com/logo.png"
+          },
+          "businessGroupId": {
+            "type": "string",
+            "example": "6756bb6f1336dde08ec59e72"
+          },
+          "companyId": {
+            "type": "string",
+            "example": "6756bb6f1336dde08ec59e72"
+          },
+          "parentBranchId": {
+            "type": "string",
+            "example": "6756bb6f1336dde08ec59e72"
+          },
+          "isDeleted": {
+            "type": "boolean",
+            "example": false
+          },
+          "tradeLicenseNumber": {
+            "type": "string",
+            "example": "TRD123456"
+          },
+          "officeNumber": {
+            "type": "string",
+            "example": "101"
+          },
+          "workStartDay": {
+            "type": "string",
+            "example": "MONDAY"
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "userInfo": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "user@example.com"
                 },
-                "example": []
-              },
-              "vehicleIds": {
-                "type": "array",
-                "items": {
-                  "type": "string"
+                "name": {
+                  "type": "string",
+                  "example": "John Doe"
                 },
-                "example": [
-                  "675040161e8ff474020bd898",
-                  "6750417f1e8ff474020bd904",
-                  "675155fae7a6b9d28a911432",
-                  "675156ad0d044ac1c9497b7b",
-                  "67515877b19c382e6dfdc313"
-                ]
-              },
-              "createdAt": {
-                "type": "string",
-                "format": "date-time",
-                "example": "2024-12-04T11:22:40.061Z"
-              },
-              "updatedAt": {
-                "type": "string",
-                "format": "date-time",
-                "example": "2024-12-05T07:38:31.698Z"
-              },
-              "companyId": {
-                "type": "array",
-                "items": {
-                  "type": "string"
+                "designation": {
+                  "type": "string",
+                  "example": "Manager"
                 },
-                "example": []
-              },
-              "businessGroupId": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "example": []
+                "mobileNumber": {
+                  "type": "string",
+                  "example": "+1234567890"
+                }
               }
             }
           },
-          "token": {
+          "email": {
             "type": "string",
-            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoiNjc1MDNiODBkZWIwZGNhYzc4OWNiZjYwIiwicm9sZSI6IlNVUEVSX0FETUlOIiwidHlwZSI6IlNUQUZGIn0sImlhdCI6MTczMzkwMzYzMX0.maEfwQ-RtDGaR14qJ1yT6brc0Avlk2Qkn1ddfQO01fA"
+            "example": "branch@example.com"
           },
-          "permissions": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "example": []
+          "country": {
+            "type": "string",
+            "example": "USA"
+          },
+          "state": {
+            "type": "string",
+            "example": "California"
+          },
+          "city": {
+            "type": "string",
+            "example": "Los Angeles"
+          },
+          "dateFormat": {
+            "type": "string",
+            "example": "MM-DD-YYYY"
+          },
+          "timeFormat": {
+            "type": "string",
+            "example": "12 Hour"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "America/Los_Angeles"
+          },
+          "createdBy": {
+            "type": "string",
+            "example": "6756bb6f1336dde08ec59e72"
+          },
+          "latitude": {
+            "type": "string",
+            "example": "34.0522"
+          },
+          "longitude": {
+            "type": "string",
+            "example": "-118.2437"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-12-01T12:34:56.789Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2024-12-10T08:22:44.321Z"
           }
         }
+      },
+      "BranchSchema": {
+        "type": "object",
+        "properties": {
+          "businessGroupId": {
+            "type": "string",
+            "example": "6756bb6f1336dde08ec59e72"
+          },
+          "companyId": {
+            "type": "string",
+            "example": "6756bb6f1336dde08ec59e72"
+          },
+          "parentBranchId": {
+            "type": "string",
+            "example": "6756bb6f1336dde08ec59e72"
+          },
+          "branchName": {
+            "type": "string",
+            "example": "Main Branch"
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "workStartDay": {
+            "type": "string",
+            "example": "MONDAY"
+          },
+          "country": {
+            "type": "string",
+            "example": "USA"
+          },
+          "state": {
+            "type": "string",
+            "example": "California"
+          },
+          "city": {
+            "type": "string",
+            "example": "Los Angeles"
+          },
+          "dateFormat": {
+            "type": "string",
+            "example": "12-13-2024"
+          },
+          "timeFormat": {
+            "type": "string",
+            "example": "12 Hour"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "America/Los_Angeles"
+          }
+        },
+        "required": ["businessGroupId", "companyId", "branchName", "country", "city"]
       },
       "ErrorResponseSchema": {
         "type": "object",
@@ -173,30 +246,32 @@
     }
   },
   "paths": {
-    "/auth/register": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Create Admin",
-        "description": "Endpoint for Admin create",
+    "/branches": {
+      "get": {
+        "tags": ["Branches"],
+        "summary": "Branches List Api",
+        "description": "Endpoint for Branches List",
         "security": [{ "bearerAuth": [] }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": { "type": "string", "example": "Lokesh" },
-                  "email": { "type": "string", "example": "lokeshbansal.75way@gmail.com" },
-                  "username": { "type": "string", "example": "LBansal" },
-                  "password": { "type": "string", "example": "password@123" },
-                  "mobile": { "type": "string", "example": "9876543210" }
-                },
-                "required": ["name", "email", "username", "password", "mobile"]
-              }
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page no",
+            "schema": {
+              "type": "number",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit no of records per page",
+            "schema": {
+              "type": "number",
+              "example": 10
             }
           }
-        },
+        ],
         "responses": {
           "200": {
             "description": "",
@@ -209,357 +284,18 @@
                       "type": "boolean",
                       "example": true
                     },
-                    "message": {
-                      "type": "string",
-                      "example": "Admin created successfully"
-                    },
-                    "data": {
-                      "type": "object",
-                      "example": {}
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "",
-                  "$ref": "#/components/schemas/BadRequestSchema"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
-              }
-            }
-          },
-          "404":  {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "",
-                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                  "schema": {
-                    "description": "",
-                    "$ref": "#/components/schemas/ErrorResponseSchema"
-                  }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/login": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Login to account",
-        "description": "Endpoint to login to account",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": { "type": "string", "example": "lokeshbansal.75way@gmail.com" },
-                  "password": { "type": "string", "example": "Admin@123" }
-                },
-                "required": ["email", "password"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Login successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "data": {
-                      "$ref": "#/components/schemas/UserResponseSchema"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Login successfully!"
-                    },
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "",
-                  "$ref": "#/components/schemas/BadRequestSchema"
-                }
-              }
-            }
-          },
-          "404":  {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "",
-                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                  "schema": {
-                    "description": "",
-                    "$ref": "#/components/schemas/ErrorResponseSchema"
-                  }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/change-password": {
-      "put": {
-        "tags": ["Auth"],
-        "summary": "Change password of user",
-        "description": "Endpoint to update user password",
-        "security": [{ "bearerAuth": [] }],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "password": { "type": "string", "example": "oldPassword@123" },
-                  "newPassword": { "type": "string", "example": "newPassword@123" }
-                },
-                "required": ["oldPassword", "newPassword"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Password changes successfully!"
-                    },
-                    "data": {
-                      "type": "object",
-                      "example": {}
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "",
-                  "$ref": "#/components/schemas/BadRequestSchema"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
-              }
-            }
-          },
-          "404":  {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "",
-                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                  "schema": {
-                    "description": "",
-                    "$ref": "#/components/schemas/ErrorResponseSchema"
-                  }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/profile": {
-      "put": {
-        "tags": ["Auth"],
-        "summary": "User Profile Update Api",
-        "description": "Endpoint for User Update",
-        "security": [{ "bearerAuth": [] }],
-        "requestBody": {
-          "required": false,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": { "type": "string", "example": "lokeshbansal.75way@gmail.com" },
-                  "name": { "type": "string", "example": "Bansal" },
-                  "active": {  "type": "boolean", "example": true }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Profile updated successfully!"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/UserResponseSchema"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "",
-                  "$ref": "#/components/schemas/BadRequestSchema"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
-              }
-            }
-          },
-          "404":  {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "description": "",
-                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                  "schema": {
-                    "description": "",
-                    "$ref": "#/components/schemas/ErrorResponseSchema"
-                  }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/forgot-password": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Forgot password of user",
-        "description": "Endpoint to get new password",
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": { "type": "string" }
-                },
-                "required": ["email"]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": { "type": "boolean", "example": true },
                     "data": {
                       "type": "object",
                       "properties": {
-                        "message": { "type": "string", "example": "A password reset link send to your registered email" },
                         "data": {
-                          "type": "object",
-                          "example": {}
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/BranchResponse"
+                          }
+                        },
+                        "totalCount": {
+                          "type": "integer",
+                          "example": 50
                         }
                       }
                     }
@@ -579,6 +315,95 @@
               }
             }
           },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Branches"],
+        "summary": "Branches Create Api",
+        "description": "Endpoint for Branches",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BranchSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Branch has been created successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/BranchResponse"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
           "404":  {
             "description": "",
             "content": {
@@ -604,23 +429,30 @@
         }
       }
     },
-    "/auth/reset-password": {
+    "/branches/{id}": {
       "put": {
-        "tags": ["Auth"],
-        "summary": "Reset api to update password",
-        "description": "Endpoint for User Password Update",
+        "tags": ["Branches"],
+        "summary": "Branches Update Api",
+        "description": "Endpoint for Branches Update",
         "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Branches to be updated",
+            "schema": {
+              "type": "string",
+              "example": "6756bb6f1336dde08ec59e72"
+            }
+          }
+        ],
         "requestBody": {
-          "required": false,
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "token": { "type": "string", "example": "66e95354cc669cdb38fe710f" },
-                  "password": { "type": "string", "example": "example@123" }
-                },
-                "required": ["token", "password"]
+                "$ref": "#/components/schemas/BranchSchema"
               }
             }
           }
@@ -639,11 +471,175 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "Password changed successfully!"
+                      "example": "Branch has been updated successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/BranchResponse"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Branches"],
+        "summary": "Branches delete Api",
+        "description": "Endpoint for delete Branches",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Branches to be deleted",
+            "schema": {
+              "type": "string",
+              "example": "6756bb6f1336dde08ec59e72"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Branch has been deleted successfully."
                     },
                     "data": {
                       "type": "object",
                       "example": {}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Branches"],
+        "summary": "Branches get Api",
+        "description": "Endpoint for get Branches",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Branches",
+            "schema": {
+              "type": "string",
+              "example": "60d0fe4f5311236168a109ca"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/BranchResponse"
                     }
                   }
                 }
