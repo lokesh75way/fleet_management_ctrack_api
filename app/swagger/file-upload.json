@@ -22,7 +22,7 @@
         "summary": "Uploading a file",
         "security": [{ "bearerAuth": [] }],
         "description": "Endpoint to upload a file",
-        "tags": ["File"],
+        "tags": ["File Upload"],
         "requestBody": {
           "required": true,
           "content": {

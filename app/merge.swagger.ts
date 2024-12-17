@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { JsonObject } from 'swagger-ui-express';
-const swaggerFiles = ['authentication.json', 'alert.json', 'branch.json', 'businessGroup.json', 'company.json', 'dashboard.json', 'driver.json', 'expense.json', 'featureTemplate.json', 'file-upload.json'];
+const swaggerFiles = ['authentication.json', 'alert.json', 'branch.json', 'businessGroup.json', 'company.json', 'dashboard.json', 'driver.json', 'expense.json', 'featureTemplate.json', 'file-upload.json', 'geoFence.json', 'modules.json', 'profileRoutes.json', 'technician.json', 'technicianTask.json', 'trip.json', 'user.json', 'vehicle.json'];
 function readJSONFile(filePath:string) : JsonObject | null {
   try {
     const jsonString = fs.readFileSync(filePath, 'utf8');
