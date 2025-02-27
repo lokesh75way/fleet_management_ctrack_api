@@ -70,6 +70,7 @@ export const createVehicle = async (
     }
 
     const vehicle = await Vehicle.create(req.body);
+    // const vehicle = await Vehicle.create({...req.body, document})
 
     const newUser = await User.updateOne(
       {
@@ -140,7 +141,6 @@ export const getVehicles = async (
     const id = req.user._id;
     // @ts-ignore
     const role = req.user.role;
-    console.log(role);
     let query: any = { isDeleted: false };
     let { page, limit, branchIds, companyId } = req.query;
     let page1 = parseInt(page as string) || 1;
@@ -184,7 +184,6 @@ export const deleteVehicle = async (
   try {
     const { id } = req.params;
     const vehicle = await Vehicle.findById(id);
-    console.log(vehicle?.imeiNumber, "delted vehicle");
     if (!vehicle) {
       res.send(createHttpError(404, "vehicle is not exists"));
     }
@@ -213,10 +212,8 @@ export const fileUploader = async (
 ) => {
   try {
     const file: any = req.files?.file;
-    console.log(file, "Log 1");
     if (!file) return next(createHttpError(404, "File not found."));
     if (file?.tempFilePath) {
-      console.log(file.tempFilePath, "Log 2");
 
       const result = await cloudinary?.uploader.upload(file?.tempFilePath);
       res.send(
@@ -227,7 +224,6 @@ export const fileUploader = async (
       );
       return;
     }
-    console.log("log 3");
     res.send(createResponse({}, "File is not uploaded"));
   } catch (error: any) {
     throw createHttpError(400, {

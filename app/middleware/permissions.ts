@@ -16,7 +16,6 @@ export const checkPermission = async (
   const method = req["method"];
   const url = req.baseUrl.replace("/api", "");
 
-  console.log("url", url, role);
 
   if (role === UserRole.SUPER_ADMIN) {
     next();

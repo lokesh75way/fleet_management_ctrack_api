@@ -22,6 +22,7 @@ export const addTrip = async (
         message: `Trip already exist!`,
       });
     }
+
     const createdTrip = await new Trip(payload).save();
 
     res.send(createResponse(createdTrip, "Trip created successfully!"));
@@ -95,11 +96,13 @@ export const getAllTrips = async (
       condition["reachTime"] = { $lte: req.query.end };
     }
 
-    console.log(condition)
-
     const startIndex = (page - 1) * limit;
 
     const data = await Trip.find(condition)
+      .populate({
+        path: "driver",
+        select: "firstName lastName",
+      })
       .sort({ createdAt: -1 })
       .limit(limit)
       .skip(startIndex);
@@ -129,7 +132,7 @@ export const getTripById = async (
       createdAt: -1,
     });
 
-    if(!data){
+    if (!data) {
       throw createHttpError(404, "Trip not found");
     }
 
@@ -168,7 +171,10 @@ export const updateTrip = async (
     }
 
     if (!vehicle) {
-      throw createHttpError(400, "Invalid vehicle! Please select valid vehicle");
+      throw createHttpError(
+        400,
+        "Invalid vehicle! Please select valid vehicle"
+      );
     }
 
     const data = await Trip.findOneAndUpdate(condition, payload);

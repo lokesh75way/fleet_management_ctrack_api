@@ -16,7 +16,6 @@ export const addSubAdmin = async (
     const payload = req.body;
     payload.email = payload.email.trim().toLocaleLowerCase();
     const checkIfExist = await User.findOne({ email: payload.email });
-    console.log(payload);
     if (checkIfExist) {
       throw createHttpError(400, {
         message: `Subadmin already exist with this email!`,

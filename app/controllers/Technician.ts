@@ -80,7 +80,6 @@ export const getTechnician = async (
 
   let companies;
   if (role === UserRole.BUSINESS_GROUP) {
-    console.log(userId);
     const businessGroupId = await User.findOne({ _id: userId }).select(
       "businessGroupId"
     );

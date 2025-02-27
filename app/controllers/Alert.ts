@@ -12,7 +12,6 @@ export const addAlert = async (
     const payload = req.body;
 
     const checkIfExist = await Alert.findOne({ alertName: payload.alertName });
-    console.log(payload);
     if (checkIfExist) {
       throw createHttpError(400, {
         message: `Alert already exist with this name!`,

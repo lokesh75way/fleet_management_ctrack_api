@@ -16,7 +16,6 @@ export const permissionAccess = async (
   const basePath = req.originalUrl;
 
   const moduleId = req.headers["moduleid"];
-  console.log(moduleId);
 
   if (role === UserRole.USER) {
     const featureTemplateId: any =

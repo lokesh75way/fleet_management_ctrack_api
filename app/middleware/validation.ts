@@ -23,6 +23,8 @@ import { GEOFENCE_TYPE } from "../schema/Geofence";
 import GeoFenceLocation from "../schema/GeofenceLocation";
 import { Category, ExpenseType } from "../schema/Expense";
 import { Currency, WorkStartDay } from "../schema/BusinessGroup";
+import { Types } from "mongoose";
+import { TripStatus } from "../schema/Trip";
 
 export const validate = (validationName: string): any[] => {
   switch (validationName) {
@@ -929,18 +931,17 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isBoolean()
           .withMessage("G-sensor must be a boolean"),
-        check("documents.*.documentType")
-          .notEmpty()
-          .withMessage("Document type is required")
-          .isIn(Object.values(DocumentType))
-          .withMessage("Invalid document type value"),
-        check("documents.*.file")
-          .notEmpty()
-          .withMessage("Document file is required"),
-        check("documents.*.issueDate")
-          .notEmpty()
-          .withMessage("Issue date is required"),
-
+        // check("documents.*.documentType")
+        //   .notEmpty()
+        //   .withMessage("Document type is required")
+        //   .isIn(Object.values(DocumentType))
+        //   .withMessage("Invalid document type value"),
+        // check("documents.*.file")
+        //   .notEmpty()
+        //   .withMessage("Document file is required"),
+        // check("documents.*.issueDate")
+        //   .notEmpty()
+        //   .withMessage("Issue date is required"),
         check("noOfTanks")
           .optional()
           .isNumeric()
@@ -1306,10 +1307,10 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isBoolean()
           .withMessage("G-sensor must be a boolean"),
-        check("documents.*.documentType")
-          .optional({ values: "falsy" })
-          .isIn(Object.values(DocumentType))
-          .withMessage("Invalid document type value"),
+        // check("documents.*.documentType")
+        //   .optional({ values: "falsy" })
+        //   .isIn(Object.values(DocumentType))
+        //   .withMessage("Invalid document type value"),
         check("documents.*.file").optional({ values: "falsy" }),
         check("documents.*.issueDate").optional({ values: "falsy" }),
 
@@ -1799,11 +1800,11 @@ export const validate = (validationName: string): any[] => {
           .isArray({ min: 1 })
           .bail()
           .withMessage("Atleast one document is required"),
-        check("documents.*.documentType")
-          .notEmpty()
-          .withMessage("Document type is required")
-          .isIn(Object.values(DriverDocumentType))
-          .withMessage("Invalid document type value"),
+        // check("documents.*.documentType")
+        //   .notEmpty()
+        //   .withMessage("Document type is required")
+        //   .isIn(Object.values(DriverDocumentType))
+        //   .withMessage("Invalid document type value"),
         check("documents.*.file")
           .exists()
           .notEmpty()
@@ -1930,10 +1931,10 @@ export const validate = (validationName: string): any[] => {
           .isArray({ min: 1 })
           .bail()
           .withMessage("Atlease one document is required"),
-        check("documents.*.documentType")
-          .optional({ values: "falsy" })
-          .isIn(Object.values(DriverDocumentType))
-          .withMessage("Document type is required"),
+        // check("documents.*.documentType")
+        //   .optional({ values: "falsy" })
+        //   .isIn(Object.values(DriverDocumentType))
+        //   .withMessage("Document type is required"),
         check("documents.*.file").optional({ values: "falsy" }),
         check("documents.*.issueDate").optional({ values: "falsy" }),
         check("documents.*.expireDate").optional({ values: "falsy" }),
@@ -2465,6 +2466,145 @@ export const validate = (validationName: string): any[] => {
           .withMessage("Created by user ID must be a valid MongoDB ObjectId"),
       ];
     }
+
+    case "trip:add":
+      return [
+        // check("businessGroup")
+        //   .notEmpty()
+        //   .withMessage("Business Group is required")
+        //   .bail()
+        //   .custom((value) => Types.ObjectId.isValid(value))
+        //   .withMessage("Invalid Business Group ID"),
+
+        // check("company")
+        //   .notEmpty()
+        //   .withMessage("Company is required")
+        //   .bail()
+        //   .custom((value) => Types.ObjectId.isValid(value))
+        //   .withMessage("Invalid Company ID"),
+
+        // check("branch")
+        //   .optional()
+        //   .custom((value) => Types.ObjectId.isValid(value))
+        //   .withMessage("Invalid Branch ID"),
+
+        check("driver")
+          .notEmpty()
+          .withMessage("Driver is required")
+          .bail()
+          .custom((value) => Types.ObjectId.isValid(value))
+          .withMessage("Invalid Driver ID"),
+
+        // check("vehicle")
+          // .notEmpty()
+          // .withMessage("Vehicle is required")
+          // .bail()
+          // .custom((value) => Types.ObjectId.isValid(value))
+          // .withMessage("Invalid Vehicle ID"),
+
+        check("tripStatus")
+          .notEmpty()
+          .withMessage("Trip Status is required")
+          .isIn(Object.values(TripStatus))
+          .withMessage("Invalid Trip Status"),
+
+        check("startLocation")
+          .notEmpty()
+          .withMessage("Start Location is required")
+          .isString()
+          .withMessage("Start Location must be a string"),
+
+        check("reachLocation")
+          .notEmpty()
+          .withMessage("Reach Location is required")
+          .isString()
+          .withMessage("Reach Location must be a string"),
+
+        check("distance")
+          .optional()
+          .isNumeric()
+          .withMessage("Distance must be a number"),
+
+        check("fuelConsumption")
+          .optional()
+          .isNumeric()
+          .withMessage("Fuel Consumption must be a number"),
+
+        check("startTime")
+          .notEmpty()
+          .withMessage("Start Time is required")
+          .isISO8601()
+          .withMessage("Invalid Start Time format"),
+
+        check("reachTime")
+          .notEmpty()
+          .withMessage("Reach Time is required")
+          .isISO8601()
+          .withMessage("Invalid Reach Time format"),
+      ];
+
+    case "trip:update":
+      return [
+        // check("businessGroup")
+        //   .optional()
+        //   .custom((value) => Types.ObjectId.isValid(value))
+        //   .withMessage("Invalid Business Group ID"),
+
+        // check("company")
+        //   .optional()
+        //   .custom((value) => Types.ObjectId.isValid(value))
+        //   .withMessage("Invalid Company ID"),
+
+        // check("branch")
+        //   .optional()
+        //   .custom((value) => Types.ObjectId.isValid(value))
+        //   .withMessage("Invalid Branch ID"),
+
+        check("driver")
+          .optional()
+          .custom((value) => Types.ObjectId.isValid(value))
+          .withMessage("Invalid Driver ID"),
+
+        // check("vehicle")
+        //   .optional()
+        //   .custom((value) => Types.ObjectId.isValid(value))
+        //   .withMessage("Invalid Vehicle ID"),
+
+        check("tripStatus")
+          .optional()
+          .isIn(Object.values(TripStatus))
+          .withMessage("Invalid Trip Status"),
+
+        check("startLocation")
+          .optional()
+          .isString()
+          .withMessage("Start Location must be a string"),
+
+        check("reachLocation")
+          .optional()
+          .isString()
+          .withMessage("Reach Location must be a string"),
+
+        check("distance")
+          .optional()
+          .isNumeric()
+          .withMessage("Distance must be a number"),
+
+        check("fuelConsumption")
+          .optional()
+          .isNumeric()
+          .withMessage("Fuel Consumption must be a number"),
+
+        check("startTime")
+          .optional()
+          .isISO8601()
+          .withMessage("Invalid Start Time format"),
+
+        check("reachTime")
+          .optional()
+          .isISO8601()
+          .withMessage("Invalid Reach Time format"),
+      ];
 
     default:
       return [];

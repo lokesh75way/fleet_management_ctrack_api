@@ -217,7 +217,8 @@ const Vehicle = new Schema<IVehicle>(
     speedDetection: { type: String },
     deviceAccuracyTolerance: { type: String, required: true },
     // profile
-    plateNumber: { type: String, unique: true },
+    plateNumber: { type: String },
+    // plateNumber: {type: String, unique: true},
     vehicleCategory: { type: String, enum: Object.values(VehicleCategory) },
     dvirTemplate: { type: String },
     manufacturerDate: { type: Date },

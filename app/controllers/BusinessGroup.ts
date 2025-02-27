@@ -97,7 +97,6 @@ export const updateBusinessUser = async (
     role: UserRole.BUSINESS_GROUP,
     type: UserType.ADMIN,
   };
-  console.log(payload);
   const payloadGroup = { ...payload };
 
   delete payloadGroup.email;
@@ -429,7 +428,6 @@ export const getGroupById = async (req: Request, res: Response) => {
     },
   ]);
 
-  console.log({ groups });
 
   if (groups.length) {
     res.send(createResponse(groups[0]));

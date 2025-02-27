@@ -58,7 +58,6 @@ export const createCompany = async (
       throw createHttpError(400, "Company is not created");
     }
 
-    console.log(payloadUser)
     const newUser = await User.create({
       ...payloadUser,
       companyId: newCompany._id,
@@ -178,6 +177,22 @@ export const getAllCompanies = async (
         },
       },
       {
+        $lookup: {
+          from: "company-branches",
+          let: { companyId: "$companyDetails._id" },
+          pipeline: [
+            { 
+              $match: { 
+                $expr: { $eq: ["$companyId", "$$companyId"] },
+                isDeleted: false 
+              } 
+            },
+            { $project: { _id: 1 } } // Only get IDs
+          ],
+          as: "branchIds"
+        }
+      },
+      {
         $addFields: {
           companyId: {
             _id: "$companyDetails._id",
@@ -205,7 +220,7 @@ export const getAllCompanies = async (
               role: "$companyDetails.createdBy.role",
               type: "$companyDetails.createdBy.type",
               businessGroupId: "$companyDetails.createdBy.businessGroupId",
-              branchIds: "$companyDetails.createdBy.branchIds",
+              branchIds: "$branchIds._id",
               vehicleIds: "$companyDetails.createdBy.vehicleIds",
               createdAt: "$companyDetails.createdBy.createdAt",
               updatedAt: "$companyDetails.createdBy.updatedAt",
@@ -464,7 +479,6 @@ export const updateCompanyUser = async (
         throw createHttpError(409, "Company with this name already exists");
       }
     }
-    console.log(updatedFields, payloadCompany);
 
     await User.updateOne({ email: payload.email }, updatedFields);
 

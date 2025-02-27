@@ -30,7 +30,6 @@ export const getAllTemplates = async (req: Request, res: Response) => {
     //   ],
     // },
   };
-  console.log(query);
 
   let { page, limit } = req.query;
   let page1 = parseInt(page as string) || 1;
@@ -51,12 +50,14 @@ export const getAllTemplates = async (req: Request, res: Response) => {
 
 export const updateFeatureTemplate = async (req: Request, res: Response) => {
   const { _id, name, permission } = req.body;
+  console.log("req bod : ", req.body);
   const existTemplate = await Permission.findOne({ _id });
   if (!existTemplate) {
     res.send(createHttpError(404, "Template not found"));
     return;
   }
-  const data = await Permission.updateOne({ _id }, { name, permission });
+  // const data = await Permission.updateOne({ _id }, { name, permission });
+  const data = await Permission.findByIdAndUpdate(_id, { name, permission }, {new: true})
   res.send(createResponse(data, "Feature template updated successfully!"));
 };
 

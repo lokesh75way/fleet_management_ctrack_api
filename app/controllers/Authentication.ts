@@ -103,7 +103,6 @@ export const adminLogin = async (req: Request, res: Response) => {
         _id: data[0].featureTemplateId,
       }).populate("permission.moduleId");
     }
-    console.log(data, "template")
 
     if (!data[0]?.logo) {
       data["logo"] = "";

@@ -72,7 +72,7 @@ export const getFleetUsage = async (
 ) => {
     const { businessGroupId, companyId } = req.query;
     const businessQuery: any = { isDeleted: false, role: UserRole.BUSINESS_GROUP };
-    const companyQuery: any = { isDeleted: false, role: UserRole.COMPANY }
+    const companyQuery: any = { isDeleted: false, role: UserRole.COMPANY };
 
     const fleetUsage: FleetUsage = {
         groups: {
@@ -153,7 +153,7 @@ export const getFleetUsage = async (
 
             if (groups && groups.length > 0) {
                 const activeUsers = groups.map(group => ({
-                    title: group._id,
+                    title: group._id.toString(),
                     country: group._id,
                     value: group.country,
                     lat: group.companyId.latitude,
@@ -264,11 +264,11 @@ export const getFleetUsage = async (
         ]);
         if (groups && groups.length > 0) {
             const activeUsers = groups.map(group => ({
-                title: group._id,
+                title: group?.businessGroupId?.groupName,
                 country: group._id,
                 value: group.country,
                 lat: group.businessGroupId.latitude,
-                long: group.businessGroupId.longitude
+                long: group.businessGroupId.longitude              
             }));
 
             fleetUsage.activeUsers = activeUsers;
@@ -465,7 +465,6 @@ export const getMaintainanceReminder = async (
     res.send(createResponse(maintainanceReminder, "Maintainance reminder fetched successfully!"));
 }
 
-
 export const getRenewalReminder = async (
     req: Request,
     res: Response,
@@ -571,6 +570,32 @@ export const getTasks = async (
     } catch (error) {
       next(error);
     }
-  };
+};
 
+export const getTechnicianTaskCount = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const totalTasks = await Task.countDocuments();
+        const categoryCount = await Task.aggregate([
+            {
+              $group: {
+                _id: "$taskCategory",
+                count: { $sum: 1 },
+              },
+            },
+          ]);
 
+          const groupedCounts = categoryCount.reduce((acc, cur) => {
+            acc[cur._id] = cur.count;
+            return acc;
+          }, { INSTALLATION: 0, MAINTAINANCE: 0 });
+      
+          res.send(createResponse(
+            {
+            totalTasks,
+            INSTALLATION: groupedCounts.INSTALLATION,
+            MAINTAINANCE: groupedCounts.MAINTAINANCE,
+          }, "Task fetched by category"));
+    } catch (error) {
+        next(error);
+    }
+}

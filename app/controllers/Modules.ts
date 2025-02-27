@@ -81,4 +81,4 @@ export const createModule = async (
         data: { user: null },
       });
     }
-  };
+};
