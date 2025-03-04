@@ -1004,10 +1004,7 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Invalid Vehicle Number"),
-        check("unitId")
-          .optional()
-          .isString()
-          .withMessage("Invalid Unit Id"),
+        check("unitId").optional().isString().withMessage("Invalid Unit Id"),
         check("fleetNumber")
           .optional()
           .isString()
@@ -1020,26 +1017,14 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Invalid Manufacture"),
-        check("year")
-          .optional()
-          .isNumeric()
-          .withMessage("Invalid Year"),
-        check("model")
-          .optional()
-          .isString()
-          .withMessage("Invalid Model"),
-        check("color")
-          .optional()
-          .isString()
-          .withMessage("Invalid color"),
+        check("year").optional().isNumeric().withMessage("Invalid Year"),
+        check("model").optional().isString().withMessage("Invalid Model"),
+        check("color").optional().isString().withMessage("Invalid color"),
         check("vinChassisNumber")
           .optional()
           .isNumeric()
           .withMessage("Invalid vin Chasis Number"),
-        check("group")
-          .optional()
-          .isString()
-          .withMessage("Invalid Group"),
+        check("group").optional().isString().withMessage("Invalid Group"),
         check("groupDescription")
           .optional()
           .isString()
@@ -1068,18 +1053,12 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Invalid Road Worthy Expire"),
-        check("odo")
-          .optional()
-          .isString()
-          .withMessage("Invalid Odo"),
+        check("odo").optional().isString().withMessage("Invalid Odo"),
         check("odoNextService")
           .optional()
           .isString()
           .withMessage("Invalid Odo Next Service"),
-        check("hours")
-          .optional()
-          .isString()
-          .withMessage("Invalid Hours"),
+        check("hours").optional().isString().withMessage("Invalid Hours"),
         check("hoursNextService")
           .optional()
           .isString()
@@ -1088,18 +1067,12 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Invalid current Status"),
-        check("speed")
-          .optional()
-          .isString()
-          .withMessage("Invalid Speed"),
+        check("speed").optional().isString().withMessage("Invalid Speed"),
         check("currentDriver")
           .optional()
           .isString()
           .withMessage("Invalid current Driver"),
-        check("heading")
-          .optional()
-          .isString()
-          .withMessage("Invalid Heading"),
+        check("heading").optional().isString().withMessage("Invalid Heading"),
         check("currentLocation")
           .optional()
           .isString()
@@ -1108,30 +1081,25 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Invalid Skill Set"),
-        check("profile")
-          .optional()
-          .isString()
-          .withMessage("Invalid profile"),
+        check("profile").optional().isString().withMessage("Invalid profile"),
         check("owningCostCenter")
           .optional()
           .isString()
           .withMessage("Invalid Owning Cost Center"),
-        check("licenseReminder*lastRenewalDate")
-          .optional({ values: "falsy" }),
-        check("licenseReminder*period")
-          .optional({ values: "falsy" }),
-        check("licenseReminder*nextRenewalDate")
-          .optional({ values: "falsy" }),
-        check("licenseReminder*reminderStarts")
-          .optional({ values: "falsy" }),
-        check("roadWorthyReminder*lastRenewalDate")
-          .optional({ values: "falsy" }),
-        check("roadWorthyReminder*period")
-          .optional({ values: "falsy" }),
-        check("roadWorthyReminder*nextRenewalDate")
-          .optional({ values: "falsy" }),
-        check("roadWorthyReminder*reminderStarts")
-          .optional({ values: "falsy" }),
+        check("licenseReminder*lastRenewalDate").optional({ values: "falsy" }),
+        check("licenseReminder*period").optional({ values: "falsy" }),
+        check("licenseReminder*nextRenewalDate").optional({ values: "falsy" }),
+        check("licenseReminder*reminderStarts").optional({ values: "falsy" }),
+        check("roadWorthyReminder*lastRenewalDate").optional({
+          values: "falsy",
+        }),
+        check("roadWorthyReminder*period").optional({ values: "falsy" }),
+        check("roadWorthyReminder*nextRenewalDate").optional({
+          values: "falsy",
+        }),
+        check("roadWorthyReminder*reminderStarts").optional({
+          values: "falsy",
+        }),
       ];
     }
 
@@ -1376,10 +1344,7 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Invalid Vehicle Number"),
-        check("unitId")
-          .optional()
-          .isString()
-          .withMessage("Invalid Unit Id"),
+        check("unitId").optional().isString().withMessage("Invalid Unit Id"),
         check("fleetNumber")
           .optional()
           .isString()
@@ -1392,26 +1357,14 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Invalid Manufacture"),
-        check("year")
-          .optional()
-          .isNumeric()
-          .withMessage("Invalid Year"),
-        check("model")
-          .optional()
-          .isString()
-          .withMessage("Invalid Model"),
-        check("color")
-          .optional()
-          .isString()
-          .withMessage("Invalid color"),
+        check("year").optional().isNumeric().withMessage("Invalid Year"),
+        check("model").optional().isString().withMessage("Invalid Model"),
+        check("color").optional().isString().withMessage("Invalid color"),
         check("vinChassisNumber")
           .optional()
           .isNumeric()
           .withMessage("Invalid vin Chasis Number"),
-        check("group")
-          .optional()
-          .isString()
-          .withMessage("Invalid Group"),
+        check("group").optional().isString().withMessage("Invalid Group"),
         check("groupDescription")
           .optional()
           .isString()
@@ -1440,18 +1393,12 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Invalid Road Worthy Expire"),
-        check("odo")
-          .optional()
-          .isString()
-          .withMessage("Invalid Odo"),
+        check("odo").optional().isString().withMessage("Invalid Odo"),
         check("odoNextService")
           .optional()
           .isString()
           .withMessage("Invalid Odo Next Service"),
-        check("hours")
-          .optional()
-          .isString()
-          .withMessage("Invalid Hours"),
+        check("hours").optional().isString().withMessage("Invalid Hours"),
         check("hoursNextService")
           .optional()
           .isString()
@@ -1460,18 +1407,12 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Invalid current Status"),
-        check("speed")
-          .optional()
-          .isString()
-          .withMessage("Invalid Speed"),
+        check("speed").optional().isString().withMessage("Invalid Speed"),
         check("currentDriver")
           .optional()
           .isString()
           .withMessage("Invalid current Driver"),
-        check("heading")
-          .optional()
-          .isString()
-          .withMessage("Invalid Heading"),
+        check("heading").optional().isString().withMessage("Invalid Heading"),
         check("currentLocation")
           .optional()
           .isString()
@@ -1480,38 +1421,30 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Invalid Skill Set"),
-        check("profile")
-          .optional()
-          .isString()
-          .withMessage("Invalid profile"),
+        check("profile").optional().isString().withMessage("Invalid profile"),
         check("owningCostCenter")
           .optional()
           .isString()
           .withMessage("Invalid Owning Cost Center"),
-        check("licenseReminder*lastRenewalDate")
-          .optional({ values: "falsy" }),
-        check("licenseReminder*period")
-          .optional({ values: "falsy" }),
-        check("licenseReminder*nextRenewalDate")
-          .optional({ values: "falsy" }),
-        check("licenseReminder*reminderStarts")
-          .optional({ values: "falsy" }),
-        check("roadWorthyReminder*lastRenewalDate")
-          .optional({ values: "falsy" }),
-        check("roadWorthyReminder*period")
-          .optional({ values: "falsy" }),
-        check("roadWorthyReminder*nextRenewalDate")
-          .optional({ values: "falsy" }),
-        check("roadWorthyReminder*reminderStarts")
-          .optional({ values: "falsy" }),
-          check("vehicleNumber")
+        check("licenseReminder*lastRenewalDate").optional({ values: "falsy" }),
+        check("licenseReminder*period").optional({ values: "falsy" }),
+        check("licenseReminder*nextRenewalDate").optional({ values: "falsy" }),
+        check("licenseReminder*reminderStarts").optional({ values: "falsy" }),
+        check("roadWorthyReminder*lastRenewalDate").optional({
+          values: "falsy",
+        }),
+        check("roadWorthyReminder*period").optional({ values: "falsy" }),
+        check("roadWorthyReminder*nextRenewalDate").optional({
+          values: "falsy",
+        }),
+        check("roadWorthyReminder*reminderStarts").optional({
+          values: "falsy",
+        }),
+        check("vehicleNumber")
           .optional()
           .isString()
           .withMessage("Invalid Vehicle Number"),
-        check("unitId")
-          .optional()
-          .isString()
-          .withMessage("Invalid Unit Id"),
+        check("unitId").optional().isString().withMessage("Invalid Unit Id"),
         check("fleetNumber")
           .optional()
           .isString()
@@ -1524,26 +1457,14 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Invalid Manufacture"),
-        check("year")
-          .optional()
-          .isNumeric()
-          .withMessage("Invalid Year"),
-        check("model")
-          .optional()
-          .isString()
-          .withMessage("Invalid Model"),
-        check("color")
-          .optional()
-          .isString()
-          .withMessage("Invalid color"),
+        check("year").optional().isNumeric().withMessage("Invalid Year"),
+        check("model").optional().isString().withMessage("Invalid Model"),
+        check("color").optional().isString().withMessage("Invalid color"),
         check("vinChassisNumber")
           .optional()
           .isNumeric()
           .withMessage("Invalid vin Chasis Number"),
-        check("group")
-          .optional()
-          .isString()
-          .withMessage("Invalid Group"),
+        check("group").optional().isString().withMessage("Invalid Group"),
         check("groupDescription")
           .optional()
           .isString()
@@ -1572,18 +1493,12 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Invalid Road Worthy Expire"),
-        check("odo")
-          .optional()
-          .isString()
-          .withMessage("Invalid Odo"),
+        check("odo").optional().isString().withMessage("Invalid Odo"),
         check("odoNextService")
           .optional()
           .isString()
           .withMessage("Invalid Odo Next Service"),
-        check("hours")
-          .optional()
-          .isString()
-          .withMessage("Invalid Hours"),
+        check("hours").optional().isString().withMessage("Invalid Hours"),
         check("hoursNextService")
           .optional()
           .isString()
@@ -1592,18 +1507,12 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Invalid current Status"),
-        check("speed")
-          .optional()
-          .isString()
-          .withMessage("Invalid Speed"),
+        check("speed").optional().isString().withMessage("Invalid Speed"),
         check("currentDriver")
           .optional()
           .isString()
           .withMessage("Invalid current Driver"),
-        check("heading")
-          .optional()
-          .isString()
-          .withMessage("Invalid Heading"),
+        check("heading").optional().isString().withMessage("Invalid Heading"),
         check("currentLocation")
           .optional()
           .isString()
@@ -1612,30 +1521,25 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isString()
           .withMessage("Invalid Skill Set"),
-        check("profile")
-          .optional()
-          .isString()
-          .withMessage("Invalid profile"),
+        check("profile").optional().isString().withMessage("Invalid profile"),
         check("owningCostCenter")
           .optional()
           .isString()
           .withMessage("Invalid Owning Cost Center"),
-        check("licenseReminder*lastRenewalDate")
-          .optional({ values: "falsy" }),
-        check("licenseReminder*period")
-          .optional({ values: "falsy" }),
-        check("licenseReminder*nextRenewalDate")
-          .optional({ values: "falsy" }),
-        check("licenseReminder*reminderStarts")
-          .optional({ values: "falsy" }),
-        check("roadWorthyReminder*lastRenewalDate")
-          .optional({ values: "falsy" }),
-        check("roadWorthyReminder*period")
-          .optional({ values: "falsy" }),
-        check("roadWorthyReminder*nextRenewalDate")
-          .optional({ values: "falsy" }),
-        check("roadWorthyReminder*reminderStarts")
-          .optional({ values: "falsy" }),
+        check("licenseReminder*lastRenewalDate").optional({ values: "falsy" }),
+        check("licenseReminder*period").optional({ values: "falsy" }),
+        check("licenseReminder*nextRenewalDate").optional({ values: "falsy" }),
+        check("licenseReminder*reminderStarts").optional({ values: "falsy" }),
+        check("roadWorthyReminder*lastRenewalDate").optional({
+          values: "falsy",
+        }),
+        check("roadWorthyReminder*period").optional({ values: "falsy" }),
+        check("roadWorthyReminder*nextRenewalDate").optional({
+          values: "falsy",
+        }),
+        check("roadWorthyReminder*reminderStarts").optional({
+          values: "falsy",
+        }),
       ];
     }
 
@@ -1797,26 +1701,39 @@ export const validate = (validationName: string): any[] => {
         check("documents")
           .exists()
           .notEmpty()
-          .isArray({ min: 1 })
-          .bail()
-          .withMessage("Atleast one document is required"),
-        // check("documents.*.documentType")
-        //   .notEmpty()
-        //   .withMessage("Document type is required")
-        //   .isIn(Object.values(DriverDocumentType))
-        //   .withMessage("Invalid document type value"),
+          .custom((value) => {
+            if (!Array.isArray(value)) {
+              value = [value];
+            }
+            if (value.length < 1) {
+              throw new Error("At least one document is required");
+            }
+            return true;
+          }),
+
+        check("documents.*.documentType")
+          .notEmpty()
+          .withMessage("Document type is required")
+          .isIn(Object.values(DriverDocumentType))
+          .withMessage("Invalid document type value"),
+
         check("documents.*.file")
           .exists()
           .notEmpty()
           .isURL()
-          .bail()
-          .withMessage("Provide valid document"),
+          .withMessage("Provide a valid document URL"),
+
         check("documents.*.issueDate")
           .notEmpty()
-          .withMessage("Issue date is required"),
+          .withMessage("Issue date is required")
+          .isISO8601()
+          .withMessage("Invalid issue date format"),
+
         check("documents.*.expireDate")
           .notEmpty()
-          .withMessage("Expire date is required"),
+          .withMessage("Expire date is required")
+          .isISO8601()
+          .withMessage("Invalid expire date format"),
       ];
     }
 
@@ -1927,17 +1844,41 @@ export const validate = (validationName: string): any[] => {
         check("mediclaimNumber").optional().isString(),
         check("active").optional().isBoolean(),
         check("documents")
-          .optional()
-          .isArray({ min: 1 })
-          .bail()
-          .withMessage("Atlease one document is required"),
-        // check("documents.*.documentType")
-        //   .optional({ values: "falsy" })
-        //   .isIn(Object.values(DriverDocumentType))
-        //   .withMessage("Document type is required"),
-        check("documents.*.file").optional({ values: "falsy" }),
-        check("documents.*.issueDate").optional({ values: "falsy" }),
-        check("documents.*.expireDate").optional({ values: "falsy" }),
+          .exists()
+          .notEmpty()
+          .custom((value) => {
+            if (!Array.isArray(value)) {
+              value = [value];
+            }
+            if (value.length < 1) {
+              throw new Error("At least one document is required");
+            }
+            return true;
+          }),
+
+        check("documents.*.documentType")
+          .notEmpty()
+          .withMessage("Document type is required")
+          .isIn(Object.values(DriverDocumentType))
+          .withMessage("Invalid document type value"),
+
+        check("documents.*.file")
+          .exists()
+          .notEmpty()
+          .isURL()
+          .withMessage("Provide a valid document URL"),
+
+        check("documents.*.issueDate")
+          .notEmpty()
+          .withMessage("Issue date is required")
+          .isISO8601()
+          .withMessage("Invalid issue date format"),
+
+        check("documents.*.expireDate")
+          .notEmpty()
+          .withMessage("Expire date is required")
+          .isISO8601()
+          .withMessage("Invalid expire date format"),
       ];
     }
 
@@ -2496,11 +2437,11 @@ export const validate = (validationName: string): any[] => {
           .withMessage("Invalid Driver ID"),
 
         // check("vehicle")
-          // .notEmpty()
-          // .withMessage("Vehicle is required")
-          // .bail()
-          // .custom((value) => Types.ObjectId.isValid(value))
-          // .withMessage("Invalid Vehicle ID"),
+        // .notEmpty()
+        // .withMessage("Vehicle is required")
+        // .bail()
+        // .custom((value) => Types.ObjectId.isValid(value))
+        // .withMessage("Invalid Vehicle ID"),
 
         check("tripStatus")
           .notEmpty()
