@@ -127,6 +127,11 @@ export const getAllDrivers = async (req: Request, res: Response) => {
     query.businessGroupId = user_id?.businessGroupId;
   }
 
+  if(role === UserRole.USER) {
+    if(user_id?.companyId) query.companyId = user_id?.companyId;
+    if(user_id?.businessGroupId) query.businessGroupId = user_id?.businessGroupId;
+  }
+  
   const data = await Driver.find(query)
     .populate("companyId")
     .populate("branchId")

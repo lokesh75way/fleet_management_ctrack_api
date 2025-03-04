@@ -143,6 +143,12 @@ export const getAllBranch = async (
         { createdBy: id },
       ];
     }
+    if(role === UserRole.USER && !companyId) {
+      query["$or"] = [
+        { businessGroupId: user_id?.businessGroupId },
+        { createdBy: id },
+      ];
+    }
 
     if (companyId) {
       query.companyId = companyId;

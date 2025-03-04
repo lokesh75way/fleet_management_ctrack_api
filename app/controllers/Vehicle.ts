@@ -153,10 +153,12 @@ export const getVehicles = async (
     if (role === UserRole.BUSINESS_GROUP) {
       query.businessGroupId = user_id?.businessGroupId;
     }
+    if(role === UserRole.USER && !companyId && !branchIds) {
+      query.businessGroupId = user_id?.businessGroupId;
+    }
     if (companyId) {
       query.companyId = companyId;
     }
-    // console.log(branchIds, "branchids")
     if (branchIds) {
       const branchIdsArray = Array.isArray(branchIds) ? branchIds : [branchIds];
       query.branchId = { $in: branchIdsArray };

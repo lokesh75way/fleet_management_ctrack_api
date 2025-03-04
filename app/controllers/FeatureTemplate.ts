@@ -50,7 +50,6 @@ export const getAllTemplates = async (req: Request, res: Response) => {
 
 export const updateFeatureTemplate = async (req: Request, res: Response) => {
   const { _id, name, permission } = req.body;
-  console.log("req bod : ", req.body);
   const existTemplate = await Permission.findOne({ _id });
   if (!existTemplate) {
     res.send(createHttpError(404, "Template not found"));
