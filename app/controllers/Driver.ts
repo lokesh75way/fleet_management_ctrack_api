@@ -58,7 +58,8 @@ export const getDriver = async (req: Request, res: Response) => {
   const userId = req.user._id;
   // @ts-ignore
   const role = req.user.role;
-  let query: mongoose.FilterQuery<IDriver> = { _id: id, isDeleted: false };
+  let query: any = { isDeleted: false };
+  let { page, limit } = req.query;
   const user = await User.findById(id).select("companyId businessGroupId");
   if (role === UserRole.COMPANY) {
     query.companyId = user?.companyId;
@@ -110,9 +111,8 @@ export const getAllDrivers = async (req: Request, res: Response) => {
   const id = req.user._id;
   // @ts-ignore
   const role = req.user.role;
-  let query: mongoose.FilterQuery<IDriver> = { isDeleted: false };
-
-  let { page, limit } = req.query;
+  let query: any = { isDeleted: false };
+  let { page, limit, branchIds, companyId } = req.query;
   let page1 = parseInt(page as string) || 1;
   let limit1 = parseInt(limit as string) || 10;
 
@@ -131,6 +131,15 @@ export const getAllDrivers = async (req: Request, res: Response) => {
     if(user_id?.companyId) query.companyId = user_id?.companyId;
     if(user_id?.businessGroupId) query.businessGroupId = user_id?.businessGroupId;
   }
+
+  if (companyId) {
+    query.companyId = companyId;
+  }
+  if (branchIds) {
+    const branchIdsArray = Array.isArray(branchIds) ? branchIds : [branchIds];
+    query.branchId = { $in: branchIdsArray };
+  }
+  console.log("****query is : ", query);
   
   const data = await Driver.find(query)
     .populate("companyId")

@@ -3,6 +3,7 @@ import expressAsyncHandler from "express-async-handler";
 import { check, param, validationResult } from "express-validator";
 import createHttpError from "http-errors";
 import { UserRole } from "../schema/User";
+import  { TripStatus } from "../schema/Trip";
 import {
   CostType,
   DistanceCounter,
@@ -24,7 +25,6 @@ import GeoFenceLocation from "../schema/GeofenceLocation";
 import { Category, ExpenseType } from "../schema/Expense";
 import { Currency, WorkStartDay } from "../schema/BusinessGroup";
 import { Types } from "mongoose";
-import { TripStatus } from "../schema/Trip";
 
 export const validate = (validationName: string): any[] => {
   switch (validationName) {
@@ -2352,100 +2352,112 @@ export const validate = (validationName: string): any[] => {
       ];
     }
 
-    case "expense:update": {
-      return [
-        check("branchId")
-          .optional()
-          .isMongoId()
-          .withMessage("Driver ID must be a valid MongoDB ObjectId"),
+    case "expense:update":
+      {
+        return [
+          check("branchId")
+            .optional()
+            .isMongoId()
+            .withMessage("Driver ID must be a valid MongoDB ObjectId"),
 
-        check("category")
-          .optional()
-          .isIn(Object.values(Category))
-          .withMessage("Invalid category"),
+          check("category")
+            .optional()
+            .isIn(Object.values(Category))
+            .withMessage("Invalid category"),
 
-        check("type")
-          .optional()
-          .isIn(Object.values(ExpenseType))
-          .withMessage("Invalid expense type"),
+          check("type")
+            .optional()
+            .isIn(Object.values(ExpenseType))
+            .withMessage("Invalid expense type"),
 
-        check("amount")
-          .optional()
-          .isNumeric()
-          .withMessage("Amount must be a number"),
+          check("amount")
+            .optional()
+            .isNumeric()
+            .withMessage("Amount must be a number"),
 
-        check("amount")
-          .optional()
-          .isNumeric()
-          .withMessage("Amount must be a number"),
+          check("amount")
+            .optional()
+            .isNumeric()
+            .withMessage("Amount must be a number"),
 
-        check("referenceNumber").optional(),
+          check("referenceNumber").optional(),
 
-        check("workHour")
-          .optional()
-          .isISO8601()
-          .withMessage("Invalid work hour format"),
+          check("workHour")
+            .optional()
+            .isISO8601()
+            .withMessage("Invalid work hour format"),
 
-        check("fromDate")
-          .optional()
-          .isISO8601()
-          .withMessage("Invalid from date format"),
+          check("fromDate")
+            .optional()
+            .isISO8601()
+            .withMessage("Invalid from date format"),
 
-        check("toDate")
-          .optional()
-          .isISO8601()
-          .withMessage("Invalid to date format"),
+          check("toDate")
+            .optional()
+            .isISO8601()
+            .withMessage("Invalid to date format"),
 
-        check("odometer")
-          .optional()
-          .isNumeric()
-          .withMessage("Odometer reading must be a number"),
+          check("odometer")
+            .optional()
+            .isNumeric()
+            .withMessage("Odometer reading must be a number"),
 
-        check("createdBy")
-          .optional()
-          .isMongoId()
-          .withMessage("Created by user ID must be a valid MongoDB ObjectId"),
-      ];
-    }
+          check("createdBy")
+            .optional()
+            .isMongoId()
+            .withMessage("Created by user ID must be a valid MongoDB ObjectId"),
+        ];
+      }
 
     case "trip:add":
       return [
-        // check("businessGroup")
-        //   .notEmpty()
-        //   .withMessage("Business Group is required")
-        //   .bail()
-        //   .custom((value) => Types.ObjectId.isValid(value))
-        //   .withMessage("Invalid Business Group ID"),
+        check("businessUser")
+          .notEmpty()
+          .withMessage("Business Group is required")
+          .bail()
+          .custom((value) => Types.ObjectId.isValid(value))
+          .withMessage("Invalid Business Group ID"),
 
-        // check("company")
-        //   .notEmpty()
-        //   .withMessage("Company is required")
-        //   .bail()
-        //   .custom((value) => Types.ObjectId.isValid(value))
-        //   .withMessage("Invalid Company ID"),
+        check("companyId")
+          .notEmpty()
+          .withMessage("Company is required")
+          .bail()
+          .custom((value) => Types.ObjectId.isValid(value))
+          .withMessage("Invalid Company ID"),
 
-        // check("branch")
-        //   .optional()
-        //   .custom((value) => Types.ObjectId.isValid(value))
-        //   .withMessage("Invalid Branch ID"),
+        check("branchIds")
+          .optional()
+          .custom((value, { req }) => {
+            if (typeof value === "string") {
+              req.body.branch = [value];
+            } else if (Array.isArray(value)) {
+              if (!value.every((id) => Types.ObjectId.isValid(id))) {
+                throw new Error("Invalid Branch ID(s)");
+              }
+            } else {
+              throw new Error(
+                "Branch must be a valid ObjectId or an array of ObjectIds"
+              );
+            }
+            return true;
+          }),
 
-        check("driver")
+        check("driverId")
           .notEmpty()
           .withMessage("Driver is required")
           .bail()
           .custom((value) => Types.ObjectId.isValid(value))
           .withMessage("Invalid Driver ID"),
 
-        // check("vehicle")
-        // .notEmpty()
-        // .withMessage("Vehicle is required")
-        // .bail()
-        // .custom((value) => Types.ObjectId.isValid(value))
-        // .withMessage("Invalid Vehicle ID"),
+        check("vehicleId")
+          .notEmpty()
+          .withMessage("Vehicle is required")
+          .bail()
+          .custom((value) => Types.ObjectId.isValid(value))
+          .withMessage("Invalid Vehicle ID"),
 
         check("tripStatus")
-          .notEmpty()
-          .withMessage("Trip Status is required")
+          .optional()
           .isIn(Object.values(TripStatus))
           .withMessage("Invalid Trip Status"),
 
@@ -2463,13 +2475,13 @@ export const validate = (validationName: string): any[] => {
 
         check("distance")
           .optional()
-          .isNumeric()
-          .withMessage("Distance must be a number"),
+          .isFloat({ gt: 0 })
+          .withMessage("Distance must be a positive number"),
 
         check("fuelConsumption")
           .optional()
-          .isNumeric()
-          .withMessage("Fuel Consumption must be a number"),
+          .isFloat({ gt: 0 })
+          .withMessage("Fuel Consumption must be a positive number"),
 
         check("startTime")
           .notEmpty()
@@ -2481,35 +2493,38 @@ export const validate = (validationName: string): any[] => {
           .notEmpty()
           .withMessage("Reach Time is required")
           .isISO8601()
-          .withMessage("Invalid Reach Time format"),
+          .withMessage("Invalid Reach Time format")
+          .bail()
+          .custom((value, { req }) => {
+            const startTime = new Date(req.body.startTime);
+            const reachTime = new Date(value);
+            if (reachTime < startTime) {
+              throw new Error("Reach Time must be after Start Time");
+            }
+            return true;
+          }),
       ];
 
     case "trip:update":
       return [
-        // check("businessGroup")
-        //   .optional()
-        //   .custom((value) => Types.ObjectId.isValid(value))
-        //   .withMessage("Invalid Business Group ID"),
+        check("businessUser")
+          .notEmpty()
+          .withMessage("Business Group is required")
+          .bail()
+          .custom((value) => Types.ObjectId.isValid(value))
+          .withMessage("Invalid Business Group ID"),
 
-        // check("company")
-        //   .optional()
-        //   .custom((value) => Types.ObjectId.isValid(value))
-        //   .withMessage("Invalid Company ID"),
-
-        // check("branch")
-        //   .optional()
-        //   .custom((value) => Types.ObjectId.isValid(value))
-        //   .withMessage("Invalid Branch ID"),
-
-        check("driver")
+        check("companyId")
+          .notEmpty()
+          .withMessage("Company is required")
+          .bail()
+          .custom((value) => Types.ObjectId.isValid(value))
+          .withMessage("Invalid Company ID"),
+          
+        check("driverId")
           .optional()
           .custom((value) => Types.ObjectId.isValid(value))
           .withMessage("Invalid Driver ID"),
-
-        // check("vehicle")
-        //   .optional()
-        //   .custom((value) => Types.ObjectId.isValid(value))
-        //   .withMessage("Invalid Vehicle ID"),
 
         check("tripStatus")
           .optional()
@@ -2539,12 +2554,39 @@ export const validate = (validationName: string): any[] => {
         check("startTime")
           .optional()
           .isISO8601()
-          .withMessage("Invalid Start Time format"),
+          .withMessage("Invalid Start Time format")
+          .bail()
+          .custom((value, { req }) => {
+            if (
+              req.body.reachTime &&
+              new Date(value) > new Date(req.body.reachTime)
+            ) {
+              throw new Error("Start Time must be before Reach Time");
+            }
+            return true;
+          }),
 
         check("reachTime")
           .optional()
           .isISO8601()
           .withMessage("Invalid Reach Time format"),
+
+        check("branchIds")
+          .optional()
+          .custom((value, { req }) => {
+            if (typeof value === "string") {
+              req.body.branch = [value];
+            } else if (Array.isArray(value)) {
+              if (!value.every((id) => Types.ObjectId.isValid(id))) {
+                throw new Error("Invalid Branch ID(s)");
+              }
+            } else {
+              throw new Error(
+                "Branch must be a valid ObjectId or an array of ObjectIds"
+              );
+            }
+            return true;
+          }),
       ];
 
     default:

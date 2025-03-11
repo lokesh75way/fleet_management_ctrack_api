@@ -3,17 +3,22 @@ import { BaseSchema } from '.';
 import { IDriver } from './Driver';
 import { IUser } from './User';
 import { IVehicle } from './Vehicle';
+import { IBusinessGroup } from './BusinessGroup';
+import { ICompany } from './Company';
 
 
 export enum TripStatus {
     ONGOING = 'ONGOING',
     COMPLETED = 'COMPLETED',
-    JUST_STARTED = 'JUST_STARTED'
+    PLANNED = 'PLANNED'
 }
 
 interface ITrip extends BaseSchema {
-    driver: Types.ObjectId | IDriver;
-    vehicle: Types.ObjectId | IVehicle;
+    businessUser: Types.ObjectId | IBusinessGroup;
+    companyId: Types.ObjectId | ICompany;
+    branchIds: Types.ObjectId[] | ICompany[];
+    driverId: Types.ObjectId | IDriver;
+    vehicleId: Types.ObjectId | IVehicle;
     tripStatus: TripStatus;
     startLocation: string;
     reachLocation: string;
@@ -29,8 +34,11 @@ interface ITrip extends BaseSchema {
 
 const TripSchema = new Schema<ITrip>(
     {
-        driver: { type: Schema.Types.ObjectId, ref: 'driver', required: true },
-        vehicle: { type: Schema.Types.ObjectId, ref: 'vehicle' },
+        businessUser: { type: Schema.Types.ObjectId, ref: 'business-group', required: true},
+        companyId: { type: Schema.Types.ObjectId, ref: 'company', required: true},
+        branchIds: { type: [Schema.Types.ObjectId], ref: 'company-branch'},
+        driverId: { type: Schema.Types.ObjectId, ref: 'driver', required: true },
+        vehicleId: { type: Schema.Types.ObjectId, ref: 'vehicle', required: true },
         tripStatus: { type: String, enum: Object.values(TripStatus) },
         startLocation: { type: String, required: true },
         reachLocation: { type: String, required: true },

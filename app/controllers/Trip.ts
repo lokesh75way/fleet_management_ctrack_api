@@ -16,21 +16,39 @@ export const addTrip = async (
     const id = req.user._id;
     payload.createdBy = id;
     payload.lastModifiedBy = id;
-    const checkIfExist = await Trip.findOne({ payload });
-    if (checkIfExist) {
-      throw createHttpError(400, {
-        message: `Trip already exist!`,
-      });
+
+    const startTime = new Date(payload.startTime);
+    const reachTime = new Date(payload.reachTime);
+    const currentTime = new Date();
+
+    if (reachTime < currentTime) {
+      payload.tripStatus = TripStatus.COMPLETED;
+    } else if (startTime > currentTime) {
+      payload.tripStatus = TripStatus.PLANNED;
+    } else {
+      payload.tripStatus = TripStatus.ONGOING;
     }
 
+    const checkIfExist = await Trip.findOne(payload);
+
+    if (checkIfExist) {
+      throw createHttpError(400, { message: `Trip already exists!` });
+    }
+
+    // Save the new trip with the computed status
     const createdTrip = await new Trip(payload).save();
 
-    res.send(createResponse(createdTrip, "Trip created successfully!"));
-  } catch (error) {
-    throw createHttpError(400, {
-      message: error ?? "An error occurred.",
-      data: { user: null },
+    res.send({
+      success: true,
+      message: "Trip created successfully!",
+      data: createdTrip,
     });
+  } catch (error) {
+    next(
+      createHttpError(400, {
+        message: (error as any).message || "An error occurred.",
+      })
+    );
   }
 };
 
@@ -69,46 +87,67 @@ export const getAllTrips = async (
   try {
     const condition: any = {
       isDeleted: false,
-      tripStatus: "JUST_STARTED",
     };
+
     const limit = parseInt((req.query.limit as string) || "10");
     const page = parseInt((req.query.page as string) || "1");
+    const startIndex = (page - 1) * limit;
+    const currentTime = new Date();
 
-    const status = req.query.status as string;
+    const status = (req.query.status as string) || "ONGOING"; // Default to ONGOING
 
-    if (status) {
-      condition["tripStatus"] = status;
+    if (status === "ONGOING") {
+      condition["tripStatus"] = TripStatus.ONGOING;
+      condition["startTime"] = { $lte: currentTime };
+      condition["reachTime"] = { $gte: currentTime };
+    } else if (status === "PLANNED") {
+      condition["tripStatus"] = TripStatus.PLANNED;
+      condition["startTime"] = { $gt: currentTime };
+    } else if (status === "COMPLETED") {
+      condition["tripStatus"] = TripStatus.COMPLETED;
+      condition["reachTime"] = { $lt: currentTime };
     }
 
-    if (req.query.driver) {
+    if (req.query.driverId) {
       condition["driverId"] = req.query.driver;
+    }
+    if (req.query.businessGroup) {
+      condition["businessUser"] = req.query.businessGroup;
+    }
+
+    if (req.query.company) {
+      condition["companyId"] = req.query.company;
     }
 
     if (req.query.vehicle) {
-      condition["vehicle"] = req.query.vehicle;
+      condition["vehicleId"] = req.query.vehicle;
     }
 
     if (req.query.start) {
-      condition["startTime"] = { $gte: req.query.start };
+      condition["startTime"] = {
+        ...(condition["startTime"] || {}),
+        $gte: new Date(req.query.start as string),
+      };
     }
 
     if (req.query.end) {
-      condition["reachTime"] = { $lte: req.query.end };
+      condition["reachTime"] = {
+        ...(condition["reachTime"] || {}),
+        $lte: new Date(req.query.end as string),
+      };
     }
-
-    const startIndex = (page - 1) * limit;
 
     const data = await Trip.find(condition)
       .populate({
-        path: "driver",
+        path: "driverId",
         select: "firstName lastName",
       })
       .sort({ createdAt: -1 })
       .limit(limit)
       .skip(startIndex);
 
-    const count = await Trip.count(condition);
-    res.send(createResponse({ data, count }, `Trip found successfully!`));
+    const count = await Trip.countDocuments(condition);
+    res.send(createResponse({ data, count }, `Trips found successfully!`));
   } catch (error: any) {
     throw createHttpError(400, {
       message: error?.message ?? "An error occurred.",
