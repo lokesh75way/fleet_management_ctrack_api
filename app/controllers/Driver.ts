@@ -139,8 +139,7 @@ export const getAllDrivers = async (req: Request, res: Response) => {
     const branchIdsArray = Array.isArray(branchIds) ? branchIds : [branchIds];
     query.branchId = { $in: branchIdsArray };
   }
-  console.log("****query is : ", query);
-  
+
   const data = await Driver.find(query)
     .populate("companyId")
     .populate("branchId")
