@@ -1,0 +1,1212 @@
+{
+  "tags": [
+    {
+      "name": "Vehicles",
+      "description": "API for Vehicles."
+    }
+  ],
+  "components": {
+    "schemas": {
+      "VehiclesResponseSchema": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "67499aae79f8e7e45b3007c4"
+          },
+          "VehiclesDetails": {
+            "$ref": "#/components/schemas/VehiclesSchema"
+          },
+          "createdBy": {
+            "type": "string",
+            "example": "6631e2be75981e7509de12b3"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-11-29T10:42:54.937Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2024-11-29T10:42:54.937Z"
+          },
+          "__v": {
+            "type": "integer",
+            "example": 0
+          }
+        }
+      },
+      "VehiclesSchema": {
+        "type": "object",
+        "properties": {
+          "businessGroupId": {
+            "type": "string",
+            "example": "60e2fbc8c3c1a3baf2d4e4a1"
+          },
+          "companyId": {
+            "type": "string",
+            "example": "60e2fbc8c3c1a3baf2d4e4a2"
+          },
+          "branchId": {
+            "type": "string",
+            "example": "60e2fbc8c3c1a3baf2d4e4a3"
+          },
+          "vehicleName": {
+            "type": "string",
+            "example": "Truck A23"
+          },
+          "deviceType": {
+            "type": "string",
+            "example": "GPS"
+          },
+          "imeiNumber": {
+            "type": "string",
+            "example": "123456789012345"
+          },
+          "simNumber": {
+            "type": "string",
+            "example": "9876543210"
+          },
+          "secondrySimNumber": {
+            "type": "string",
+            "example": "0123456789"
+          },
+          "deviceAccuracyTolerance": {
+            "type": "string",
+            "example": "5 meters"
+          },
+          "plateNumber": {
+            "type": "string",
+            "example": "MH12XY1234"
+          },
+          "purchaseAmount": {
+            "type": "number",
+            "example": 1500000
+          },
+          "purchaseDate": {
+            "type": "string",
+            "example": "2023-06-15T00:00:00Z"
+          },
+          "manufacturerDate": {
+            "type": "string",
+            "example": "2023-01-01T00:00:00Z"
+          },
+          "weightCapacity": {
+            "type": "number",
+            "example": 5000
+          },
+          "fuelIdlingConsumption": {
+            "type": "string",
+            "example": "1.5 Litre/Hour"
+          },
+          "vinNumber": {
+            "type": "number",
+            "example": 1234567890
+          },
+          "engineNumber": {
+            "type": "string",
+            "example": "ENG12345678"
+          },
+          "passengerSeat": {
+            "type": "number",
+            "example": 4
+          },
+          "rfidTimeoutDuration": {
+            "type": "number",
+            "example": 30
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true
+          },
+          "isDeleted": {
+            "type": "boolean",
+            "example": false
+          },
+          "vehicleNumber": {
+            "type": "string",
+            "example": "MH12XZ5678"
+          },
+          "description": {
+            "type": "string",
+            "example": "A heavy-duty truck used for logistics"
+          },
+          "manufacture": {
+            "type": "string",
+            "example": "Tata Motors"
+          },
+          "year": {
+            "type": "number",
+            "example": 2023
+          },
+          "model": {
+            "type": "string",
+            "example": "LPT 4923"
+          },
+          "color": {
+            "type": "string",
+            "example": "Red"
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "documentType": {
+                  "type": "string",
+                  "example": "INSURANCE"
+                },
+                "file": {
+                  "type": "string",
+                  "example": "insurance_document.pdf"
+                },
+                "issueDate": {
+                  "type": "string",
+                  "example": "2023-05-01T00:00:00Z"
+                },
+                "expireDate": {
+                  "type": "string",
+                  "example": "2024-05-01T00:00:00Z"
+                }
+              }
+            }
+          },
+          "licenseReminder": {
+            "type": "object",
+            "properties": {
+              "lastRenewalDate": {
+                "type": "string",
+                "example": "2023-01-01"
+              },
+              "period": {
+                "type": "string",
+                "example": "12 months"
+              },
+              "nextRenewalDate": {
+                "type": "string",
+                "example": "2024-01-01"
+              },
+              "reminderStarts": {
+                "type": "string",
+                "example": "2023-12-01"
+              }
+            }
+          },
+          "roadWorthyReminder": {
+            "type": "object",
+            "properties": {
+              "lastRenewalDate": {
+                "type": "string",
+                "example": "2023-02-01"
+              },
+              "period": {
+                "type": "string",
+                "example": "6 months"
+              },
+              "nextRenewalDate": {
+                "type": "string",
+                "example": "2023-08-01"
+              },
+              "reminderStarts": {
+                "type": "string",
+                "example": "2023-07-01"
+              }
+            }
+          }
+        }
+      },
+      "CompanyResponseSchema": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "60d21b4967d0d8992e610c86"
+          },
+          "businessGroupId": {
+            "type": "string",
+            "example": "60d21b4967d0d8992e610c86"
+          },
+          "companyName": {
+            "type": "string",
+            "example": "TechCorp"
+          },
+          "logo": {
+            "type": "string",
+            "example": "https://example.com/logo.png"
+          },
+          "dateFormat": {
+            "type": "string",
+            "example": "YYYY-MM-DD"
+          },
+          "timeFormat": {
+            "type": "string",
+            "example": "HH:mm"
+          },
+          "workStartDay": {
+            "type": "string",
+            "example": "Monday"
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "tradeLicenseNumber": {
+            "type": "string",
+            "example": "123456789"
+          },
+          "officeNumber": {
+            "type": "string",
+            "example": "+1234567890"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "America/New_York"
+          },
+          "createdBy": {
+            "type": "string",
+            "example": "60d21b4667d0d8992e610c85"
+          },
+          "latitude": {
+            "type": "string",
+            "example": "40.7128"
+          },
+          "longitude": {
+            "type": "string",
+            "example": "-74.0060"
+          },
+          "isDeleted": {
+            "type": "boolean",
+            "example": false
+          },          
+          "createdAt": {
+            "type": "string",
+            "example": "2024-11-29T10:42:54.937Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2024-11-29T10:42:54.937Z"
+          },
+          "__v": {
+            "type": "integer",
+            "example": 0
+          }
+        }
+      },
+      "UnassignedVehicleResponseSchema": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "67499aae79f8e7e45b3007c4"
+          },
+          "imeiNumber": {
+            "type": "string",
+            "example": "123456789012345"
+          },
+          "Vehicle_Name": {
+            "type": "string",
+            "example": "Truck A23"
+          },
+          "Vehicle_No": {
+            "type": "string",
+            "example": "MH12XY1234"
+          },
+          "Vehicletype": {
+            "type": "string",
+            "example": "Heavy-Duty Truck"
+          },
+          "DeviceModel": {
+            "type": "string",
+            "example": "GPS Tracker Model X1"
+          },
+          "isVehicleAssigned": {
+            "type": "boolean",
+            "example": false
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-11-29T10:42:54.937Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2024-11-29T10:42:54.937Z"
+          },
+          "__v": {
+            "type": "integer",
+            "example": 0
+          }
+        }
+      },
+      "ErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Something went wrong"
+          }
+        }
+      },
+      "RouteNotFoundResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not found"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "AuthenticationErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not authenticated"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "BadRequestSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": ""
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "AuthorizationErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/vehicles": {
+      "get": {
+        "tags": ["Vehicles"],
+        "summary": "Vehicles List Api",
+        "description": "Endpoint for Vehicles List",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page no",
+            "schema": {
+              "type": "number",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit no of records per page",
+            "schema": {
+              "type": "number",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/VehiclesResponseSchema"
+                      }
+                    },
+                    "totalCount": {
+                      "type": "number",
+                      "example": 50
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Vehicles"],
+        "summary": "Vehicles Create Api",
+        "description": "Endpoint for Vehicles",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VehiclesSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Vehicles created successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/VehiclesResponseSchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vehicles/{id}": {
+      "patch": {
+        "tags": ["Vehicles"],
+        "summary": "Vehicles Update Api",
+        "description": "Endpoint for Vehicles Update",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Vehicles to be updated",
+            "schema": {
+              "type": "string",
+              "example": "6756bb6f1336dde08ec59e72"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VehiclesSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Vehicles has been updated successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/VehiclesResponseSchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Vehicles"],
+        "summary": "Vehicles delete Api",
+        "description": "Endpoint for delete Vehicles",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Vehicles to be deleted",
+            "schema": {
+              "type": "string",
+              "example": "6756bb6f1336dde08ec59e72"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Task Deleted successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/TaskResponseSchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Vehicles"],
+        "summary": "Vehicles get Api",
+        "description": "Endpoint for get Vehicles",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Vehicles",
+            "schema": {
+              "type": "string",
+              "example": "60d0fe4f5311236168a109ca"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/VehiclesResponseSchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vehicles/tracking": {
+      "get": {
+        "tags": ["Vehicles"],
+        "summary": "Vehicles Tracking Api",
+        "description": "Endpoint for Vehicles Tracking",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "Ids Of Vehicles",
+            "schema": {
+              "type": "array",
+              "example": ["60e2fbc8c3c1a3baf2d4e4a1", "60e2fbc8c3c1a3baf2d4e4a2"]
+            }
+          },
+          {
+            "name": "status",
+            "in": "query",
+            "description": "Status of the Vehicle",
+            "schema": {
+              "type": "string",
+              "example": "RUNNING"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "_id": {
+                            "type": "string",
+                            "example": "60f7d2e8b4a31742f4c8e6a9"
+                          },
+                          "Status": {
+                            "type": "string",
+                            "example": "Active"
+                          },
+                          "Vehicle_No": {
+                            "type": "string",
+                            "example": "MH12XY1234"
+                          },
+                          "imeiNumber": {
+                            "type": "string",
+                            "example": "123456789012345"
+                          },
+                          "Vehicle_Name": {
+                            "type": "string",
+                            "example": "Truck A23"
+                          },
+                          "Latitude": {
+                            "type": "number",
+                            "example": 18.5204
+                          },
+                          "Longitude": {
+                            "type": "number",
+                            "example": 73.8567
+                          },
+                          "Location": {
+                            "type": "string",
+                            "example": "Pune, Maharashtra, India"
+                          },
+                          "Datetime": {
+                            "type": "string",
+                            "example": "2024-06-15T10:30:00Z"
+                          },
+                          "updatedAt": {
+                            "type": "string",
+                            "example": "2024-06-16T08:20:00Z"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "example": "2024-06-15T09:45:00Z"
+                          },
+                          "vehicleId": {
+                            "type": "object",
+                            "properties": {
+                              "_id": {
+                                "type": "string",
+                                "example": "60f7d2e8b4a31742f4c8e6a9"
+                              },
+                              "vehicleName": {
+                                "type": "string",
+                                "example": "Truck A23"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "running": {
+                      "type": "number",
+                      "example": 50
+                    },
+                    "stopped": {
+                      "type": "number",
+                      "example": 50
+                    },
+                    "inactive": {
+                      "type": "number",
+                      "example": 50
+                    },
+                    "idle": {
+                      "type": "number",
+                      "example": 50
+                    },
+                    "total": {
+                      "type": "number",
+                      "example": 50
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vehicles/list": {
+      "get": {
+        "tags": ["Vehicles"],
+        "summary": "Company Vehicles List Api",
+        "description": "Endpoint for Company Vehicles List",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page no",
+            "schema": {
+              "type": "number",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit no of records per page",
+            "schema": {
+              "type": "number",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CompanyResponseSchema"
+                      }
+                    },
+                    "totalCount": {
+                      "type": "number",
+                      "example": 50
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vehicles/unassigned": {
+      "get": {
+        "tags": ["Vehicles"],
+        "summary": "Unassigned Vehicles List Api",
+        "description": "Endpoint for Unassigned Vehicles List",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page no",
+            "schema": {
+              "type": "number",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit no of records per page",
+            "schema": {
+              "type": "number",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/UnassignedVehicleResponseSchema"
+                      }
+                    },
+                    "totalCount": {
+                      "type": "number",
+                      "example": 50
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

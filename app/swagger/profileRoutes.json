@@ -1,0 +1,373 @@
+{
+  "tags": [
+    {
+      "name": "Profile",
+      "description": "API for Profile."
+    }
+  ],
+  "components": {
+    "schemas": {
+      "ProfileResponseSchema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/UserSchema"
+              },
+              {
+                "$ref": "#/components/schemas/CompanySchema"
+              },
+              {
+                "$ref": "#/components/schemas/BusinessGroupSchema"
+              }
+            ]
+          },
+          "message": {
+            "type": "string",
+            "example": "Profile fetched successfully"
+          }
+        }
+      },
+      "UserSchema": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "60d21b4667d0d8992e610c85"
+          },
+          "userName": {
+            "type": "string",
+            "example": "JohnDoe"
+          },
+          "userInfo": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "John Doe"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "johndoe@example.com"
+                },
+                "designation": {
+                  "type": "string",
+                  "example": "Manager"
+                },
+                "mobileNumber": {
+                  "type": "string",
+                  "example": "+1234567890"
+                }
+              }
+            }
+          },
+          "mobileNumber": {
+            "type": "string",
+            "example": "+1234567890"
+          },
+          "email": {
+            "type": "string",
+            "example": "johndoe@example.com"
+          },
+          "city": {
+            "type": "string",
+            "example": "New York"
+          },
+          "country": {
+            "type": "string",
+            "example": "USA"
+          },
+          "state": {
+            "type": "string",
+            "example": "NY"
+          },
+          "role": {
+            "type": "string",
+            "example": "COMPANY"
+          },
+          "type": {
+            "type": "string",
+            "example": "ADMIN"
+          },
+          "isActive": {
+            "type": "boolean",
+            "example": true
+          },
+          "companyId": {
+            "type": "string",
+            "example": "60d21b4667d0d8992e610c85"
+          }
+        }
+      },
+      "CompanySchema": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "60d21b4967d0d8992e610c86"
+          },
+          "businessGroupId": {
+            "type": "string",
+            "example": "60d21b4967d0d8992e610c86"
+          },
+          "companyName": {
+            "type": "string",
+            "example": "TechCorp"
+          },
+          "logo": {
+            "type": "string",
+            "example": "https://example.com/logo.png"
+          },
+          "dateFormat": {
+            "type": "string",
+            "example": "YYYY-MM-DD"
+          },
+          "timeFormat": {
+            "type": "string",
+            "example": "HH:mm"
+          },
+          "workStartDay": {
+            "type": "string",
+            "example": "Monday"
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "tradeLicenseNumber": {
+            "type": "string",
+            "example": "123456789"
+          },
+          "officeNumber": {
+            "type": "string",
+            "example": "+1234567890"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "America/New_York"
+          },
+          "createdBy": {
+            "type": "string",
+            "example": "60d21b4667d0d8992e610c85"
+          },
+          "latitude": {
+            "type": "string",
+            "example": "40.7128"
+          },
+          "longitude": {
+            "type": "string",
+            "example": "-74.0060"
+          },
+          "isDeleted": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "BusinessGroupSchema": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "60d21b4967d0d8992e610c87"
+          },
+          "groupName": {
+            "type": "string",
+            "example": "GlobalTech Group"
+          },
+          "logo": {
+            "type": "string",
+            "example": "https://example.com/logo.png"
+          },
+          "tradeLicenseNumber": {
+            "type": "string",
+            "example": "987654321"
+          },
+          "officeNumber": {
+            "type": "string",
+            "example": "+1234567890"
+          },
+          "workStartDay": {
+            "type": "string",
+            "example": "Monday"
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "dateFormat": {
+            "type": "string",
+            "example": "YYYY-MM-DD"
+          },
+          "timeFormat": {
+            "type": "string",
+            "example": "HH:mm"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "America/New_York"
+          },
+          "createdBy": {
+            "type": "string",
+            "example": "60d21b4667d0d8992e610c85"
+          },
+          "latitude": {
+            "type": "string",
+            "example": "40.7128"
+          },
+          "longitude": {
+            "type": "string",
+            "example": "-74.0060"
+          },
+          "isDeleted": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "ErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Something went wrong"
+          }
+        }
+      },
+      "RouteNotFoundResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not found"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "AuthenticationErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not authenticated"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "BadRequestSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": ""
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "AuthorizationErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/profile": {
+      "get": {
+        "tags": ["Profile"],
+        "summary": "Profile Data Api",
+        "description": "Endpoint for Profile data",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ModulesResponseSchema"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

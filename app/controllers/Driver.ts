@@ -49,7 +49,7 @@ export const updateDriver = async (req: Request, res: Response) => {
   if (newDriver == null)
     throw createHttpError(404, { message: "No driver found" });
 
-  res.send(createResponse(newDriver, "Driver date updated successfully!"));
+  res.send(createResponse(newDriver, "Driver data updated successfully!"));
 };
 
 export const getDriver = async (req: Request, res: Response) => {
@@ -130,11 +130,12 @@ export const getAllDrivers = async (req: Request, res: Response) => {
   const data = await Driver.find(query)
     .populate("companyId")
     .populate("branchId")
-    .populate("businessGroupId").sort({createdAt : -1})
+    .populate("businessGroupId")
+    .sort({ createdAt: -1 })
     .limit(limit1)
     .skip(startIndex);
 
-    const totalCount = await Driver.countDocuments(query);
+  const totalCount = await Driver.countDocuments(query);
 
-    res.send(createResponse({ data, totalCount }, "All drivers"));
+  res.send(createResponse({ data, totalCount }, "All drivers"));
 };

@@ -1,0 +1,1027 @@
+{
+  "tags": [
+    {
+      "name": "Driver",
+      "description": "API for Driver."
+    }
+  ],
+  "components": {
+    "schemas": {
+      "DriverResponseSchema": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "6756f4be11e2b8f1a35c1dcd"
+          },
+          "businessGroupId": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "674da82192f0ac531261f414"
+              },
+              "groupName": {
+                "type": "string",
+                "example": "Ruby Holland23"
+              },
+              "logo": {
+                "type": "string",
+                "example": "https://res.cloudinary.com/ddxpchjay/image/upload/v1733142383/ay5ryu9o8w2waqvy52jp.svg"
+              },
+              "tradeLicenseNumber": {
+                "type": "string",
+                "example": "19423"
+              },
+              "officeNumber": {
+                "type": "string",
+                "example": "958745453453"
+              },
+              "workStartDay": {
+                "type": "string",
+                "example": "MONDAY"
+              },
+              "dateFormat": {
+                "type": "string",
+                "example": "DD-MM-YYYY"
+              },
+              "timeFormat": {
+                "type": "string",
+                "example": "24 Hour"
+              },
+              "timezone": {
+                "type": "string",
+                "example": "Asia/Kolkata"
+              },
+              "createdBy": {
+                "type": "string",
+                "example": "6631e2be75981e7509de12b3"
+              },
+              "isDeleted": {
+                "type": "boolean",
+                "example": false
+              },
+              "createdAt": {
+                "type": "string",
+                "example": "2024-12-02T12:29:21.835Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "example": "2024-12-02T12:30:22.259Z"
+              },
+              "__v": {
+                "type": "integer",
+                "example": 0
+              }
+            }
+          },
+          "companyId": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "674dbcec9a012d25b7b9b6bc"
+              },
+              "companyName": {
+                "type": "string",
+                "example": "Moon and Atkins Associates"
+              },
+              "tradeLicenseNumber": {
+                "type": "string",
+                "example": "912"
+              },
+              "officeNumber": {
+                "type": "string",
+                "example": "917451451475"
+              },
+              "workStartDay": {
+                "type": "string",
+                "example": "MONDAY"
+              },
+              "dateFormat": {
+                "type": "string",
+                "example": "MM-DD-YYYY"
+              },
+              "timeFormat": {
+                "type": "string",
+                "example": "24 Hour"
+              },
+              "timezone": {
+                "type": "string",
+                "example": "Asia/Kolkata"
+              },
+              "createdBy": {
+                "type": "string",
+                "example": "6631e2be75981e7509de12b3"
+              },
+              "isDeleted": {
+                "type": "boolean",
+                "example": false
+              },
+              "createdAt": {
+                "type": "string",
+                "example": "2024-12-02T13:58:04.016Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "example": "2024-12-09T15:21:09.374Z"
+              },
+              "__v": {
+                "type": "integer",
+                "example": 0
+              }
+            }
+          },
+          "branchId": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "674dc6cc9a012d25b7b9b805"
+              },
+              "branchName": {
+                "type": "string",
+                "example": "Skyler Valenciarefreqf"
+              },
+              "businessGroupId": {
+                "type": "string",
+                "example": "674da82192f0ac531261f414"
+              },
+              "companyId": {
+                "type": "string",
+                "example": "674dbcec9a012d25b7b9b6bc"
+              },
+              "isDeleted": {
+                "type": "boolean",
+                "example": false
+              },
+              "tradeLicenseNumber": {
+                "type": "string",
+                "example": "8614123654"
+              },
+              "officeNumber": {
+                "type": "string",
+                "example": "8547963215"
+              },
+              "workStartDay": {
+                "type": "string",
+                "example": "MONDAY"
+              },
+              "userInfo": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "example": "vedux@mailinator.com"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "Ignatius Sawyer"
+                    },
+                    "designation": {
+                      "type": "string",
+                      "example": "Adipisci soluta labo"
+                    },
+                    "mobileNumber": {
+                      "type": "string",
+                      "example": "8614123654"
+                    },
+                    "_id": {
+                      "type": "string",
+                      "example": "674dc6cc9a012d25b7b9b806"
+                    }
+                  }
+                }
+              },
+              "email": {
+                "type": "string",
+                "example": "hyqofa@mailinator.com"
+              },
+              "country": {
+                "type": "string",
+                "example": "IND"
+              },
+              "state": {
+                "type": "string",
+                "example": "Andaman and Nicobar Islands"
+              },
+              "city": {
+                "type": "string",
+                "example": "Architecto vel quaer"
+              },
+              "dateFormat": {
+                "type": "string",
+                "example": "MM-DD-YYYY"
+              },
+              "timeFormat": {
+                "type": "string",
+                "example": "12 Hour"
+              },
+              "timezone": {
+                "type": "string",
+                "example": "Asia/Kolkata"
+              },
+              "createdBy": {
+                "type": "string",
+                "example": "6631e2be75981e7509de12b3"
+              },
+              "createdAt": {
+                "type": "string",
+                "example": "2024-12-02T14:40:12.562Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "example": "2024-12-02T14:40:37.215Z"
+              },
+              "__v": {
+                "type": "integer",
+                "example": 0
+              }
+            }
+          },
+          "firstName": {
+            "type": "string",
+            "example": "Driver"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "2"
+          },
+          "employeeNumber": {
+            "type": "string",
+            "example": "540"
+          },
+          "country": {
+            "type": "string",
+            "example": "India"
+          },
+          "state": {
+            "type": "string",
+            "example": "Punjab"
+          },
+          "city": {
+            "type": "string",
+            "example": "mohali"
+          },
+          "zipCode": {
+            "type": "string",
+            "example": "7890"
+          },
+          "street1": {
+            "type": "string",
+            "example": "Street1"
+          },
+          "street2": {
+            "type": "string",
+            "example": "Street2"
+          },
+          "contact1": {
+            "type": "string",
+            "example": "9087654321"
+          },
+          "contact2": {
+            "type": "string",
+            "example": "9087543219"
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "example": "2000-12-01T13:43:23.000Z"
+          },
+          "age": {
+            "type": "integer",
+            "example": 24
+          },
+          "dateOfJoining": {
+            "type": "string",
+            "example": "2024-12-01T13:43:23.000Z"
+          },
+          "dateOfLeaving": {
+            "type": "string",
+            "example": "2025-01-04T13:43:23.000Z"
+          },
+          "drivingExperience": {
+            "type": "integer",
+            "example": 18
+          },
+          "licenseAvailable": {
+            "type": "boolean",
+            "example": false
+          },
+          "licenseNumber": {
+            "type": "string",
+            "example": "92335"
+          },
+          "status": {
+            "type": "string",
+            "example": "Not Verified"
+          },
+          "isDeleted": {
+            "type": "boolean",
+            "example": false
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2024-12-02T14:50:00.000Z"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-12-02T14:50:00.000Z"
+          }
+        }
+      },
+      "DriverSchema": {
+        "type": "object",
+        "properties": {
+          "businessGroupId": {
+            "type": "string",
+            "format": "mongoid",
+            "description": "ID of the business group"
+          },
+          "companyId": {
+            "type": "string",
+            "format": "mongoid",
+            "description": "ID of the company"
+          },
+          "branchId": {
+            "type": "string",
+            "format": "mongoid",
+            "description": "ID of the branch"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First name of the driver"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name of the driver"
+          },
+          "employeeNumber": {
+            "type": "string",
+            "description": "Employee number"
+          },
+          "country": {
+            "type": "string",
+            "description": "Country"
+          },
+          "state": {
+            "type": "string",
+            "nullable": true,
+            "description": "State (optional)"
+          },
+          "city": {
+            "type": "string",
+            "description": "City"
+          },
+          "zipCode": {
+            "type": "string",
+            "nullable": true,
+            "description": "ZIP code (optional)"
+          },
+          "street1": {
+            "type": "string",
+            "description": "Primary street address"
+          },
+          "street2": {
+            "type": "string",
+            "nullable": true,
+            "description": "Secondary street address (optional)"
+          },
+          "contact1": {
+            "type": "string",
+            "description": "Primary contact number"
+          },
+          "contact2": {
+            "type": "string",
+            "nullable": true,
+            "description": "Secondary contact number (optional)"
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "format": "date",
+            "description": "Date of birth (optional)"
+          },
+          "age": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Age of the driver"
+          },
+          "dateOfJoining": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Date of joining (optional)"
+          },
+          "dateOfLeaving": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Date of leaving (optional)"
+          },
+          "drivingExperience": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Driving experience in years"
+          },
+          "licenseAvailable": {
+            "type": "boolean",
+            "description": "Is a driving license available?"
+          },
+          "licenseNumber": {
+            "type": "string",
+            "nullable": true,
+            "description": "Driving license number (optional)"
+          },
+          "licenseIssueDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "License issue date (optional)"
+          },
+          "licenseExpiryDate": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "License expiry date (optional)"
+          },
+          "lifeInsuranceNumber": {
+            "type": "string",
+            "nullable": true,
+            "description": "Life insurance number (optional)"
+          },
+          "lifeInsuranceExpiry": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Life insurance expiry date (optional)"
+          },
+          "mediclaimNumber": {
+            "type": "string",
+            "nullable": true,
+            "description": "Mediclaim number (optional)"
+          },
+          "mediclaimExpiry": {
+            "type": "string",
+            "format": "date",
+            "nullable": true,
+            "description": "Mediclaim expiry date (optional)"
+          },
+          "active": {
+            "type": "boolean",
+            "nullable": true,
+            "description": "Is the driver currently active? (optional)"
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "documentType",
+                "file",
+                "issueDate",
+                "expireDate"
+              ],
+              "properties": {
+                "documentType": {
+                  "type": "string",
+                  "enum": ["PAN_CARD", "MEDICLAIM", "LICENSE", "OTHER"],
+                  "description": "Type of the document"
+                },
+                "file": {
+                  "type": "string",
+                  "format": "url",
+                  "description": "Document file URL"
+                },
+                "issueDate": {
+                  "type": "string",
+                  "format": "date",
+                  "description": "Document issue date"
+                },
+                "expireDate": {
+                  "type": "string",
+                  "format": "date",
+                  "description": "Document expiry date"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Something went wrong"
+          }
+        }
+      },
+      "RouteNotFoundResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not found"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "AuthenticationErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not authenticated"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "BadRequestSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": ""
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "AuthorizationErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/driver": {
+      "get": {
+        "tags": ["Driver"],
+        "summary": "Driver List Api",
+        "description": "Endpoint for Driver List",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page no",
+            "schema": {
+              "type": "number",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit no of records per page",
+            "schema": {
+              "type": "number",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "All drivers"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/DriverResponseSchema"
+                      }
+                    },
+                    "totalCount": {
+                      "type": "number",
+                      "example": 50
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Driver"],
+        "summary": "driver Create Api",
+        "description": "Endpoint for Driver",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DriverSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Driver added successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/DriverResponseSchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/driver/{id}": {
+      "put": {
+        "tags": ["Driver"],
+        "summary": "Driver Update Api",
+        "description": "Endpoint for Driver Update",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Driver to be updated",
+            "schema": {
+              "type": "string",
+              "example": "6756bb6f1336dde08ec59e72"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DriverSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Driver data updated successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/DriverResponseSchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Driver"],
+        "summary": "Driver delete Api",
+        "description": "Endpoint for delete Driver",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Driver to be deleted",
+            "schema": {
+              "type": "string",
+              "example": "6756bb6f1336dde08ec59e72"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Drivers deleted successfully!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Driver"],
+        "summary": "Driver get Api",
+        "description": "Endpoint for get Driver",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Driver",
+            "schema": {
+              "type": "string",
+              "example": "60d0fe4f5311236168a109ca"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "One driver found!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/DriverResponseSchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -97,7 +97,7 @@ export const updateBusinessUser = async (
     role: UserRole.BUSINESS_GROUP,
     type: UserType.ADMIN,
   };
-  console.log(payload);
+
   const payloadGroup = { ...payload };
 
   delete payloadGroup.email;

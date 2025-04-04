@@ -58,7 +58,6 @@ export const createCompany = async (
       throw createHttpError(400, "Company is not created");
     }
 
-    console.log(payloadUser);
     const newUser = await User.create({
       ...payloadUser,
       companyId: newCompany._id,
@@ -495,7 +494,6 @@ export const updateCompanyUser = async (
         throw createHttpError(409, "Company with this name already exists");
       }
     }
-    console.log(updatedFields, payloadCompany);
 
     await User.updateOne({ email: payload.email }, updatedFields);
 

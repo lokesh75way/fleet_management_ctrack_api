@@ -45,7 +45,7 @@ export const getExpense = async (
   let data = await Expense.find({ deleted: false })
     .sort({ createdAt: -1 })
     .limit(limit1)
-    .skip(startIndex)
+    .skip(startIndex);
 
   const totalCount = await Expense.countDocuments({ deleted: false });
 
@@ -82,7 +82,10 @@ export const deleteExpense = async (
     return;
   }
 
-  const deletedExpense = await Expense.updateOne({ _id: id }, { deleted: true });
+  const deletedExpense = await Expense.updateOne(
+    { _id: id },
+    { deleted: true }
+  );
 
   res.send(createResponse(deletedExpense, "Expense Deleted successfully!"));
 };
