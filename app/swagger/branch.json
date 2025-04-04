@@ -1,0 +1,694 @@
+{
+  "tags": [
+    {
+      "name": "Branches",
+      "description": "API for Branches."
+    }
+  ],
+  "components": {
+    "schemas": {
+      "BranchResponse": {
+        "type": "object",
+        "properties": {
+          "branchName": {
+            "type": "string",
+            "example": "Main Branch"
+          },
+          "logo": {
+            "type": "string",
+            "example": "https://example.com/logo.png"
+          },
+          "businessGroupId": {
+            "type": "string",
+            "example": "6756bb6f1336dde08ec59e72"
+          },
+          "companyId": {
+            "type": "string",
+            "example": "6756bb6f1336dde08ec59e72"
+          },
+          "parentBranchId": {
+            "type": "string",
+            "example": "6756bb6f1336dde08ec59e72"
+          },
+          "isDeleted": {
+            "type": "boolean",
+            "example": false
+          },
+          "tradeLicenseNumber": {
+            "type": "string",
+            "example": "TRD123456"
+          },
+          "officeNumber": {
+            "type": "string",
+            "example": "101"
+          },
+          "workStartDay": {
+            "type": "string",
+            "example": "MONDAY"
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "userInfo": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "user@example.com"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "John Doe"
+                },
+                "designation": {
+                  "type": "string",
+                  "example": "Manager"
+                },
+                "mobileNumber": {
+                  "type": "string",
+                  "example": "+1234567890"
+                }
+              }
+            }
+          },
+          "email": {
+            "type": "string",
+            "example": "branch@example.com"
+          },
+          "country": {
+            "type": "string",
+            "example": "USA"
+          },
+          "state": {
+            "type": "string",
+            "example": "California"
+          },
+          "city": {
+            "type": "string",
+            "example": "Los Angeles"
+          },
+          "dateFormat": {
+            "type": "string",
+            "example": "MM-DD-YYYY"
+          },
+          "timeFormat": {
+            "type": "string",
+            "example": "12 Hour"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "America/Los_Angeles"
+          },
+          "createdBy": {
+            "type": "string",
+            "example": "6756bb6f1336dde08ec59e72"
+          },
+          "latitude": {
+            "type": "string",
+            "example": "34.0522"
+          },
+          "longitude": {
+            "type": "string",
+            "example": "-118.2437"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-12-01T12:34:56.789Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2024-12-10T08:22:44.321Z"
+          }
+        }
+      },
+      "BranchSchema": {
+        "type": "object",
+        "properties": {
+          "businessGroupId": {
+            "type": "string",
+            "example": "6756bb6f1336dde08ec59e72"
+          },
+          "companyId": {
+            "type": "string",
+            "example": "6756bb6f1336dde08ec59e72"
+          },
+          "parentBranchId": {
+            "type": "string",
+            "example": "6756bb6f1336dde08ec59e72"
+          },
+          "branchName": {
+            "type": "string",
+            "example": "Main Branch"
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "workStartDay": {
+            "type": "string",
+            "example": "MONDAY"
+          },
+          "country": {
+            "type": "string",
+            "example": "USA"
+          },
+          "state": {
+            "type": "string",
+            "example": "California"
+          },
+          "city": {
+            "type": "string",
+            "example": "Los Angeles"
+          },
+          "dateFormat": {
+            "type": "string",
+            "example": "12-13-2024"
+          },
+          "timeFormat": {
+            "type": "string",
+            "example": "12 Hour"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "America/Los_Angeles"
+          }
+        },
+        "required": ["businessGroupId", "companyId", "branchName", "country", "city"]
+      },
+      "ErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Something went wrong"
+          }
+        }
+      },
+      "RouteNotFoundResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not found"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "AuthenticationErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not authenticated"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "BadRequestSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": ""
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "AuthorizationErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/branches": {
+      "get": {
+        "tags": ["Branches"],
+        "summary": "Branches List Api",
+        "description": "Endpoint for Branches List",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page no",
+            "schema": {
+              "type": "number",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit no of records per page",
+            "schema": {
+              "type": "number",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/BranchResponse"
+                          }
+                        },
+                        "totalCount": {
+                          "type": "integer",
+                          "example": 50
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Branches"],
+        "summary": "Branches Create Api",
+        "description": "Endpoint for Branches",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BranchSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Branch has been created successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/BranchResponse"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/branches/{id}": {
+      "put": {
+        "tags": ["Branches"],
+        "summary": "Branches Update Api",
+        "description": "Endpoint for Branches Update",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Branches to be updated",
+            "schema": {
+              "type": "string",
+              "example": "6756bb6f1336dde08ec59e72"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BranchSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Branch has been updated successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/BranchResponse"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Branches"],
+        "summary": "Branches delete Api",
+        "description": "Endpoint for delete Branches",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Branches to be deleted",
+            "schema": {
+              "type": "string",
+              "example": "6756bb6f1336dde08ec59e72"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Branch has been deleted successfully."
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Branches"],
+        "summary": "Branches get Api",
+        "description": "Endpoint for get Branches",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Branches",
+            "schema": {
+              "type": "string",
+              "example": "60d0fe4f5311236168a109ca"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/BranchResponse"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

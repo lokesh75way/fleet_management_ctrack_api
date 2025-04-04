@@ -1,0 +1,635 @@
+{
+  "tags": [
+    {
+      "name": "Expense",
+      "description": "API for Expense."
+    }
+  ],
+  "components": {
+    "schemas": {
+      "ExpenseResponseSchema": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "67499aae79f8e7e45b3007c4"
+          },
+          "branch": {
+            "type": "string",
+            "example": "6638db4e4201ce82411f000c"
+          },
+          "category": {
+            "type": "string",
+            "example": "FIX"
+          },
+          "type": {
+            "type": "string",
+            "example": "BONUS"
+          },
+          "amount": {
+            "type": "number",
+            "example": 1000
+          },
+          "expenseDate": {
+            "type": "string",
+            "example": "2024-11-30T10:42:08.000Z"
+          },
+          "referenceNumber": {
+            "type": "string",
+            "example": "39786735468"
+          },
+          "bill": {
+            "type": "string",
+            "example": "https://res.cloudinary.com/ddxpchjay/image/upload/v1732876965/aqvwfjvvalrqqabeyujt.jpg"
+          },
+          "description": {
+            "type": "string",
+            "example": "rfdgsvg"
+          },
+          "fromDate": {
+            "type": "string",
+            "example": "2024-11-04T10:42:08.000Z"
+          },
+          "toDate": {
+            "type": "string",
+            "example": "2024-11-20T10:42:08.000Z"
+          },
+          "odometer": {
+            "type": "string",
+            "example": "12"
+          },
+          "createdBy": {
+            "type": "string",
+            "example": "6631e2be75981e7509de12b3"
+          },
+          "deleted": {
+            "type": "boolean",
+            "example": false
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-11-29T10:42:54.937Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2024-11-29T10:42:54.937Z"
+          },
+          "__v": {
+            "type": "integer",
+            "example": 0
+          }
+        }
+      },
+      "ExpenseSchema": {
+        "type": "object",
+        "properties": {
+          "branch": {
+            "type": "string",
+            "example": "6638db4e4201ce82411f000c"
+          },
+          "category": {
+            "type": "string",
+            "example": "FIX"
+          },
+          "type": {
+            "type": "string",
+            "example": "BONUS"
+          },
+          "expenseDate": {
+            "type": "string",
+            "example": "2024-11-30T10:42:08.000Z"
+          },
+          "amount": {
+            "type": "number",
+            "example": 1000
+          },
+          "referenceNumber": {
+            "type": "string",
+            "example": "39786735468"
+          },
+          "workHour": {
+            "type": "string",
+            "example": "8"
+          },
+          "fromDate": {
+            "type": "string",
+            "example": "2024-11-04T10:42:08.000Z"
+          },
+          "toDate": {
+            "type": "string",
+            "example": "2024-11-20T10:42:08.000Z"
+          },
+          "odometer": {
+            "type": "number",
+            "example": 1200
+          }
+        }
+      },
+      "ErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Something went wrong"
+          }
+        }
+      },
+      "RouteNotFoundResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not found"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "AuthenticationErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not authenticated"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "BadRequestSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": ""
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "AuthorizationErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/expenses": {
+      "get": {
+        "tags": ["Expense"],
+        "summary": "Expense List Api",
+        "description": "Endpoint for Expense List",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page no",
+            "schema": {
+              "type": "number",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit no of records per page",
+            "schema": {
+              "type": "number",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ExpenseResponseSchema"
+                      }
+                    },
+                    "totalCount": {
+                      "type": "number",
+                      "example": 50
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Expense"],
+        "summary": "Expense Create Api",
+        "description": "Endpoint for Expense",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpenseSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Expense created successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ExpenseResponseSchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/expenses/{id}": {
+      "patch": {
+        "tags": ["Expense"],
+        "summary": "Expense Update Api",
+        "description": "Endpoint for Expense Update",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Expense to be updated",
+            "schema": {
+              "type": "string",
+              "example": "6756bb6f1336dde08ec59e72"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpenseSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Expense has been updated successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ExpenseResponseSchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Expense"],
+        "summary": "Expense delete Api",
+        "description": "Endpoint for delete Expense",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Expense to be deleted",
+            "schema": {
+              "type": "string",
+              "example": "6756bb6f1336dde08ec59e72"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Expense Deleted successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ExpenseResponseSchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Expense"],
+        "summary": "Expense get Api",
+        "description": "Endpoint for get Expense",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Expense",
+            "schema": {
+              "type": "string",
+              "example": "60d0fe4f5311236168a109ca"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/ExpenseResponseSchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

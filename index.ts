@@ -37,7 +37,9 @@ import { initTeltonikaServer } from "./app/services/Teltonika";
 import {initJT701Server} from "./app/services/JT701";
 import { initCronJob} from "./app/services/cronJob"
 import { createAdmin } from "./app/helper/createAdmin";
-
+import swaggerUi from 'swagger-ui-express';
+import { mergeSwaggerFiles } from "./app/merge.swagger";
+const mergedSwagger = mergeSwaggerFiles();
 const envFilePath = path.resolve(`./.env.${process.env.NODE_ENV}`);
 dotenv.config({ path: envFilePath });
 
@@ -86,6 +88,7 @@ const initApp = async (): Promise<void> => {
   ];
 
   // routes
+  router.use('/docs', swaggerUi.serve, swaggerUi.setup(mergedSwagger));
   router.use("/auth", authRoutes);
   router.use("/feature-template", adminAccess, featureTemplate);
   router.use("/modules", adminAccess, modules);

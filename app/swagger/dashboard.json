@@ -1,0 +1,1157 @@
+{
+  "tags": [
+    {
+      "name": "Dashboard",
+      "description": "API for Dashboard."
+    }
+  ],
+  "components": {
+    "schemas": {
+      "TripSchema": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "662b8b186842f00ec221d6cd"
+          },
+          "driver": {
+            "type": "string",
+            "example": "661659e024cee833687e4854"
+          },
+          "startLocation": {
+            "type": "string",
+            "example": "test1"
+          },
+          "reachLocation": {
+            "type": "string",
+            "example": "test2"
+          },
+          "distance": {
+            "type": "integer",
+            "example": 23
+          },
+          "fuelConsumption": {
+            "type": "integer",
+            "example": 8
+          },
+          "reachTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-04-18T11:07:37.000Z"
+          },
+          "startTime": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-04-02T11:07:37.000Z"
+          },
+          "isDeleted": {
+            "type": "boolean",
+            "example": false
+          },
+          "lastModifiedBy": {
+            "type": "string",
+            "example": "66054f9f41db15e959273639"
+          },
+          "createdBy": {
+            "type": "string",
+            "example": "66054f9f41db15e959273639"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-04-26T11:08:08.734Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2024-04-26T11:08:08.734Z"
+          },
+          "__v": {
+            "type": "integer",
+            "example": 0
+          }
+        },
+        "additionalProperties": false
+      },
+      "CompleteTripSchema": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TripSchema"
+          },
+          {
+            "properties": {
+              "tripStatus": {
+                "type": "string",
+                "example": "COMPLETED"
+              }
+            }
+          }
+        ]
+      },
+      "OngoingTripSchema": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TripSchema"
+          },
+          {
+            "properties": {
+              "tripStatus": {
+                "type": "string",
+                "example": "ONGOING"
+              }
+            }
+          }
+        ]
+      },
+      "JustStartedTripSchema": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TripSchema"
+          },
+          {
+            "properties": {
+              "tripStatus": {
+                "type": "string",
+                "example": "JUST_STARTED"
+              }
+            }
+          }
+        ]
+      },
+      "CancelledTripSchema": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/TripSchema"
+          },
+          {
+            "properties": {
+              "tripStatus": {
+                "type": "string",
+                "example": "CANCELLED"
+              }
+            }
+          }
+        ]
+      },
+      "ErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Something went wrong"
+          }
+        }
+      },
+      "RouteNotFoundResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not found"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "AuthenticationErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not authenticated"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "BadRequestSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": ""
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "AuthorizationErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/dashboard/fleet-status": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Dashboard Fleet status Api",
+        "description": "Endpoint for Dashboard Fleet status",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Fleet status fetched successfully!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "complete": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/CompleteTripSchema"
+                          }
+                        },
+                        "progress": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/OngoingTripSchema"
+                          }
+                        },
+                        "yetToStart": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/JustStartedTripSchema"
+                          }
+                        },
+                        "cancelled": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/CancelledTripSchema"
+                          }
+                        }     
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/fleet-usage": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Dashboard Fleet usage Api",
+        "description": "Endpoint for Dashboard Fleet usage",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Fleet usage fetched successfully!"
+                    },
+                    "data": {
+                      "properties": {
+                        "groups": {
+                          "type": "object",
+                          "properties": {
+                            "total": {
+                              "type": "integer",
+                              "example": 1000
+                            },
+                            "businesses": {
+                              "type": "integer",
+                              "example": 300
+                            },
+                            "companies": {
+                              "type": "integer",
+                              "example": 200
+                            },
+                            "users": {
+                              "type": "integer",
+                              "example": 500
+                            }
+                          }
+                        },
+                        "vehicle": {
+                          "type": "object",
+                          "properties": {
+                            "running": {
+                              "type": "integer",
+                              "example": 45
+                            },
+                            "idle": {
+                              "type": "integer",
+                              "example": 30
+                            },
+                            "stopped": {
+                              "type": "integer",
+                              "example": 25
+                            },
+                            "total": {
+                              "type": "integer",
+                              "example": 100
+                            }
+                          }
+                        },
+                        "applicationUsage": {
+                          "type": "object",
+                          "properties": {
+                            "mobile": {
+                              "type": "integer",
+                              "example": 50
+                            },
+                            "web": {
+                              "type": "integer",
+                              "example": 80
+                            }
+                          }
+                        },
+                        "activeUsers": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "title": {
+                                "type": "string",
+                                "example": "67503d823293842b693effac"
+                              },
+                              "country": {
+                                "type": "string",
+                                "example": "67503d823293842b693effac"
+                              },
+                              "value": {
+                                "type": "string",
+                                "example": "IND"
+                              }
+                            }
+                          }
+                        },
+                        "percentage": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "country": {
+                                "type": "string",
+                                "example": "IND"
+                              },
+                              "count": {
+                                "type": "integer",
+                                "example": 14
+                              },
+                              "percentage": {
+                                "type": "string",
+                                "example": "43.75"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/fleet-fuel": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Dashboard Fleet fuel Api",
+        "description": "Endpoint for Dashboard Fleet fuel",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Fleet fuel fetched successfully!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "fuelFill": {
+                          "type": "object",
+                          "properties": {
+                            "events": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "object": {
+                                    "type": "string",
+                                    "example": "Vehicle 1"
+                                  },
+                                  "date": {
+                                    "type": "string",
+                                    "example": "2021-10-10"
+                                  },
+                                  "time": {
+                                    "type": "string",
+                                    "example": "10:00"
+                                  },
+                                  "fuelLevelBefore": {
+                                    "type": "integer",
+                                    "example": 100
+                                  },
+                                  "fuelLevelAfter": {
+                                    "type": "integer",
+                                    "example": 120
+                                  },
+                                  "difference": {
+                                    "type": "integer",
+                                    "example": 20
+                                  }
+                                }
+                              }
+                            },
+                            "totalFuelFill": {
+                              "type": "integer",
+                              "example": 140
+                            }
+                          }
+                        },
+                        "fuelDrain": {
+                          "type": "object",
+                          "properties": {
+                            "events": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "object": {
+                                    "type": "string",
+                                    "example": "Vehicle 1"
+                                  },
+                                  "date": {
+                                    "type": "string",
+                                    "example": "2021-10-10"
+                                  },
+                                  "time": {
+                                    "type": "string",
+                                    "example": "10:00"
+                                  },
+                                  "fuelLevelBefore": {
+                                    "type": "integer",
+                                    "example": 100
+                                  },
+                                  "fuelLevelAfter": {
+                                    "type": "integer",
+                                    "example": 30
+                                  },
+                                  "difference": {
+                                    "type": "integer",
+                                    "example": 70
+                                  }
+                                }
+                              }
+                            },
+                            "totalFuelDrain": {
+                              "type": "integer",
+                              "example": 130
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/overspeed": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Dashboard overspeed Api",
+        "description": "Endpoint for Dashboard overspeed",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Over speed fetched successfully!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "events": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "object": {
+                                "type": "string",
+                                "example": "Vehicle 1"
+                              },
+                              "noOfTimes": {
+                                "type": "integer",
+                                "example": 10
+                              },
+                              "maxSpeed": {
+                                "type": "integer",
+                                "example": 120
+                              },
+                              "overSpeedingDistance": {
+                                "type": "integer",
+                                "example": 100
+                              },
+                              "distance": {
+                                "type": "integer",
+                                "example": 1000
+                              },
+                              "driver": {
+                                "type": "string",
+                                "example": "Driver 1"
+                              }
+                            }
+                          }
+                        },
+                        "maxSpeed": {
+                          "type": "integer",
+                          "example": 130
+                        },
+                        "alertCount": {
+                          "type": "integer",
+                          "example": 30
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/maintainance-reminder": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Dashboard Fleet status Api",
+        "description": "Endpoint for Dashboard Fleet status",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Maintainance reminder fetched successfully!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "events": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "maintainanceType": {
+                                "type": "string",
+                                "example": "Oil Change"
+                              },
+                              "due": {
+                                "type": "string",
+                                "format": "date",
+                                "example": "2024-10-10"
+                              }
+                            }
+                          }
+                        },
+                        "dueEvents": {
+                          "type": "integer",
+                          "example": 2
+                        },
+                        "overdueEvents": {
+                          "type": "integer",
+                          "example": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/renewal-reminder": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Dashboard Fleet status Api",
+        "description": "Endpoint for Dashboard Fleet status",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Renewal reminder fetched successfully!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "events": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "renewalType": {
+                                "type": "string",
+                                "example": "Insurance"
+                              },
+                              "due": {
+                                "type": "string",
+                                "format": "date",
+                                "example": "2024-10-10"
+                              }
+                            }
+                          }
+                        },
+                        "dueEvents": {
+                          "type": "integer",
+                          "example": 2
+                        },
+                        "overdueEvents": {
+                          "type": "integer",
+                          "example": 1
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/fleet-idle": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Dashboard Fleet status Api",
+        "description": "Endpoint for Dashboard Fleet status",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Fleet idle fetched successfully!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "events": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "object": {
+                                "type": "string",
+                                "example": "Vehicle 1"
+                              },
+                              "idleDuration": {
+                                "type": "string",
+                                "example": "10"
+                              },
+                              "approxFuelWastage": {
+                                "type": "integer",
+                                "example": 100
+                              }
+                            }
+                          }
+                        },
+                        "totalIdleTime": {
+                          "type": "string",
+                          "example": "60"
+                        },
+                        "totalApproxFuelWastage": {
+                          "type": "integer",
+                          "example": 600
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/dashboard/tasks": {
+      "get": {
+        "tags": ["Dashboard"],
+        "summary": "Dashboard Fleet status Api",
+        "description": "Endpoint for Dashboard Fleet status",
+        "security": [{ "bearerAuth": [] }],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Tasks fetched successfully!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "xAxis": {
+                          "type": "array",
+                          "items": {
+                            "type": "string",
+                            "example": "04-01-22"
+                          }
+                        },
+                        "series": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string",
+                                "example": "Upcoming Tasks"
+                              },
+                              "data": {
+                                "type": "array",
+                                "items": {
+                                  "type": "integer",
+                                  "example": 0
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

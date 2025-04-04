@@ -1,0 +1,629 @@
+{
+  "tags": [
+    {
+      "name": "Technician",
+      "description": "API for Technician."
+    }
+  ],
+  "components": {
+    "schemas": {
+      "TechnicianResponseSchema": {
+        "type": "object",
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "67499aae79f8e7e45b3007c4"
+          },
+          "TechnicianDetails": {
+            "$ref": "#/components/schemas/TechnicianSchema"
+          },
+          "createdBy": {
+            "type": "string",
+            "example": "6631e2be75981e7509de12b3"
+          },
+          "createdAt": {
+            "type": "string",
+            "example": "2024-11-29T10:42:54.937Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "example": "2024-11-29T10:42:54.937Z"
+          },
+          "__v": {
+            "type": "integer",
+            "example": 0
+          }
+        }
+      },
+      "TechnicianSchema": {
+        "type": "object",
+        "properties": {
+          "company": {
+            "type": "string",
+            "example": "60d21b4667d0d8992e610c85"
+          },
+          "firstName": {
+            "type": "string",
+            "example": "John"
+          },
+          "lastName": {
+            "type": "string",
+            "example": "Doe"
+          },
+          "technicianNo": {
+            "type": "string",
+            "example": "TECH12345"
+          },
+          "email": {
+            "type": "string",
+            "example": "johndoe@example.com"
+          },
+          "mobileNumber": {
+            "type": "string",
+            "example": "+1234567890"
+          },
+          "gender": {
+            "type": "string",
+            "example": "Male"
+          },
+          "dateOfJoin": {
+            "type": "string",
+            "example": "2023-01-15"
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "example": "1990-05-20"
+          },
+          "emergencyContact": {
+            "type": "string",
+            "example": "+1234567890"
+          },
+          "address": {
+            "type": "object",
+            "properties": {
+              "street1": {
+                "type": "string",
+                "example": "123 Main St"
+              },
+              "city": {
+                "type": "string",
+                "example": "New York"
+              },
+              "zipCode": {
+                "type": "string",
+                "example": "10001"
+              },
+              "country": {
+                "type": "string",
+                "example": "USA"
+              }
+            },
+            "required": ["street1", "city", "zipCode", "country"]
+          },
+          "leave": {
+            "type": "array",
+            "description": "Leave details of the technician",
+            "items": {
+              "type": "object",
+              "properties": {
+                "leaveType": {
+                  "type": "string",
+                  "example": "Sick"
+                },
+                "days": {
+                  "type": "integer",
+                  "example": 5
+                }
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Something went wrong"
+          }
+        }
+      },
+      "RouteNotFoundResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not found"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "AuthenticationErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not authenticated"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "BadRequestSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": ""
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "AuthorizationErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/technicians": {
+      "get": {
+        "tags": ["Technician"],
+        "summary": "Technician List Api",
+        "description": "Endpoint for Technician List",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page no",
+            "schema": {
+              "type": "number",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit no of records per page",
+            "schema": {
+              "type": "number",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/TechnicianResponseSchema"
+                      }
+                    },
+                    "totalCount": {
+                      "type": "number",
+                      "example": 50
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Technician"],
+        "summary": "Technician Create Api",
+        "description": "Endpoint for Technician",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TechnicianSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Technician created successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/TechnicianResponseSchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/technicians/{id}": {
+      "patch": {
+        "tags": ["Technician"],
+        "summary": "Technician Update Api",
+        "description": "Endpoint for Technician Update",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Technician to be updated",
+            "schema": {
+              "type": "string",
+              "example": "6756bb6f1336dde08ec59e72"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TechnicianSchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Technician has been updated successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/TechnicianResponseSchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Technician"],
+        "summary": "Technician delete Api",
+        "description": "Endpoint for delete Technician",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Technician to be deleted",
+            "schema": {
+              "type": "string",
+              "example": "6756bb6f1336dde08ec59e72"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Technician Deleted successfully!"
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/TechnicianResponseSchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Technician"],
+        "summary": "Technician get Api",
+        "description": "Endpoint for get Technician",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Technician",
+            "schema": {
+              "type": "string",
+              "example": "60d0fe4f5311236168a109ca"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/TechnicianResponseSchema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

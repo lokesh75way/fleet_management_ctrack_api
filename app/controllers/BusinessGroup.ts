@@ -97,7 +97,7 @@ export const updateBusinessUser = async (
     role: UserRole.BUSINESS_GROUP,
     type: UserType.ADMIN,
   };
-  console.log(payload);
+
   const payloadGroup = { ...payload };
 
   delete payloadGroup.email;
@@ -246,6 +246,11 @@ export const getAllGroups = async (
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;
 
+    if (role !== "SUPER_ADMIN") {
+      const user = await User.findById(id);
+      query.businessGroupId = user?.businessGroupId;
+    }
+
     const totalCount = await User.countDocuments(query);
 
     const totalPages = Math.ceil(totalCount / limit);
@@ -302,17 +307,17 @@ export const getAllGroups = async (
           companyCount: { $size: "$companyCount" },
         },
       },
-      {
-        $match: {
-          $expr: {
-            $cond: {
-              if: { $eq: [role, "SUPER_ADMIN"] },
-              then: {},
-              else: { $eq: ["$businessGroupId.createdBy", id] },
-            },
-          },
-        },
-      },
+      // {
+      //   $match: {
+      //     $expr: {
+      //       $cond: {
+      //         if: { $eq: [role, "SUPER_ADMIN"] },
+      //         then: {},
+      //         else: { $eq: ["$businessGroupId.createdBy", id] },
+      //       },
+      //     },
+      //   },
+      // },
       {
         $project: {
           password: 0,
@@ -428,8 +433,6 @@ export const getGroupById = async (req: Request, res: Response) => {
       },
     },
   ]);
-
-  console.log({ groups });
 
   if (groups.length) {
     res.send(createResponse(groups[0]));

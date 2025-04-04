@@ -3,6 +3,7 @@ import { createResponse } from "../helper/response";
 import createHttpError from "http-errors";
 import Task from "../schema/Task";
 import Technician from "../schema/Technician";
+import { UserRole } from "../schema/User";
 
 export const createTechnicianTask = async (
   req: Request,
@@ -10,16 +11,19 @@ export const createTechnicianTask = async (
   next: NextFunction
 ) => {
   const payload = req.body;
-  
+
   // @ts-ignore
   const id = req.user._id;
 
   const technician = await Technician.findById({ _id: payload.technician });
   if (!technician) {
-    throw createHttpError(400, "Invalid technician! Please select valid technician");
+    throw createHttpError(
+      400,
+      "Invalid technician! Please select valid technician"
+    );
   }
 
-  const createdTrip = await Task.create({...payload, createdBy : id});
+  const createdTrip = await Task.create({ ...payload, createdBy: id });
 
   if (!createdTrip) {
     res.send(createHttpError(400, "Task is not created!"));
@@ -33,20 +37,30 @@ export const getTechnicianTasks = async (
   res: Response,
   next: NextFunction
 ) => {
-  let { page, limit } = req.query;
+  let { page, limit, groupId, companyId, brancId } = req.query;
   let page1 = parseInt(page as string) || 1;
   let limit1 = parseInt(limit as string) || 10;
 
+  // @ts-ignore
+  const userId = req.user._id;
+  // @ts-ignore
+  const role = req.user.role;
+
   const startIndex = (page1 - 1) * limit1;
 
-  let data = await Task.find({ deleted: false })
+  const query: any = { deleted: false };
+
+  if (role !== UserRole.SUPER_ADMIN) {
+    query["createdBy"] = userId;
+  }
+
+  let data = await Task.find(query)
     .sort({ createdAt: -1 })
     .limit(limit1)
     .skip(startIndex)
     .populate("technician");
-    
 
-  const totalCount = await Task.countDocuments({deleted : false});
+  const totalCount = await Task.countDocuments(query);
 
   res.send(createResponse({ data, totalCount }));
 };

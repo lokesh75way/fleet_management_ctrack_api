@@ -23,6 +23,7 @@ import { GEOFENCE_TYPE } from "../schema/Geofence";
 import GeoFenceLocation from "../schema/GeofenceLocation";
 import { Category, ExpenseType } from "../schema/Expense";
 import { Currency, WorkStartDay } from "../schema/BusinessGroup";
+import mongoose from "mongoose";
 
 export const validate = (validationName: string): any[] => {
   switch (validationName) {
@@ -2463,6 +2464,145 @@ export const validate = (validationName: string): any[] => {
           .optional()
           .isMongoId()
           .withMessage("Created by user ID must be a valid MongoDB ObjectId"),
+      ];
+    }
+
+    case "alert:add": {
+      return [
+        check("branch")
+          .isArray()
+          .withMessage("Branch must be an array")
+          .notEmpty()
+          .withMessage("Branch is required")
+          .custom((branchArray: string[]) => {
+            if (branchArray.some((id) => !mongoose.isObjectIdOrHexString(id))) {
+              throw new Error("Each branch ID must be a valid ObjectId or hex string");
+            }
+            return true;
+          })
+          .withMessage("Invalid branch format"),
+        check("object")
+          .exists()
+          .notEmpty()
+          .withMessage("Object is required")
+          .isString()
+          .withMessage("Object must be a string"),
+        check("objectGroup")
+          .exists()
+          .withMessage("Object group is required")
+          .isString()
+          .withMessage("Object group must be a string"),
+        check("alertName")
+          .exists()
+          .notEmpty()
+          .withMessage("Alert name is required")
+          .isString()
+          .withMessage("Alert name must be a string"),
+        check("alertType")
+          .exists()
+          .notEmpty()
+          .withMessage("Alert type is required")
+          .isString()
+          .withMessage("Alert type must be a string"),
+        check("severity")
+          .exists()
+          .notEmpty()
+          .withMessage("Severity is required")
+          .isString()
+          .withMessage("Severity must be a string"),
+        check("basedOn")
+          .exists()
+          .notEmpty()
+          .withMessage("Based on is required")
+          .isString()
+          .withMessage("Based on must be a string"),
+        check("value")
+          .exists()
+          .notEmpty()
+          .withMessage("Value is required")
+          .isString()
+          .withMessage("Value must be a string"),
+        check("validDays")
+          .exists()
+          .notEmpty()
+          .withMessage("Valid days is required")
+          .isString()
+          .withMessage("Valid days must be a string"),
+        check("action")
+          .isObject()
+          .withMessage("Action must be an object")
+          .custom((action) => {
+            const validKeys = ["Email", "SMS", "Notification"];
+            for (const key of Object.keys(action)) {
+              if (!validKeys.includes(key) || typeof action[key] !== "boolean") {
+                throw new Error("Action must contain valid boolean keys: Email, SMS, Notification");
+              }
+            }
+            return true;
+          })
+          .withMessage("Invalid action format"),
+      ];
+    }
+
+    case "alert:update": {
+      return [
+        check("branch")
+          .isArray()
+          .withMessage("Branch must be an array")
+          .notEmpty()
+          .withMessage("Branch is required")
+          .custom((branchArray: string[]) => {
+            if (branchArray.some((id) => !mongoose.isObjectIdOrHexString(id))) {
+              throw new Error("Each branch ID must be a valid ObjectId or hex string");
+            }
+            return true;
+          })
+          .withMessage("Invalid branch format"),
+        check("object")
+          .optional()
+          .isString()
+          .withMessage("Object must be a string"),
+        check("objectGroup")
+          .optional()
+          .isString()
+          .withMessage("Object group must be a string"),
+        check("alertName")
+          .optional()
+          .isString()
+          .withMessage("Alert name must be a string"),
+        check("alertType")
+          .optional()
+          .isString()
+          .withMessage("Alert type must be a string"),
+        check("severity")
+          .optional()
+          .isString()
+          .withMessage("Severity must be a string"),
+        check("basedOn")
+          .optional()
+          .isString()
+          .withMessage("Based on must be a string"),
+        check("value")
+          .optional()
+          .isString()
+          .withMessage("Value must be a string"),
+        check("validDays")
+          .optional()
+          .isString()
+          .withMessage("Valid days must be a string"),
+        check("action")
+          .optional()
+          .isObject()
+          .withMessage("Action must be an object")
+          .custom((action) => {
+            const validKeys = ["Email", "SMS", "Notification"];
+            for (const key of Object.keys(action)) {
+              if (!validKeys.includes(key) || typeof action[key] !== "boolean") {
+                throw new Error("Action must contain valid boolean keys: Email, SMS, Notification");
+              }
+            }
+            return true;
+          }),
       ];
     }
 

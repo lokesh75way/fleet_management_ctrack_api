@@ -5,6 +5,7 @@ import Task, { TaskCategory } from "../schema/Task";
 import Technician from "../schema/Technician";
 import User, { UserRole } from "../schema/User";
 import Company from "../schema/Company";
+import CompanyBranch from "../schema/CompanyBranch";
 
 export const createTechnician = async (
   req: Request,
@@ -68,8 +69,9 @@ export const getTechnician = async (
   const userId = req.user._id;
   // @ts-ignore
   const role = req.user.role;
-
+  const { branchId, companyId, groupId } = req.query;
   const query: any = { deleted: false };
+
   if (role === UserRole.COMPANY) {
     const companyId = await User.findById(userId);
 
@@ -80,14 +82,15 @@ export const getTechnician = async (
 
   let companies;
   if (role === UserRole.BUSINESS_GROUP) {
-    console.log(userId);
     const businessGroupId = await User.findOne({ _id: userId }).select(
       "businessGroupId"
     );
     if (businessGroupId) {
-      companies = await Company.find({
+      const filter: any = {
         businessGroupId: businessGroupId.businessGroupId,
-      }).select("_id");
+      };
+      if (companyId) filter._id = companyId;
+      companies = await Company.find(filter).select("_id");
     }
 
     const companyIds = companies?.map((company) => company._id);
@@ -99,6 +102,31 @@ export const getTechnician = async (
         },
       },
     ];
+  }
+
+  if (role === UserRole.SUPER_ADMIN) {
+    if (companyId) query.company = companyId;
+    if (groupId) {
+      const companies = await Company.find({ businessGroupId: groupId });
+      if (companies) {
+        query.company = { $in: companies.map((company) => company._id) };
+      }
+    }
+    if (branchId) {
+      const companies = await CompanyBranch.find({
+        _id: { $in: (branchId as string).split(",") },
+      });
+      if (companies) {
+        query.company = { $in: companies.map((company) => company._id) };
+      }
+    }
+  }
+
+  if (role === UserRole.USER) {
+    const user = await User.findById(userId);
+    if (user) {
+      query["$or"] = [{ createdBy: userId }, { company: user.companyId }];
+    }
   }
 
   const page = parseInt((req.query.page as string) || "1");

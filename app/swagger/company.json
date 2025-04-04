@@ -1,0 +1,990 @@
+{
+  "tags": [
+    {
+      "name": "Company",
+      "description": "API for Company."
+    }
+  ],
+  "components": {
+    "schemas": {
+      "CompanyResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "_id": {
+                "type": "string",
+                "example": "60d0fe4f5311236168a109ca"
+              },
+              "userName": {
+                "type": "string",
+                "example": "ABC Corp"
+              },
+              "userInfo": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "_id": {
+                      "type": "string",
+                      "example": "60d0fe4f5311236168a109cb"
+                    },
+                    "email": {
+                      "type": "string",
+                      "example": "admin@abccorp.com"
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "John Doe"
+                    },
+                    "designation": {
+                      "type": "string",
+                      "example": "CEO"
+                    },
+                    "mobileNumber": {
+                      "type": "string",
+                      "example": "+1234567890"
+                    }
+                  }
+                }
+              },
+              "email": {
+                "type": "string",
+                "example": "contact@abccorp.com"
+              },
+              "country": {
+                "type": "string",
+                "example": "USA"
+              },
+              "state": {
+                "type": "string",
+                "example": "California"
+              },
+              "city": {
+                "type": "string",
+                "example": "Los Angeles"
+              },
+              "isActive": {
+                "type": "boolean",
+                "example": true
+              },
+              "isDeleted": {
+                "type": "boolean",
+                "example": false
+              },
+              "password": {
+                "type": "string",
+                "example": "$2a$12$WmH/rJHL.3XjfuCByvH5HeOUihpnxeZyV2bcP5h1fL6tndvP5u9SO"
+              },
+              "role": {
+                "type": "string",
+                "example": "ADMIN"
+              },
+              "type": {
+                "type": "string",
+                "example": "COMPANY"
+              },
+              "businessGroupId": {
+                "type": "string",
+                "example": "60d0fe4f5311236168a109cd"
+              },
+              "companyId": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string",
+                    "example": "60d0fe4f5311236168a109ce"
+                  },
+                  "businessGroupId": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string",
+                        "example": "60d0fe4f5311236168a109cf"
+                      },
+                      "groupName": {
+                        "type": "string",
+                        "example": "Group A"
+                      }
+                    }
+                  },
+                  "companyName": {
+                    "type": "string",
+                    "example": "ABC Corp"
+                  },
+                  "tradeLicenseNumber": {
+                    "type": "string",
+                    "example": "TR12345"
+                  },
+                  "officeNumber": {
+                    "type": "string",
+                    "nullable": true,
+                    "example": "+1234567890"
+                  },
+                  "workStartDay": {
+                    "type": "string",
+                    "example": "Monday"
+                  },
+                  "dateFormat": {
+                    "type": "string",
+                    "example": "MM/DD/YYYY"
+                  },
+                  "timeFormat": {
+                    "type": "string",
+                    "example": "HH:mm"
+                  },
+                  "timezone": {
+                    "type": "string",
+                    "example": "PST"
+                  },
+                  "createdBy": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string",
+                        "example": "60d0fe4f5311236168a109d0"
+                      },
+                      "userName": {
+                        "type": "string",
+                        "example": "adminUser"
+                      },
+                      "email": {
+                        "type": "string",
+                        "example": "admin@company.com"
+                      },
+                      "isActive": {
+                        "type": "boolean",
+                        "example": true
+                      },
+                      "isDeleted": {
+                        "type": "boolean",
+                        "example": false
+                      }
+                    }
+                  },
+                  "createdAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2024-12-12T12:00:00Z"
+                  },
+                  "updatedAt": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2024-12-12T12:00:00Z"
+                  }
+                }
+              },
+              "branchIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "example": "60d0fe4f5311236168a109d1"
+                }
+              },
+              "vehicleIds": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "example": "60d0fe4f5311236168a109d2"
+                }
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2024-12-12T12:00:00Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2024-12-12T12:00:00Z"
+              },
+              "__v": {
+                "type": "integer",
+                "example": 0
+              },
+              "companyDetails": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string",
+                    "example": "60d0fe4f5311236168a109d3"
+                  },
+                  "businessGroupId": {
+                    "type": "string",
+                    "example": "60d0fe4f5311236168a109d4"
+                  },
+                  "companyName": {
+                    "type": "string",
+                    "example": "ABC Corp"
+                  },
+                  "tradeLicenseNumber": {
+                    "type": "string",
+                    "example": "TR12345"
+                  },
+                  "officeNumber": {
+                    "type": "string",
+                    "nullable": true,
+                    "example": "+1234567890"
+                  },
+                  "workStartDay": {
+                    "type": "string",
+                    "example": "Monday"
+                  },
+                  "dateFormat": {
+                    "type": "string",
+                    "example": "MM/DD/YYYY"
+                  },
+                  "timeFormat": {
+                    "type": "string",
+                    "example": "HH:mm"
+                  }
+                }
+              },
+              "businessGroupDetails": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string",
+                    "example": "60d0fe4f5311236168a109d5"
+                  },
+                  "groupName": {
+                    "type": "string",
+                    "example": "Group A"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "CompanySchema": {
+        "type": "object",
+        "properties": {
+          "userInfo": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "user@example.com"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "John Doe"
+                },
+                "designation": {
+                  "type": "string",
+                  "example": "Manager"
+                },
+                "mobileNumber": {
+                  "type": "string",
+                  "example": "9876543210"
+                }
+              },
+              "minItems": 1
+            },
+            "description": "List of user information"
+          },
+          "businessGroupId": {
+            "type": "string",
+            "example": "67503d823293842b693effaa"
+          },
+          "userName": {
+            "type": "string",
+            "example": "exampleUser"
+          },
+          "companyName": {
+            "type": "string",
+            "example": "Company Name"
+          },
+          "currency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "workStartDay": {
+            "type": "string",
+            "example": "MONDAY"
+          },
+          "email": {
+            "type": "string",
+            "example": "admin@example.com"
+          },
+          "country": {
+            "type": "string",
+            "example": "IND"
+          },
+          "state": {
+            "type": "string",
+            "example": "Haryana"
+          },
+          "city": {
+            "type": "string",
+            "example": "Los Angeles"
+          },
+          "logo": {
+            "type": "string",
+            "example": "https://example.com/logo.png"
+          },
+          "dateFormat": {
+            "type": "string",
+            "example": "MM-DD-YYYY"
+          },
+          "timeFormat": {
+            "type": "string",
+            "example": "24 Hour"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "Asia/Kolkata"
+          }
+        },
+        "required": [
+          "userInfo",
+          "userName",
+          "companyName",
+          "email",
+          "country",
+          "city"
+        ],
+        "additionalProperties": false
+      },
+      "CreateCompanySchema": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/CompanySchema"
+          },
+          {
+            "properties": {
+              "password": {
+                "type": "string",
+                "example": "Password123!"
+              }
+            },
+            "required": ["password"]
+          }
+        ]
+      },
+      "ErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean",
+            "example": false
+          },
+          "message": {
+            "type": "string",
+            "example": "Something went wrong"
+          }
+        }
+      },
+      "RouteNotFoundResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not found"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "AuthenticationErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Not authenticated"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "BadRequestSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": ""
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      },
+      "AuthorizationErrorResponseSchema": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Unauthorized"
+          },
+          "success": {
+            "type": "boolean",
+            "example": false
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/companies": {
+      "get": {
+        "tags": ["Company"],
+        "summary": "Company List Api",
+        "description": "Endpoint for Company List",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Page no",
+            "schema": {
+              "type": "number",
+              "example": 1
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Limit no of records per page",
+            "schema": {
+              "type": "number",
+              "example": 10
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "data": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/CompanyResponse"
+                          }
+                        },
+                        "totalCount": {
+                          "type": "integer",
+                          "example": 50
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Company"],
+        "summary": "Company Create Api",
+        "description": "Endpoint for Company",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCompanySchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Company has been created successfully!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companies/{id}": {
+      "put": {
+        "tags": ["Company"],
+        "summary": "Company Update Api",
+        "description": "Endpoint for Company Update",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Company to be updated",
+            "schema": {
+              "type": "string",
+              "example": "6756bb6f1336dde08ec59e72"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CompanySchema"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Company has been updated successfully!"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean",
+                          "example": true
+                        },
+                        "message": {
+                          "type": "string",
+                          "example": "Company has been updated successfully!"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Company"],
+        "summary": "Company delete Api",
+        "description": "Endpoint for delete Company",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Company to be deleted",
+            "schema": {
+              "type": "string",
+              "example": "6756bb6f1336dde08ec59e72"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Company has been deleted successfully."
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {}
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Company"],
+        "summary": "Company get Api",
+        "description": "Endpoint for get Company",
+        "security": [{ "bearerAuth": [] }],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID of the Company",
+            "schema": {
+              "type": "string",
+              "example": "60d0fe4f5311236168a109ca"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "data": {
+                      "$ref": "#/components/schemas/CompanyResponse"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/companies/change-password": {
+      "post": {
+        "tags": ["Company"],
+        "summary": "Company Update Api",
+        "description": "Endpoint for Company Update",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "_id": { "type": "string", "example": "67503d823293842b693effaa" },
+                  "oldPassword": { "type": "string", "example": "oldPassword@123" },
+                  "password": { "type": "string", "example": "newPassword@123" },
+                  "confirmPassword": { "type": "string", "example": "newPassword@123" }
+                },
+                "required": ["oldPassword", "password", "confirmPassword"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Password changed successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "_id": {
+                          "type": "string",
+                          "example": "67503d823293842b693effaa"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/BadRequestSchema"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/AuthenticationErrorResponseSchema"
+              }
+            }
+          },
+          "404":  {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "",
+                  "$ref": "#/components/schemas/RouteNotFoundResponseSchema"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "",
+            "content": {
+              "application/json": {
+                  "schema": {
+                    "description": "",
+                    "$ref": "#/components/schemas/ErrorResponseSchema"
+                  }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

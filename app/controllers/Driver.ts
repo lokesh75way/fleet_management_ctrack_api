@@ -49,7 +49,7 @@ export const updateDriver = async (req: Request, res: Response) => {
   if (newDriver == null)
     throw createHttpError(404, { message: "No driver found" });
 
-  res.send(createResponse(newDriver, "Driver date updated successfully!"));
+  res.send(createResponse(newDriver, "Driver data updated successfully!"));
 };
 
 export const getDriver = async (req: Request, res: Response) => {
@@ -112,7 +112,7 @@ export const getAllDrivers = async (req: Request, res: Response) => {
   const role = req.user.role;
   let query: mongoose.FilterQuery<IDriver> = { isDeleted: false };
 
-  let { page, limit } = req.query;
+  let { page, limit, groupId, companyId, branchId } = req.query;
   let page1 = parseInt(page as string) || 1;
   let limit1 = parseInt(limit as string) || 10;
 
@@ -121,20 +121,38 @@ export const getAllDrivers = async (req: Request, res: Response) => {
   const user_id = await User.findById(id).select("companyId businessGroupId");
   if (role === UserRole.COMPANY) {
     query.companyId = user_id?.companyId;
+    if (branchId) query.branchId = branchId;
   }
 
   if (role === UserRole.BUSINESS_GROUP) {
     query.businessGroupId = user_id?.businessGroupId;
+    if (branchId) query.branchId = branchId;
+    if (companyId) query.companyId = companyId;
+  }
+
+  if (role === UserRole.USER) {
+    query.companyId = user_id?.companyId;
+    query.businessGroupId = user_id?.businessGroupId;
+    if (branchId) query.branchId = { $in: (branchId as string).split(",") };
+    else if (user_id?.branchIds && user_id.branchIds.length)
+      query.branchId = { $in: user_id.branchIds };
+  }
+
+  if (role === UserRole.SUPER_ADMIN) {
+    if (branchId) query.branchId = branchId;
+    if (companyId) query.companyId = companyId;
+    if (groupId) query.businessGroupId = groupId;
   }
 
   const data = await Driver.find(query)
     .populate("companyId")
     .populate("branchId")
-    .populate("businessGroupId").sort({createdAt : -1})
+    .populate("businessGroupId")
+    .sort({ createdAt: -1 })
     .limit(limit1)
     .skip(startIndex);
 
-    const totalCount = await Driver.countDocuments(query);
+  const totalCount = await Driver.countDocuments(query);
 
-    res.send(createResponse({ data, totalCount }, "All drivers"));
+  res.send(createResponse({ data, totalCount }, "All drivers"));
 };

@@ -3,7 +3,7 @@ import { createResponse } from "../helper/response";
 import createHttpError from "http-errors";
 import Modules from "../schema/Modules";
 import Permission from "../schema/Permission";
-import { Mongoose } from "mongoose";
+import mongoose from "mongoose";
 
 export const createTemplate = async (req: Request, res: Response) => {
   const { name, permission } = req.body;
@@ -49,6 +49,16 @@ export const getAllTemplates = async (req: Request, res: Response) => {
   res.send(createResponse({ data, totalCount, totalPages }));
 };
 
+export const getTemplateById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const query: any = {
+    deleted: false,
+    _id: new mongoose.Types.ObjectId(id),
+  };
+  const data = await Permission.findOne(query);
+  res.send(createResponse({ data }));
+};
+
 export const updateFeatureTemplate = async (req: Request, res: Response) => {
   const { _id, name, permission } = req.body;
   const existTemplate = await Permission.findOne({ _id });
@@ -63,7 +73,7 @@ export const updateFeatureTemplate = async (req: Request, res: Response) => {
 export const deletePermission = async (req: Request, res: Response) => {
   const { id } = req.params;
   const data = await Permission.findOne({ _id: id });
-  
+
   if (!data) {
     res.send(createHttpError(404, "Template not found!"));
     return;

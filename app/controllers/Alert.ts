@@ -12,7 +12,6 @@ export const addAlert = async (
     const payload = req.body;
 
     const checkIfExist = await Alert.findOne({ alertName: payload.alertName });
-    console.log(payload);
     if (checkIfExist) {
       throw createHttpError(400, {
         message: `Alert already exist with this name!`,
@@ -93,18 +92,20 @@ export const getAllAlerts = async (
   next: NextFunction
 ) => {
   try {
-
     const page = parseInt((req.query.page as string) || "1");
-  const limit = parseInt((req.query.limit as string) || "10");
+    const limit = parseInt((req.query.limit as string) || "10");
 
-  const startIndex = (page - 1) * limit;
+    const startIndex = (page - 1) * limit;
 
     const condition = {
       isDeleted: false,
     };
-    const data = await Alert.find(condition).sort({
-      createdAt: -1,
-    }).skip(startIndex).limit(limit);
+    const data = await Alert.find(condition)
+      .sort({
+        createdAt: -1,
+      })
+      .skip(startIndex)
+      .limit(limit);
     const count = await Alert.count(condition);
 
     res.send(createResponse({ data, count }, `Alert found successfully!`));
