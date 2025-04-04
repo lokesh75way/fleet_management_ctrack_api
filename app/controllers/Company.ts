@@ -5,7 +5,7 @@ import Company from "../schema/Company";
 import User, { UserRole, UserType } from "../schema/User";
 import bcrypt from "bcrypt";
 import CompanyBranch from "../schema/CompanyBranch";
-import mongoose, { Types } from "mongoose";
+import mongoose, { PipelineStage, Types } from "mongoose";
 
 export const createCompany = async (
   req: Request,
@@ -25,8 +25,8 @@ export const createCompany = async (
       businessGroupId: payload.businessGroupId,
       country: payload.country,
       state: payload.state,
-      city : payload.city,
-      userInfo : payload.userInfo,
+      city: payload.city,
+      userInfo: payload.userInfo,
       role: UserRole.COMPANY,
       type: UserType.ADMIN,
     };
@@ -36,7 +36,7 @@ export const createCompany = async (
     delete payloadCompany.userName;
     delete payloadCompany.password;
     delete payloadCompany.mobileNumber;
-    delete payloadCompany.userInfo
+    delete payloadCompany.userInfo;
 
     let alreadyExists = await User.findOne({
       email: payload.userInfo.email,
@@ -58,7 +58,7 @@ export const createCompany = async (
       throw createHttpError(400, "Company is not created");
     }
 
-    console.log(payloadUser)
+    console.log(payloadUser);
     const newUser = await User.create({
       ...payloadUser,
       companyId: newCompany._id,
@@ -88,7 +88,7 @@ export const getAllCompanies = async (
     // @ts-ignore
     const role = req.user.role;
 
-    let { page, limit, businessGroupId } = req.query;
+    let { page, limit, groupId } = req.query;
     const pageNumber = parseInt(page as string) || 1;
     const limitNumber = parseInt(limit as string) || 10;
     const startIndex = (pageNumber - 1) * limitNumber;
@@ -113,30 +113,42 @@ export const getAllCompanies = async (
       }
     }
 
+    if (role == "COMPANY" || role == "USER") {
+      const user = await User.findById(id);
+      matchCondition["companyId"] = user?.companyId;
+    }
+
     // Apply businessGroupId filter
-    if (businessGroupId) {
-      const businessGroupIdStr = Array.isArray(businessGroupId)
-        ? businessGroupId[0]
-        : businessGroupId; // Handle array cases
+    if (groupId && role == "SUPER_ADMIN") {
+      const businessGroupIdStr = Array.isArray(groupId)
+        ? groupId
+        : typeof groupId === "string"
+          ? groupId.split(",")
+          : undefined; // Handle array cases and undefined
 
       // Ensure that businessGroupId is a valid string
-      if (
-        typeof businessGroupIdStr === "string" &&
-        Types.ObjectId.isValid(businessGroupIdStr)
-      ) {
+      if (businessGroupIdStr) {
         matchCondition["$or"] = [
-          { businessGroupId: new Types.ObjectId(businessGroupIdStr) },
           {
-            "companyId.createdBy.businessGroupId": new Types.ObjectId(
-              businessGroupIdStr
-            ),
+            businessGroupId: {
+              $in: businessGroupIdStr.map(
+                (el) => new Types.ObjectId(el as string)
+              ),
+            },
+          },
+          {
+            "companyId.createdBy.businessGroupId": {
+              $in: businessGroupIdStr.map(
+                (el) => new Types.ObjectId(el as string)
+              ),
+            },
           },
         ];
       }
     }
 
     // Aggregation pipeline
-    const companiesPipeline: any[] = [
+    const companiesPipeline: PipelineStage[] = [
       { $match: matchCondition },
       {
         $lookup: {
@@ -175,6 +187,25 @@ export const getAllCompanies = async (
         $unwind: {
           path: "$companyDetails.createdBy",
           preserveNullAndEmptyArrays: true,
+        },
+      },
+      {
+        $lookup: {
+          from: "company-branches",
+          let: { branchIds: "$branchIds" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $in: ["$_id", "$$branchIds"] },
+                    { $ne: ["$isDeleted", true] },
+                  ],
+                },
+              },
+            },
+          ],
+          as: "branchIds",
         },
       },
       {

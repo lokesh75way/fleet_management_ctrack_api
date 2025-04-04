@@ -121,7 +121,7 @@ export const getAllBranch = async (
     const id = req.user._id;
     // @ts-ignore
     const role = req.user.role;
-    const { companyId, branchId } = req.query;
+    const { companyId, groupId } = req.query;
     let query: any = {
       isDeleted: false,
     };
@@ -131,7 +131,9 @@ export const getAllBranch = async (
 
     const startIndex = (page1 - 1) * limit1;
 
-    const user_id = await User.findById(id).select("companyId businessGroupId");
+    const user_id = await User.findById(id).select(
+      "companyId businessGroupId branchIds branchId"
+    );
 
     if (role === UserRole.COMPANY) {
       query["$or"] = [{ companyId: user_id?.companyId }, { createdBy: id }];
@@ -144,12 +146,21 @@ export const getAllBranch = async (
       ];
     }
 
-    if (companyId) {
-      query.companyId = companyId;
+    if (role == UserRole.USER) {
+      query._id = { $in: user_id?.branchIds };
+      query["$or"] = [
+        { _id: { $in: user_id?.branchIds } },
+        { _id: user_id?.branchId },
+      ];
     }
 
-    if (branchId) {
-      query.$or = [{ parentBranchId: branchId }, { _id: branchId }];
+    if (role == UserRole.SUPER_ADMIN) {
+      if (groupId) {
+        query.businessGroupId = groupId;
+      }
+      if (companyId) {
+        query.companyId = companyId;
+      }
     }
 
     let data = await CompanyBranch.find(query)

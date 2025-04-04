@@ -2,7 +2,13 @@
 import passport from "passport";
 import asyncHandler from "express-async-handler"
 import { catchError, validate } from "../middleware/validation";
-import {  createTemplate,  deletePermission,  getAllTemplates, updateFeatureTemplate } from "../controllers/FeatureTemplate";
+import {
+  createTemplate,
+  deletePermission,
+  getAllTemplates,
+  getTemplateById,
+  updateFeatureTemplate,
+} from "../controllers/FeatureTemplate";
 import { permissionAccess } from "../middleware/featureTemplate";
 
 const router = express.Router();
@@ -12,6 +18,8 @@ router.post('/',validate("module:permission"),catchError,asyncHandler(createTemp
 
 // to list all feature templates
 router.get("/",catchError , asyncHandler(getAllTemplates));
+
+router.get("/:id", catchError, asyncHandler(getTemplateById));
 
 // to update feature templates
 router.patch("/", validate("module:update-permission"),catchError , asyncHandler(updateFeatureTemplate))

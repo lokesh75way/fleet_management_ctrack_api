@@ -174,6 +174,7 @@ export const getSubAdminById = async (req: Request, res: Response) => {
 
     const condition: any = {
       isDeleted: false,
+      _id: adminId,
       role: { $in: [UserRole.USER] },
       type: { $in: [UserType.STAFF, UserType.ADMIN] },
     };
