@@ -141,24 +141,38 @@ export const getVehicles = async (
     // @ts-ignore
     const role = req.user.role;
     let query: any = { isDeleted: false };
-    let { page, limit, branchIds, companyId } = req.query;
+    let { page, limit, branchIds, companyId, groupId } = req.query;
     let page1 = parseInt(page as string) || 1;
     let limit1 = parseInt(limit as string) || 10;
     const startIndex = (page1 - 1) * limit1;
     const user_id = await User.findById(id).select("companyId businessGroupId");
+
     if (role === UserRole.COMPANY) {
       query.companyId = user_id?.companyId;
+      if (branchIds) query.branchId = { $in: (branchIds as string).split(",") };
     }
+
     if (role === UserRole.BUSINESS_GROUP) {
       query.businessGroupId = user_id?.businessGroupId;
+      if (branchIds) query.branchId = { $in: (branchIds as string).split(",") };
+      if (companyId) query.companyId = companyId;
     }
-    if (companyId) {
-      query.companyId = companyId;
+
+    if (role === UserRole.SUPER_ADMIN) {
+      if (companyId) query.companyId = companyId;
+      if (groupId) query.businessGroupId = groupId;
+      if (branchIds) query.branchId = { $in: (branchIds as string).split(",") };
     }
-    if (branchIds) {
-      const branchIdsArray = Array.isArray(branchIds) ? branchIds : [branchIds];
-      query.branchId = { $in: branchIdsArray };
+
+    if (role === UserRole.USER) {
+      query.companyId = user_id?.companyId;
+      query.businessGroupId = user_id?.businessGroupId;
+      if (branchIds) query.branchId = { $in: (branchIds as string).split(",") };
+      else if (user_id?.branchIds && user_id?.branchIds?.length > 0) {
+        query.branchId = { $in: user_id?.branchIds };
+      }
     }
+
     const data = await Vehicle.find(query)
       .populate("branchId")
       .sort({ createdAt: -1 })
@@ -212,7 +226,6 @@ export const fileUploader = async (
     const file: any = req.files?.file;
     if (!file) return next(createHttpError(404, "File not found."));
     if (file?.tempFilePath) {
-
       const result = await cloudinary?.uploader.upload(file?.tempFilePath);
       res.send(
         createResponse(
@@ -531,16 +544,50 @@ export const getUnAssinedVehicles = async (req: Request, res: Response) => {
     //   isVehicleAssigned: false,
     // };
 
-    const totalCount = await UnassignedVehicle.countDocuments();
-    const data = await UnassignedVehicle.find()
-      .sort({ imeiNumber: 1 })
-      .limit(pageLimit)
-      .skip(startIndex);
+    // const totalCount = await UnassignedVehicle.countDocuments();
+    const data = await UnassignedVehicle.aggregate([
+      {
+        $lookup: {
+          from: "vehicles",
+          let: { imeiNumber: "$imeiNumber" },
+          as: "vehicle",
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$imeiNumber", "$$imeiNumber"] },
+                    { $eq: ["$isDeleted", false] },
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      },
+      {
+        $unwind: {
+          path: "$vehicle",
+          preserveNullAndEmptyArrays: false,
+        },
+      },
+      {
+        $sort: { imeiNumber: 1 },
+      },
+      {
+        $facet: {
+          metadata: [{ $count: "totalCount" }],
+          data: [{ $skip: startIndex }, { $limit: pageLimit }],
+        },
+      },
+    ]);
+    const vehicles = data?.[0]?.data || [];
+    const totalCount = data?.[0]?.metadata[0]?.totalCount || 0;
 
     res.send(
       createResponse(
         {
-          data,
+          data: vehicles,
           totalCount,
         },
         "Unassigned vehicle found succesfully!"

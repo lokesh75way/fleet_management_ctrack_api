@@ -16,7 +16,6 @@ export const addSubAdmin = async (
     const payload = req.body;
     payload.email = payload.email.trim().toLocaleLowerCase();
     const checkIfExist = await User.findOne({ email: payload.email });
-    console.log(payload);
     if (checkIfExist) {
       throw createHttpError(400, {
         message: `Subadmin already exist with this email!`,
@@ -117,6 +116,7 @@ export const getAllSubadmin = async (
 
     const page = parseInt((req.query.page as string) || "1");
     const limit = parseInt((req.query.limit as string) || "10");
+    const { branchId, companyId, groupId } = req.query;
 
     const startIndex = (page - 1) * limit;
 
@@ -130,9 +130,31 @@ export const getAllSubadmin = async (
 
     if (role === UserRole.BUSINESS_GROUP) {
       condition.businessGroupId = user_id?.businessGroupId;
+      if (companyId) condition.companyId = companyId;
+      if (branchId)
+        condition.branchIds = { $in: (branchId as string).split(",") };
     }
     if (role === UserRole.COMPANY) {
       condition.companyId = user_id?.companyId;
+      if (branchId)
+        condition.branchIds = { $in: (branchId as string).split(",") };
+    }
+
+    if (role === UserRole.USER) {
+      condition.companyId = user_id?.companyId;
+      condition.businessGroupId = user_id?.businessGroupId;
+      if (branchId)
+        condition.branchIds = { $in: (branchId as string).split(",") };
+      else if (user_id?.branchIds && user_id?.branchIds?.length > 0) {
+        condition.branchIds = { $in: user_id?.branchIds };
+      }
+    }
+
+    if (role === UserRole.SUPER_ADMIN) {
+      if (companyId) condition.companyId = companyId;
+      if (branchId)
+        condition.branchIds = { $in: (branchId as string).split(",") };
+      if (groupId) condition.businessGroupId = groupId;
     }
 
     const data = await User.find(condition)

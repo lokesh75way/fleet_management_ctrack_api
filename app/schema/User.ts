@@ -49,7 +49,7 @@ export interface IUser extends BaseSchema {
   password: string;
   isValidPassword: (password: string) => Promise<boolean>;
   businessGroupId: Types.ObjectId | IBusinessGroup;
-  branchId: Types.ObjectId | IBranch
+  branchId: Types.ObjectId | IBranch;
   companyId?: Types.ObjectId | ICompany;
   branchIds?: Types.ObjectId[] | IBranch[];
   vehicleIds?: Types.ObjectId[] | IVehicle[];
@@ -80,7 +80,7 @@ const UserSchema = new Schema<IUser>(
     type: { type: String, enum: UserType, default: UserType.STAFF },
     businessGroupId: { type: mongoose.Types.ObjectId, ref: "business-group" },
     companyId: { type: mongoose.Types.ObjectId, ref: "company" },
-    branchId : {type : mongoose.Types.ObjectId , ref : 'company-branch'},
+    branchId: { type: mongoose.Types.ObjectId, ref: "company-branch" },
     branchIds: [
       {
         type: mongoose.Types.ObjectId,
