@@ -34,6 +34,7 @@ jobs:
             nvm use 16
             echo "Successfully connected to server"
             cd /var/www/html/fleet_management/fleet_management_ctrack_api
+            git checkout package-lock.json
             git pull origin main
             npm i --legacy-peer-deps
             npm run build
