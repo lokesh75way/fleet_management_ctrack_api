@@ -50,6 +50,11 @@ export const createTechnician = async (
     throw createHttpError(404, "company doesn't exist!");
   }
 
+  payload.leave =
+    payload?.leave?.map((leave: any) => ({
+      leaveType: leave.leaveType,
+      days: leave.days,
+    })) || [];
   const technician = await Technician.create({ ...payload, createdBy: id });
 
   if (!technician) {
@@ -267,6 +272,11 @@ export const updateTechnician = async (
       return;
     }
   }
+  payload.leave =
+    payload?.leave?.map((leave: any) => ({
+      leaveType: leave.leaveType,
+      days: leave.days,
+    })) || [];
 
   const updatedTechnician = await Technician.updateOne(
     { _id: id, deleted: false },

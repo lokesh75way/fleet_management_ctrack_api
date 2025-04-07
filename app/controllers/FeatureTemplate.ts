@@ -4,6 +4,7 @@ import createHttpError from "http-errors";
 import Modules from "../schema/Modules";
 import Permission from "../schema/Permission";
 import mongoose from "mongoose";
+import { UserRole } from "../schema/User";
 
 export const createTemplate = async (req: Request, res: Response) => {
   const { name, permission } = req.body;
@@ -12,8 +13,13 @@ export const createTemplate = async (req: Request, res: Response) => {
     res.send(createResponse({}, "Name must be unique"));
     return;
   }
-
-  const newPermission = new Permission({ name, permission });
+  // @ts-ignore
+  const userId = req.user?._id;
+  const newPermission = new Permission({
+    name,
+    permission,
+    createdBy: userId,
+  });
   const data = await newPermission.save();
 
   res.send(createResponse(data, "Feature template created succesfully"));
@@ -30,16 +36,20 @@ export const getAllTemplates = async (req: Request, res: Response) => {
     //   ],
     // },
   };
-  console.log(query);
+
+  // @ts-ignore
+  const role = req.user.role;
+  if (role !== UserRole.SUPER_ADMIN) {
+    // @ts-ignore
+    query.createdBy = req.user?._id;
+  }
 
   let { page, limit } = req.query;
   let page1 = parseInt(page as string) || 1;
   let limit1 = parseInt(limit as string) || 10;
 
   const totalCount = await Permission.countDocuments(query);
-
   const totalPages = Math.ceil(totalCount / limit1);
-
   const startIndex = (page1 - 1) * limit1;
   const data = await Permission.find(query)
     .limit(limit1)
