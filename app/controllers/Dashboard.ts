@@ -600,3 +600,47 @@ export const getTasks = async (
     next(error);
   }
 };
+
+
+export const getAllTechnicianTasks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // @ts-ignore
+    const userId = req.user._id;
+    // @ts-ignore
+    const role = req.user.role;
+    
+    const technicianId = req.query.technicianId as string;
+
+    const query: any = { deleted: false };
+
+    if (technicianId) {
+      query["technician"] = technicianId;
+    }
+
+    if (role !== UserRole.SUPER_ADMIN) {
+      query["createdBy"] = userId;
+    }
+
+    const { startDate, endDate } = req.query;
+    if (startDate && endDate) {
+      query["plannedReportingDate"] = {
+        $gte: startDate,
+        $lte: endDate
+      };
+    }
+
+    const data = await Task.find(query)
+      .sort({ createdAt: -1 })
+      .populate("technician");
+
+    const totalCount = data.length;
+
+    res.send(createResponse({ data, totalCount }));
+  } catch (error) {
+    next(error);
+  }
+};
