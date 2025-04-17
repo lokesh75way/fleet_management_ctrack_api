@@ -121,6 +121,13 @@ export const updateVehicle = async (
 
     await Vehicle.findOneAndUpdate({ _id: id }, payload);
 
+    if(payload.imeiNumber){
+      const updateVehicleAssigned = await UnassignedVehicle.updateOne(
+        { imeiNumber: payload.imeiNumber },
+        { isVehicleAssigned: true }
+      );  
+    }
+
     res.send(createResponse({}, "Vehicle has been updated successfully!"));
   } catch (error: any) {
     throw createHttpError(400, {
@@ -546,31 +553,6 @@ export const getUnAssinedVehicles = async (req: Request, res: Response) => {
 
     // const totalCount = await UnassignedVehicle.countDocuments();
     const data = await UnassignedVehicle.aggregate([
-      {
-        $lookup: {
-          from: "vehicles",
-          let: { imeiNumber: "$imeiNumber" },
-          as: "vehicle",
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$imeiNumber", "$$imeiNumber"] },
-                    { $eq: ["$isDeleted", false] },
-                  ],
-                },
-              },
-            },
-          ],
-        },
-      },
-      {
-        $unwind: {
-          path: "$vehicle",
-          preserveNullAndEmptyArrays: false,
-        },
-      },
       {
         $sort: { imeiNumber: 1 },
       },
