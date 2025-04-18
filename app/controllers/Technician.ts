@@ -138,13 +138,37 @@ export const getTechnician = async (
   const limit = parseInt((req.query.limit as string) || "10");
 
   const startIndex = (page - 1) * limit;
-
-  const technicians = await Technician.find(query)
-    .sort({ createdAt: -1 })
-    .limit(limit)
-    .skip(startIndex);
-
   const count = await Technician.countDocuments(query);
+  
+  const aggregate = [
+    {
+      $match: query,
+    },
+    {
+      $lookup: {
+        from: "tasks",
+        localField: "_id",
+        foreignField: "technician",
+        as: "tasks",
+      },
+    },
+    {
+      $addFields: {
+        totalTasks: { $size: "$tasks" },
+      },
+    },
+    {
+      $sort: { createdAt: -1 } as const, 
+    },
+    {
+      $skip: startIndex
+    },
+    {
+      $limit: limit
+    }
+  ];
+  
+  const technicians = await Technician.aggregate(aggregate);
 
   // Fetch all tasks and calculate category percentages
   const tasks = await Task.find({});
@@ -175,7 +199,6 @@ export const getTechnician = async (
 
   res.send(createResponse({ technicians, count, taskSummary }));
 };
-
 export const getTechnicianById = async (
   req: Request,
   res: Response,
