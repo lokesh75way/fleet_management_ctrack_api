@@ -268,155 +268,6 @@ type LatLongNumberType = {
  * @param next
  */
 
-// export const getVehicleTrackings = async (
-//   req: Request,
-//   res: Response,
-//   next: NextFunction
-// ) => {
-//   try {
-//     const status = req.query.status;
-//     const ids = req.query.id as string[];
-
-//     let query: any = {};
-//     if (Array.isArray(ids) && ids.length > 0) {
-//       query["_id"] = { $in: ids };
-//     } else if (ids) {
-//       query["_id"] = ids;
-//     }
-
-//     const imeiIds = await Vehicle.find(query).select("imeiNumber");
-//     const imeiIdsArray = imeiIds.map((imei) => imei.imeiNumber);
-//     // const query2  :  any= { imeiNumber: { $in: imeiIdsArray }};
-
-//     const query2: any = {
-//       vehicleId: Array.isArray(ids)
-//         ? { $in: ids.map((id: string) => new mongoose.Types.ObjectId(id)) }
-//         : { $eq: new mongoose.Types.ObjectId(ids) },
-//     };
-
-//     let statusFilter = {};
-//     if (status && status != "") {
-//       statusFilter = { Status: { $eq: status } };
-//     }
-
-//     const trackData = await TrakingHistory.aggregate([
-//       {
-//         $match: query2,
-//       },
-//       {
-//         $match: {
-//           vehicleId: { $ne: null },
-//         },
-//       },
-//       {
-//         $sort: {
-//           updatedAt: -1,
-//         },
-//       },
-//       {
-//         $group: {
-//           _id: { vehicleId: "$vehicleId" },
-//           allFields: { $addToSet: "$$ROOT" },
-//         },
-//       },
-//       { $unwind: "$allFields" },
-//       {
-//         $sort: {
-//           "allFields.updatedAt": -1,
-//         },
-//       },
-//       {
-//         $group: {
-//           _id: "$_id",
-//           allFields: {
-//             $first: "$allFields",
-//           },
-//         },
-//       },
-//       {
-//         $addFields: {
-//           vehicleId: "$allFields.vehicleId",
-//         },
-//       },
-//       {
-//         $lookup: {
-//           from: "vehicles",
-//           localField: "vehicleId",
-//           foreignField: "_id",
-//           as: "vehicleId",
-//         },
-//       },
-//       { $unwind: "$vehicleId" },
-//       {
-//         $project: {
-//           _id: "$allFields._id",
-//           Status: "$allFields.Status",
-//           Vehicle_No: "$allFields.Vehicle_No",
-//           imeiNumber: "$allFields.imeiNumber",
-//           Vehicle_Name: "$allFields.Vehicle_Name",
-//           Latitude: "$allFields.Latitude",
-//           Longitude: "$allFields.Longitude",
-//           Location: "$allFields.Location",
-//           Datetime: "$allFields.Datetime",
-//           updatedAt: "$allFields.updatedAt",
-//           createdAt: "$allFields.createdAt",
-//           vehicleId: {
-//             _id: true,
-//             vehicleName: true,
-//           },
-//         },
-//       },
-//       {
-//         $facet: {
-//           data: [{ $match: statusFilter }],
-//           running: [{ $match: { Status: "RUNNING" } }, { $count: "count" }],
-//           stopped: [{ $match: { Status: "STOP" } }, { $count: "count" }],
-//           inactive: [{ $match: { Status: "INACTIVE" } }, { $count: "count" }],
-//           idle: [{ $match: { Status: "IDLE" } }, { $count: "count" }],
-//           total: [{ $count: "count" }],
-//         },
-//       },
-//     ]);
-
-//     function calculateCenterCoordinate(coordinates: LatLongNumberType[]) {
-//       const avgLat =
-//         coordinates?.reduce((acc, coord) => acc + coord.latitude, 0) /
-//         coordinates.length;
-//       const avgLng =
-//         coordinates?.reduce((acc, coord) => acc + coord.longitude, 0) /
-//         coordinates.length;
-//       return {
-//         latitude: parseFloat(avgLat.toFixed(5)),
-//         longitude: parseFloat(avgLng.toFixed(5)),
-//       };
-//     }
-
-//     const coordinates = trackData[0].data?.map((item: LatLongStringType) => ({
-//       latitude: parseFloat(item.Latitude),
-//       longitude: parseFloat(item.Longitude),
-//     }));
-
-//     const result = {
-//       data: trackData[0].data ?? [],
-//       count: {
-//         running: trackData[0]?.running[0]?.count ?? 0,
-//         stopped: trackData[0]?.stopped[0]?.count ?? 0,
-//         inactive: trackData[0]?.inactive[0]?.count ?? 0,
-//         idle: trackData[0]?.idle[0]?.count ?? 0,
-//         nodata: 0,
-//         total: trackData[0]?.total[0]?.count ?? 0,
-//       },
-//       centerCoordinate: calculateCenterCoordinate(coordinates),
-//     };
-
-//     res.send(createResponse(result));
-//   } catch (error: any) {
-//     throw createHttpError(400, {
-//       message: error?.message ?? "An error occurred.",
-//       data: { user: null },
-//     });
-//   }
-// };
 export const getVehicleTrackings = async (
   req: Request,
   res: Response,
@@ -448,114 +299,113 @@ export const getVehicleTrackings = async (
       statusFilter = { Status: { $eq: status } };
     }
 
-    // Split the aggregation into smaller, more efficient parts
-    // First, get the latest record for each vehicle using a simpler approach
-    const latestTrackingData = await TrakingHistory.aggregate([
+    const trackData = await TrakingHistory.aggregate([
+      {
+        $match: query2,
+      },
       {
         $match: {
-          ...query2,
-          vehicleId: { $ne: null }
-        }
+          vehicleId: { $ne: null },
+        },
       },
       {
         $sort: {
-          vehicleId: 1,
-          updatedAt: -1
-        }
+          updatedAt: -1,
+        },
       },
       {
         $group: {
-          _id: "$vehicleId",
-          latestRecord: { $first: "$$ROOT" }
-        }
+          _id: { vehicleId: "$vehicleId" },
+          allFields: { $addToSet: "$$ROOT" },
+        },
+      },
+      { $unwind: "$allFields" },
+      {
+        $sort: {
+          "allFields.updatedAt": -1,
+        },
       },
       {
-        $replaceRoot: { newRoot: "$latestRecord" }
+        $group: {
+          _id: "$_id",
+          allFields: {
+            $first: "$allFields",
+          },
+        },
+      },
+      {
+        $addFields: {
+          vehicleId: "$allFields.vehicleId",
+        },
       },
       {
         $lookup: {
           from: "vehicles",
           localField: "vehicleId",
           foreignField: "_id",
-          as: "vehicleData"
-        }
+          as: "vehicleId",
+        },
       },
-      {
-        $unwind: {
-          path: "$vehicleData",
-          preserveNullAndEmptyArrays: true
-        }
-      },
+      { $unwind: "$vehicleId" },
       {
         $project: {
-          _id: 1,
-          Status: 1,
-          Vehicle_No: 1,
-          imeiNumber: 1,
-          Vehicle_Name: 1,
-          Latitude: 1,
-          Longitude: 1,
-          Location: 1,
-          Datetime: 1,
-          updatedAt: 1,
-          createdAt: 1,
+          _id: "$allFields._id",
+          Status: "$allFields.Status",
+          Vehicle_No: "$allFields.Vehicle_No",
+          imeiNumber: "$allFields.imeiNumber",
+          Vehicle_Name: "$allFields.Vehicle_Name",
+          Latitude: "$allFields.Latitude",
+          Longitude: "$allFields.Longitude",
+          Location: "$allFields.Location",
+          Datetime: "$allFields.Datetime",
+          updatedAt: "$allFields.updatedAt",
+          createdAt: "$allFields.createdAt",
           vehicleId: {
-            _id: "$vehicleData._id",
-            vehicleName: "$vehicleData.vehicleName"
-          }
-        }
-      }
-    ], { 
-      allowDiskUse: true,
-      maxTimeMS: 60000
-    });
-
-    // Filter by status if provided
-    const filteredData = status && status !== "" 
-      ? latestTrackingData.filter(item => item.Status === status)
-      : latestTrackingData;
-
-    // Calculate counts manually to avoid complex facet operations
-    const counts = {
-      running: latestTrackingData.filter(item => item.Status === "RUNNING").length,
-      stopped: latestTrackingData.filter(item => item.Status === "STOP").length,
-      inactive: latestTrackingData.filter(item => item.Status === "INACTIVE").length,
-      idle: latestTrackingData.filter(item => item.Status === "IDLE").length,
-      nodata: 0,
-      total: latestTrackingData.length
-    };
+            _id: true,
+            vehicleName: true,
+          },
+        },
+      },
+      {
+        $facet: {
+          data: [{ $match: statusFilter }],
+          running: [{ $match: { Status: "RUNNING" } }, { $count: "count" }],
+          stopped: [{ $match: { Status: "STOP" } }, { $count: "count" }],
+          inactive: [{ $match: { Status: "INACTIVE" } }, { $count: "count" }],
+          idle: [{ $match: { Status: "IDLE" } }, { $count: "count" }],
+          total: [{ $count: "count" }],
+        },
+      },
+    ]);
 
     function calculateCenterCoordinate(coordinates: LatLongNumberType[]) {
-      if (!coordinates || coordinates.length === 0) {
-        return { latitude: 0, longitude: 0 };
-      }
-      
-      const validCoordinates = coordinates.filter(coord => 
-        coord.latitude && coord.longitude && 
-        !isNaN(coord.latitude) && !isNaN(coord.longitude)
-      );
-
-      if (validCoordinates.length === 0) {
-        return { latitude: 0, longitude: 0 };
-      }
-      
-      const avgLat = validCoordinates.reduce((acc, coord) => acc + coord.latitude, 0) / validCoordinates.length;
-      const avgLng = validCoordinates.reduce((acc, coord) => acc + coord.longitude, 0) / validCoordinates.length;
-      
+      const avgLat =
+        coordinates?.reduce((acc, coord) => acc + coord.latitude, 0) /
+        coordinates.length;
+      const avgLng =
+        coordinates?.reduce((acc, coord) => acc + coord.longitude, 0) /
+        coordinates.length;
       return {
         latitude: parseFloat(avgLat.toFixed(5)),
         longitude: parseFloat(avgLng.toFixed(5)),
       };
     }
 
-    const coordinates = filteredData.map((item: LatLongStringType) => ({
-      latitude: parseFloat(item.Latitude || "0"),
-      longitude: parseFloat(item.Longitude || "0"),
-    })).filter(coord => coord.latitude !== 0 || coord.longitude !== 0);
+    const coordinates = trackData[0].data?.map((item: LatLongStringType) => ({
+      latitude: parseFloat(item.Latitude),
+      longitude: parseFloat(item.Longitude),
+    }));
 
     const result = {
-      data: filteredData,
-      count: counts,
+      data: trackData[0].data ?? [],
+      count: {
+        running: trackData[0]?.running[0]?.count ?? 0,
+        stopped: trackData[0]?.stopped[0]?.count ?? 0,
+        inactive: trackData[0]?.inactive[0]?.count ?? 0,
+        idle: trackData[0]?.idle[0]?.count ?? 0,
+        nodata: 0,
+        total: trackData[0]?.total[0]?.count ?? 0,
+      },
       centerCoordinate: calculateCenterCoordinate(coordinates),
     };
 
@@ -567,6 +417,157 @@ export const getVehicleTrackings = async (
     });
   }
 };
+
+// export const getVehicleTrackings = async (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   try {
+//     const status = req.query.status;
+//     const ids = req.query.id as string[];
+
+//     let query: any = {};
+//     if (Array.isArray(ids) && ids.length > 0) {
+//       query["_id"] = { $in: ids };
+//     } else if (ids) {
+//       query["_id"] = ids;
+//     }
+
+//     const imeiIds = await Vehicle.find(query).select("imeiNumber");
+//     const imeiIdsArray = imeiIds.map((imei) => imei.imeiNumber);
+//     // const query2  :  any= { imeiNumber: { $in: imeiIdsArray }};
+
+//     const query2: any = {
+//       vehicleId: Array.isArray(ids)
+//         ? { $in: ids.map((id: string) => new mongoose.Types.ObjectId(id)) }
+//         : { $eq: new mongoose.Types.ObjectId(ids) },
+//     };
+
+//     let statusFilter = {};
+//     if (status && status != "") {
+//       statusFilter = { Status: { $eq: status } };
+//     }
+
+//     // Split the aggregation into smaller, more efficient parts
+//     // First, get the latest record for each vehicle using a simpler approach
+//     const latestTrackingData = await TrakingHistory.aggregate([
+//       {
+//         $match: {
+//           ...query2,
+//           vehicleId: { $ne: null }
+//         }
+//       },
+//       {
+//         $sort: {
+//           vehicleId: 1,
+//           updatedAt: -1
+//         }
+//       },
+//       {
+//         $group: {
+//           _id: "$vehicleId",
+//           latestRecord: { $first: "$$ROOT" }
+//         }
+//       },
+//       {
+//         $replaceRoot: { newRoot: "$latestRecord" }
+//       },
+//       {
+//         $lookup: {
+//           from: "vehicles",
+//           localField: "vehicleId",
+//           foreignField: "_id",
+//           as: "vehicleData"
+//         }
+//       },
+//       {
+//         $unwind: {
+//           path: "$vehicleData",
+//           preserveNullAndEmptyArrays: true
+//         }
+//       },
+//       {
+//         $project: {
+//           _id: 1,
+//           Status: 1,
+//           Vehicle_No: 1,
+//           imeiNumber: 1,
+//           Vehicle_Name: 1,
+//           Latitude: 1,
+//           Longitude: 1,
+//           Location: 1,
+//           Datetime: 1,
+//           updatedAt: 1,
+//           createdAt: 1,
+//           vehicleId: {
+//             _id: "$vehicleData._id",
+//             vehicleName: "$vehicleData.vehicleName"
+//           }
+//         }
+//       }
+//     ], { 
+//       allowDiskUse: true,
+//       maxTimeMS: 60000
+//     });
+
+//     // Filter by status if provided
+//     const filteredData = status && status !== "" 
+//       ? latestTrackingData.filter(item => item.Status === status)
+//       : latestTrackingData;
+
+//     // Calculate counts manually to avoid complex facet operations
+//     const counts = {
+//       running: latestTrackingData.filter(item => item.Status === "RUNNING").length,
+//       stopped: latestTrackingData.filter(item => item.Status === "STOP").length,
+//       inactive: latestTrackingData.filter(item => item.Status === "INACTIVE").length,
+//       idle: latestTrackingData.filter(item => item.Status === "IDLE").length,
+//       nodata: 0,
+//       total: latestTrackingData.length
+//     };
+
+//     function calculateCenterCoordinate(coordinates: LatLongNumberType[]) {
+//       if (!coordinates || coordinates.length === 0) {
+//         return { latitude: 0, longitude: 0 };
+//       }
+      
+//       const validCoordinates = coordinates.filter(coord => 
+//         coord.latitude && coord.longitude && 
+//         !isNaN(coord.latitude) && !isNaN(coord.longitude)
+//       );
+
+//       if (validCoordinates.length === 0) {
+//         return { latitude: 0, longitude: 0 };
+//       }
+      
+//       const avgLat = validCoordinates.reduce((acc, coord) => acc + coord.latitude, 0) / validCoordinates.length;
+//       const avgLng = validCoordinates.reduce((acc, coord) => acc + coord.longitude, 0) / validCoordinates.length;
+      
+//       return {
+//         latitude: parseFloat(avgLat.toFixed(5)),
+//         longitude: parseFloat(avgLng.toFixed(5)),
+//       };
+//     }
+
+//     const coordinates = filteredData.map((item: LatLongStringType) => ({
+//       latitude: parseFloat(item.Latitude || "0"),
+//       longitude: parseFloat(item.Longitude || "0"),
+//     })).filter(coord => coord.latitude !== 0 || coord.longitude !== 0);
+
+//     const result = {
+//       data: filteredData,
+//       count: counts,
+//       centerCoordinate: calculateCenterCoordinate(coordinates),
+//     };
+
+//     res.send(createResponse(result));
+//   } catch (error: any) {
+//     throw createHttpError(400, {
+//       message: error?.message ?? "An error occurred.",
+//       data: { user: null },
+//     });
+//   }
+// };
 
 export const getCompanyVehicles = async (
   req: Request,
